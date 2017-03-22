@@ -6,32 +6,72 @@
 var tpl = {};
 
 /**
+ * The template cache
+ * @type {object<string, string>}
+ * @private
+ */
+tpl._cache = {};
+
+/**
+ * Reload a template for the given name
+ * @param {string} name
+ * @param {function=} callback
+ * @return jQuery
+ */
+tpl.reload = function (name, callback) {
+    tpl.reloadContainer($(".template").filter("[data-name='" + name + "']"), callback);
+};
+
+/**
+ * Reload a template for the given container
+ * @param {jQuery} container
+ * @param {function=} callback
+ * @return jQuery
+ */
+tpl.reloadContainer = function (container, callback) {
+    tpl.loadInto(container.attr("data-name"), container, callback);
+};
+
+/**
+ * Load the given tpl into given container and pass the jquery element to the callback
+ * @param {string} name
+ * @param {string|jQuery} container
+ * @param {function=} callback
+ * @return jQuery
+ */
+tpl.loadInto = function (name, container, callback) {
+    tpl.load(name, function ($tpl) {
+        $(container).html($tpl);
+        if (callback) callback($tpl);
+    })
+};
+
+/**
  * Load the given view and pass the jquery element to the callback
  * @param {string} name
- * @param {function} callback
+ * @param {function=} callback
  * @return jQuery
  */
 tpl.load = function (name, callback) {
     var $tpl = $('<div class="template">');
     $tpl.attr("data-name", name);
-    $.get("/tpl/" + name + ".html", function (htmlData) {
+    $tpl.addClass("template-" + name);
+    var cb = function (htmlData) {
         $tpl.append(htmlData);
         lang.replaceInHtml($tpl);
-        if (typeof tpl.fn[name] == "function") {
-            tpl.fn[name].apply(this, params);
-        } else {
-            $.getScript("/tpl/" + name + ".frontend.js", function () {
-
-            }).fail(function () {
-                callback($tpl);
-            });
+        if (callback) callback($tpl);
+    };
+    if (typeof tpl._cache[name] === "undefined") {
+        tpl._cache[name] = false;
+        $.get("/tpl/" + name + ".html", function (htmlData) {
+            tpl._cache[name] = htmlData;
+            cb(htmlData);
+        });
+    } else {
+        if (tpl._cache[name] === false) {
+            console.error("Template does not exist");
+            return;
         }
-    });
+        cb(tpl._cache[name]);
+    }
 };
-
-/**
- * All template functions
- * Will be override by the template itself
- * @type {object<string, function>}
- */
-tpl.fn = {};

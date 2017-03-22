@@ -156,15 +156,6 @@ socket.connect = function (callback) {
 };
 
 /**
- * Connect to socket and load view for current url hash
- */
-socket.connectAndLoadView = function () {
-    socket.connect(function () {
-
-    });
-};
-
-/**
  * Send a command to the backend
  * @param {string} action
  * @param {object=} message

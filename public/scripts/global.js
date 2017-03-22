@@ -11,6 +11,14 @@ function t(key, params) {
 }
 
 /**
+ * Show/Hide loading indicator
+ * @param {boolean} flag
+ */
+function loading(flag) {
+    $(".loader").toggleClass("hidden", !flag);
+}
+
+/**
  * Show a note message on top
  * @param {string} message
  * @param {string=} type
@@ -72,5 +80,9 @@ $(function () {
         }
     });
     lang.replaceInHtml(body);
-    socket.connectAndLoadView();
+    socket.connect(function () {
+        tpl.loadInto("main", "#wrapper", function () {
+            loading(false);
+        });
+    });
 });
