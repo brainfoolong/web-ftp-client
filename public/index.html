@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport"
+          content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+    <link rel="stylesheet" type="text/css" href="stylesheets/lib/sandstone/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/lib/bootstrap-select.min.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/scss/page.css">
+    <link rel="shortcut icon" href="images/logo.png" type="image/png">
+    <script type="text/javascript" src="scripts/lib/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="scripts/lib/jquery.serializejson.min.js"></script>
+    <script type="text/javascript" src="scripts/lib/bootstrap.min.js"></script>
+    <script type="text/javascript" src="scripts/lib/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="scripts/lib/bootstrap-notify.min.js"></script>
+    <script type="text/javascript" src="scripts/lang.js"></script>
+    <script type="text/javascript" src="scripts/socket.js"></script>
+    <script type="text/javascript" src="scripts/storage.js"></script>
+    <script type="text/javascript" src="scripts/global.js"></script>
+    <script type="text/javascript" src="scripts/modal.js"></script>
+    <script type="text/javascript" src="scripts/tpl.js"></script>
+    <title>Web FTP Client</title>
+</head>
+<body>
+<div class="loader"></div>
+
+<div id="wrapper" class="hidden">
+    <div class="menu-top">
+        <span class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="menu-file" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="true">File <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="menu-file">
+            <li><a href="#">Servermanager</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Export</a></li>
+            <li><a href="#">Import</a></li>
+        </ul>
+        </span>
+    </div>
+    <div class="menu-icons">Icons</div>
+    <div class="quick-connect-bar form-inline">
+        <input type="text" name="host" placeholder="Server Host/Ip" class="form-control input-sm">
+        <input type="text" name="username" placeholder="Username" class="form-control input-sm">
+        <input type="password" name="password" placeholder="Password" class="form-control input-sm">
+        <input type="number" name="port" placeholder="Port" class="form-control input-sm" size="5" min="0" max="65535" step="1">
+    </div>
+    <div class="logs">Logs</div>
+    <div class="browser">
+        <div class="local">Local Browser</div>
+        <div class="server">Server Browser</div>
+    </div>
+    <div class="transfer">Transfers</div>
+</div>
+</body>
+</html>

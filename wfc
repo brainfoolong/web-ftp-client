@@ -1,0 +1,87 @@
+#!/bin/sh
+
+LABEL="Web FTP Client"
+PIDFILE=bgsm.pid
+SCRIPT=bgsm
+BASEDIR=$(dirname "$0")
+cd "${BASEDIR}"
+
+case "$1" in
+	start)
+		if [ -e $PIDFILE ]; then
+			if ( kill -0 $(cat $PIDFILE) 2> /dev/null ); then
+				echo "The server is already running, try restart or stop"
+				exit 1
+			else
+				echo "$PIDFILE found, but no server running. Possibly your previously started server crashed"
+				echo "Please view the logfile for details."
+				rm $PIDFILE
+			fi
+		fi
+		if [ "${UID}" = "0" ]; then
+			echo "WARNING ! For security reasons we advise: DO NOT RUN THE SERVER AS ROOT"
+			c=1
+			while [ "$c" -le 10 ]; do
+				echo -n "!"
+				sleep 1
+				c=$(($c+1))
+			done
+			echo "!"
+		fi
+		echo "Starting $LABEL... "
+		node src/main.js start > logs/output.log 2> logs/error.log &
+		PID=$!
+		ps -p ${PID} > /dev/null 2>&1
+		if [ "$?" -ne "0" ]; then
+			echo "$LABEL could not start"
+		else
+			echo $PID > $PIDFILE
+			echo "$LABEL started, for details please view the log file"
+		fi
+	;;
+	stop)
+		if [ -e $PIDFILE ]; then
+			echo -n "Stopping $LABEL... "
+			if ( kill -TERM $(cat $PIDFILE) 2> /dev/null ); then
+				c=1
+				while [ "$c" -le 300 ]; do
+					if ( kill -0 $(cat $PIDFILE) 2> /dev/null ); then
+						echo -n "."
+						sleep 1
+					else
+						break
+					fi
+					c=$(($c+1))
+				done
+			fi
+			if ( kill -0 $(cat $PIDFILE) 2> /dev/null ); then
+				echo "Server is not shutting down cleanly - killing"
+				kill -KILL $(cat $PIDFILE)
+			else
+				echo "Done"
+			fi
+			rm $PIDFILE
+		else
+			echo "No server running ($PIDFILE is missing)"
+			exit 0
+		fi
+	;;
+	restart)
+		sh $SCRIPT stop && sh $SCRIPT start || exit 1
+	;;
+	status)
+		if [ -e $PIDFILE ]; then
+			if ( kill -0 $(cat $PIDFILE) 2> /dev/null ); then
+				echo "Server is running"
+			else
+				echo "Server seems to have died"
+			fi
+		else
+			echo "No server running ($PIDFILE is missing)"
+		fi
+	;;
+	*)
+		echo "Usage: ${0} {start|stop|restart|status}"
+		exit 2
+esac
+exit 0
