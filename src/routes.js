@@ -19,7 +19,7 @@ app.get('/wsport', function (req, res) {
 
 app.use(express.static('./../public'))
 
-app.get(/^\/view\/([a-z0-9\-\_\.]+)/, function (req, res, next) {
+app.get(/^\/view\/([a-z0-9\-_.]+)/, function (req, res, next) {
   let filepath = path.resolve('./../views/' + res.req.params[0])
   if (fs.existsSync(filepath)) {
     res.sendFile(filepath)

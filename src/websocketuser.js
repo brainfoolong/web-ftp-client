@@ -1,8 +1,6 @@
 'use strict'
 
-const db = require('./db')
 const fs = require('fs')
-let hash = require('./hash')
 
 /**
  * A single websocket user

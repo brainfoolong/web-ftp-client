@@ -2,6 +2,7 @@
 
 /**
  * Templates
+ * @type {object}
  */
 var tpl = {}
 

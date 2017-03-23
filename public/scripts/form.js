@@ -1,9 +1,10 @@
 'use strict'
 
 /**
- * Form creator
+ * form creator
+ * @type {object}
  */
-var Form = {}
+var form = {}
 
 /**
  * Create a form table by given props
@@ -14,7 +15,7 @@ var Form = {}
  * @param {object=} values
  * @return {JQuery}
  */
-Form.create = function (container, formName, fields, onSubmit, values) {
+form.create = function (container, formName, fields, onSubmit, values) {
   if (!values) values = {}
   var $form = $('<form>').attr('name', formName).attr('onsubmit', 'return false').attr('id', 'form-' + formName)
   for (var fieldName in fields) {
@@ -74,8 +75,8 @@ Form.create = function (container, formName, fields, onSubmit, values) {
         $input = $('<select class="form-control" name="' + fieldName + ':boolean">')
         var fieldValues = ['true', 'false']
         for (var i = 0; i < fieldValues.length; i++) {
-          var valueKey = fieldValues[i]
-          $input.append($('<option>').attr('value', valueKey).text(global.t(valueKey === 'true' ? 'yes' : 'no')))
+          var valueKey1 = fieldValues[i]
+          $input.append($('<option>').attr('value', valueKey1).text(global.t(valueKey1 === 'true' ? 'yes' : 'no')))
         }
         if (currentValue !== null) {
           $input.val(currentValue ? 'true' : 'false')
@@ -93,8 +94,8 @@ Form.create = function (container, formName, fields, onSubmit, values) {
         $input.attr('placeholder', global.t(field.placeholder))
       }
       if (field.attributes) {
-        for (var i in field.attributes) {
-          $input.attr('data-' + i, field.attributes[i])
+        for (var i2 in field.attributes) {
+          $input.attr('data-' + i2, field.attributes[i])
         }
       }
       $el.find('.form-input').append($input)
@@ -114,7 +115,7 @@ Form.create = function (container, formName, fields, onSubmit, values) {
   var $btn = $('<div><span data-name="save" data-translate="save" class="btn btn-info submit-form"></span></div>')
   if (Object.keys(values).length) {
     $btn.children().attr('data-translate', 'save.edited')
-    $btn.append('&nbsp;<a href="' + location.pathname + '" data-translate="cancel.edit" class="btn btn-default page-link"></a>')
+    $btn.append('&nbsp;<a href="' + window.location.pathname + '" data-translate="cancel.edit" class="btn btn-default page-link"></a>')
   }
   $form.append($btn)
   lang.replaceInHtml($form)
@@ -127,8 +128,6 @@ Form.create = function (container, formName, fields, onSubmit, values) {
       var formDataJson = f.serializeJSON()
       onSubmit(formDataJson)
     } else {
-      var firstInvalid = $form.find(':invalid').first()
-      scrollTo('body', firstInvalid.closest('.form-field').offset().top)
       // on validation error trigger a fake submit button to enable validation UI popup
       $(this).after('<input type="submit">')
       $(this).next().trigger('click').remove()

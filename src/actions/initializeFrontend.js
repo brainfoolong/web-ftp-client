@@ -19,7 +19,7 @@ action.requireUser = false
 action.execute = function (user, message, callback) {
   // if we've got some login credentials than check against db if login is valid
   var userData = db.get('users').get(message.loginData.id).cloneDeep().value()
-  var valid = userData && userData.loginHash == message.loginData.hash
+  var valid = userData && userData.loginHash === message.loginData.hash
   if (valid) {
     // set the socket userdata if valid login
     user.userData = userData

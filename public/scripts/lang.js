@@ -1,8 +1,9 @@
 'use strict'
+
 /**
  * Translations
+ * @type {object}
  */
-
 var lang = {}
 
 /**

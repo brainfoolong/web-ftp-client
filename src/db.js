@@ -1,8 +1,8 @@
 'use strict'
 
 const Low = require('lowdb')
-let fs = require('fs')
 const hash = require('./hash')
+const path = require('path')
 
 /**
  * LowDB helper
@@ -27,10 +27,10 @@ db._defaults = {
  * @returns {Low}
  */
 db.get = function (file, folder) {
-  let path = __dirname + '/../db'
-  if (folder) path += '/' + folder
-  path += '/' + file + '.json'
-  const inst = Low(path)
+  let filepath = path.join(__dirname, '../db')
+  if (folder) filepath = path.join(filepath, folder)
+  filepath = path.join(filepath, file + '.json')
+  const inst = Low(filepath)
   // if getting settings than set some defaults
   if (typeof db._defaults[file] !== 'undefined') {
     if (file === 'settings') {

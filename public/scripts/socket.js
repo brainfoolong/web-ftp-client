@@ -2,6 +2,7 @@
 
 /**
  * socket stuff
+ * @type {object}
  */
 var socket = {}
 
@@ -38,7 +39,7 @@ socket.sendQueue = function () {
  */
 socket.connect = function (callback) {
   var cb = function () {
-    var con = new WebSocket('ws://' + window.location.hostname + ':' + socket.port)
+    var con = new window.WebSocket('ws://' + window.location.hostname + ':' + socket.port)
     /**
      * On open connection
      */

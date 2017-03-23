@@ -20,11 +20,17 @@
     "standard": "^9.0.2"
   },
   "scripts": {
-    "test": "standard --fix && node my-tests.js"
+    "test": "standard"
   },
   "standard": {
     "globals": [
-      "$"
+      "$",
+      "form",
+      "global",
+      "socket",
+      "lang",
+      "storage",
+      "tpl"
     ]
   }
 }

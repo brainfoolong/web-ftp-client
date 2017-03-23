@@ -2,6 +2,7 @@
 
 /**
  * Storage handling
+ * @type {object}
  */
 var storage = {}
 
@@ -11,10 +12,10 @@ var storage = {}
  * @returns {*}
  */
 storage.get = function (key) {
-  var s = sessionStorage
+  var s = window.sessionStorage
   var value = s.getItem(key)
   if (value === null) {
-    s = localStorage
+    s = window.localStorage
     value = s.getItem(key)
     if (value === null) return null
   }
@@ -28,7 +29,7 @@ storage.get = function (key) {
  * @param {boolean=} session
  */
 storage.set = function (key, value, session) {
-  var s = session ? sessionStorage : localStorage
+  var s = session ? window.sessionStorage : window.localStorage
   if (value === null || typeof value === 'undefined') {
     s.removeItem(key)
   } else {

@@ -10,7 +10,6 @@ let mode = process.argv[2]
 if (!mode) {
   process.stdout.write('Usage: node main.js start|update-core')
   process.exit(0)
-  return
 }
 
 if (mode === 'start') {
@@ -18,7 +17,6 @@ if (mode === 'start') {
   require('./websocketmgr')
   require('./config')
   require('./core')
-  return
 }
 
 // update core

@@ -75,12 +75,12 @@ global.addTab = function (tpl, params) {
 }
 
 $(function () {
-  if (typeof WebSocket === 'undefined') {
+  if (typeof window.WebSocket === 'undefined') {
     global.note('Your browser is not supported in this application (Outdated Browser). Please upgrade to the newest version')
     return
   }
   var body = $('body')
-  var hasTouch = ('ontouchstart' in window || window.DocumentTouch && document instanceof DocumentTouch) === true
+  var hasTouch = ('ontouchstart' in window || (typeof window.DocumentTouch !== 'undefined' && document instanceof window.DocumentTouch)) === true
   body.addClass(hasTouch ? 'no-touch' : 'touch')
   // bind tooltips
   $(document).tooltip({
