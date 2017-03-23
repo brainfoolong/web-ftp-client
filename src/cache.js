@@ -1,16 +1,16 @@
-"use strict";
+'use strict'
 
 /**
  * Simple cached value management
  */
-const cache = {};
+const cache = {}
 
 /**
  * The values
  * @type {{}}
  * @private
  */
-cache._values = {};
+cache._values = {}
 
 /**
  * Get a value from cache
@@ -18,15 +18,15 @@ cache._values = {};
  * @returns {*}
  */
 cache.get = function (key) {
-    if (typeof cache._values[key] == "undefined") {
-        return null;
-    }
-    if (cache._values[key].time > new Date().getTime() / 1000) {
-        return cache._values[key].value;
-    }
-    delete cache._values[key];
-    return null;
-};
+  if (typeof cache._values[key] === 'undefined') {
+    return null
+  }
+  if (cache._values[key].time > new Date().getTime() / 1000) {
+    return cache._values[key].value
+  }
+  delete cache._values[key]
+  return null
+}
 
 /**
  * Set a value in cache
@@ -35,7 +35,7 @@ cache.get = function (key) {
  * @param {number} lifetime Lifetime in seconds
  */
 cache.set = function (key, value, lifetime) {
-    cache._values[key] = {"value": value, "time": new Date().getTime() / 1000 + lifetime};
-};
+  cache._values[key] = {'value': value, 'time': new Date().getTime() / 1000 + lifetime}
+}
 
-module.exports = cache;
+module.exports = cache

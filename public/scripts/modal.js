@@ -1,9 +1,9 @@
-"use strict";
+'use strict'
 
 /**
  * Modal
  */
-var modal = {};
+var modal = {}
 
 /**
  * Show a modal window
@@ -14,4 +14,4 @@ var modal = {};
  */
 modal.show = function (header, body, footer) {
 
-};
+}

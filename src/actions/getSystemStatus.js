@@ -1,14 +1,14 @@
-"use strict";
+'use strict'
 
-const db = require("./../db");
+const db = require('./../db')
 
-const action = {};
+const action = {}
 
 /**
  * Require user
  * @type {boolean}
  */
-action.requireUser = false;
+action.requireUser = false
 
 /**
  * Execute the action
@@ -17,10 +17,10 @@ action.requireUser = false;
  * @param {function} callback
  */
 action.execute = function (user, message, callback) {
-    callback({
-        "installed": db.get("users").size().value() > 0,
-        "version": require("./../core").latestVersion
-    });
-};
+  callback({
+    'installed': db.get('users').size().value() > 0,
+    'version': require('./../core').latestVersion
+  })
+}
 
-module.exports = action;
+module.exports = action

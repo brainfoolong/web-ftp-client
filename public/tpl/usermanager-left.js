@@ -1,5 +1,5 @@
-"use strict";
+'use strict';
 (function () {
-    var $tab = $(".splitbox-tabs").find(".active");
-    $tab.find(".text").text("Usermanager");
-})();
+  var $tab = $('.splitbox-tabs').find('.active')
+  $tab.find('.text').text('Usermanager')
+})()

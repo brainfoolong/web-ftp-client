@@ -1,11 +1,11 @@
-"use strict";
+'use strict'
 
-const crypto = require('crypto');
+const crypto = require('crypto')
 
 /**
  * Hash generator
  */
-const hash = {};
+const hash = {}
 
 /**
  * Generate random hash
@@ -13,8 +13,8 @@ const hash = {};
  * @returns {string}
  */
 hash.random = function (length) {
-    return crypto.randomBytes(length / 2).toString('hex');
-};
+  return crypto.randomBytes(length / 2).toString('hex')
+}
 
 /**
  * Generate salted md5 hash
@@ -22,8 +22,8 @@ hash.random = function (length) {
  * @returns {string}
  */
 hash.saltedMd5 = function (str) {
-    const db = require("./db");
-    return crypto.createHash('md5').update(str + "" + db.get("settings").get("salt").value()).digest("hex");
-};
+  const db = require('./db')
+  return crypto.createHash('md5').update(str + '' + db.get('settings').get('salt').value()).digest('hex')
+}
 
-module.exports = hash;
+module.exports = hash
