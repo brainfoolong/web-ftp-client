@@ -1,7 +1,7 @@
 'use strict';
 (function () {
   var $box = $('.template-login .box')
-  socket.send('getSystemStatus', null, function (data) {
+  gl.socket.send('getSystemStatus', null, function (data) {
     if (!data.installed) {
       $box.find('.well').toggleClass('hidden')
     }
@@ -11,14 +11,14 @@
     'password': {'type': 'password', 'label': 'Password', 'required': true},
     'remember': {'type': 'switch', 'label': 'Remember'}
   }, function (formData) {
-    socket.send('loginFormSubmit', formData, function (userData) {
+    gl.socket.send('loginFormSubmit', formData, function (userData) {
       if (!userData) {
-        global.note('Login failed', 'danger')
+        gl.note('Login failed', 'danger')
       } else {
-        storage.set('login.id', userData.id, !formData.remember)
-        storage.set('login.hash', userData.loginHash, !formData.remember)
-        global.note('Login successfull', 'success')
-        tpl.loadInto('main', '#wrapper')
+        gl.storage.set('login.id', userData.id, !formData.remember)
+        gl.storage.set('login.hash', userData.loginHash, !formData.remember)
+        gl.note('Login successfull', 'success')
+        gl.tpl.loadInto('main', '#wrapper')
       }
     })
   })

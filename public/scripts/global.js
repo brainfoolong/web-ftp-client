@@ -4,23 +4,13 @@
  * The global object
  * @type {object}
  */
-var global = {}
-
-/**
- * Just get a translation value for given key
- * @param {string} key
- * @param {object=} params
- * @return {string}
- */
-global.t = function (key, params) {
-  return lang.get(key, params)
-}
+var gl = {}
 
 /**
  * Show/Hide loading indicator
  * @param {boolean} flag
  */
-global.loading = function (flag) {
+gl.loading = function (flag) {
   $('.loader').toggleClass('hidden', !flag)
 }
 
@@ -30,10 +20,10 @@ global.loading = function (flag) {
  * @param {string=} type
  * @param {number=} delay
  */
-global.note = function (message, type, delay) {
+gl.note = function (message, type, delay) {
   if (delay === -1) delay = 99999999
   $.notify({
-    'message': global.t(message)
+    'message': gl.t(message)
   }, {
     'type': typeof type === 'undefined' ? 'info' : type,
     placement: {
@@ -50,7 +40,7 @@ global.note = function (message, type, delay) {
  * @param {string} key
  * @returns {*|undefined}
  */
-global.getObjectValue = function (object, key) {
+gl.getObjectValue = function (object, key) {
   var spl = key.split('[')
   var o = object
   for (var i = 0; i < spl.length; i++) {
@@ -66,7 +56,7 @@ global.getObjectValue = function (object, key) {
  * @param {string} tpl
  * @param {*?} params
  */
-global.addTab = function (tpl, params) {
+gl.addTab = function (tpl, params) {
   var $li = $('<li role="presentation"><a href="#"><span class="text"></span></a></li>').data('params', params)
   $li.attr('data-template', tpl)
   $li.find('a').append(' <span class="glyphicon glyphicon-remove"></span>')
@@ -76,7 +66,7 @@ global.addTab = function (tpl, params) {
 
 $(function () {
   if (typeof window.WebSocket === 'undefined') {
-    global.note('Your browser is not supported in this application (Outdated Browser). Please upgrade to the newest version')
+    gl.note('Your browser is not supported in this application (Outdated Browser). Please upgrade to the newest version')
     return
   }
   var body = $('body')
@@ -88,7 +78,7 @@ $(function () {
     'container': 'body',
     'html': true,
     'title': function () {
-      return global.t($(this).attr('data-tooltip'))
+      return gl.t($(this).attr('data-tooltip'))
     }
   }).on('inserted.bs.tooltip', function (ev) {
     // hide if we are on mobile touch device
@@ -98,11 +88,11 @@ $(function () {
       }, 1000)
     }
   })
-  lang.replaceInHtml(body)
+  gl.lang.replaceInHtml(body)
 
   // template load trigger
   $(document).on('click', '.template-load-trigger[data-template]', function () {
-    tpl.loadInto($(this).attr('data-template'), $(this).attr('data-container'))
+    gl.tpl.loadInto($(this).attr('data-template'), $(this).attr('data-container'))
   })
 
   // tab delete trigger
@@ -117,7 +107,7 @@ $(function () {
 
   // tab load trigger
   $(document).on('click', '.tab-load-trigger[data-template]', function () {
-    global.addTab($(this).attr('data-template'))
+    gl.addTab($(this).attr('data-template'))
   })
 
   // tab click trigger
@@ -126,25 +116,25 @@ $(function () {
     var tabs = $(this).parent().children()
     tabs.removeClass('active')
     $(this).addClass('active')
-    tpl.loadInto($(this).attr('data-template') + '-left', '.splitbox .left')
-    tpl.loadInto($(this).attr('data-template') + '-right', '.splitbox .right')
+    gl.tpl.loadInto($(this).attr('data-template') + '-left', '.splitbox .left')
+    gl.tpl.loadInto($(this).attr('data-template') + '-right', '.splitbox .right')
   })
 
   // socket connection
-  socket.connect(function () {
-    socket.send('initializeFrontend', {
+  gl.socket.connect(function () {
+    gl.socket.send('initializeFrontend', {
       'loginData': {
-        'id': storage.get('login.id'),
-        'hash': storage.get('login.hash')
+        'id': gl.storage.get('login.id'),
+        'hash': gl.storage.get('login.hash')
       }
     }, function (data) {
       if (!data) {
-        tpl.loadInto('login', '#wrapper', function () {
-          global.loading(false)
+        gl.tpl.loadInto('login', '#wrapper', function () {
+          gl.loading(false)
         })
       } else {
-        tpl.loadInto('main', '#wrapper', function () {
-          global.loading(false)
+        gl.tpl.loadInto('main', '#wrapper', function () {
+          gl.loading(false)
         })
       }
     })

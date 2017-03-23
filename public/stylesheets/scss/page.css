@@ -61,7 +61,7 @@ html {
 .quick-connect-bar {
   padding: 10px; }
 
-.global.note {
+.gl.note {
   padding: 10px;
   background: #ebff00; }
 
@@ -118,5 +118,15 @@ textarea:invalid + span:after {
   right: -30px;
   top: 10px;
   color: #ffaeb3; }
+
+.template-servermanager-left {
+  flex-direction: column;
+  display: flex;
+  height: 100%; }
+  .template-servermanager-left .tree {
+    background: red;
+    height: 100%; }
+  .template-servermanager-left .buttons {
+    background: blue; }
 
 /*# sourceMappingURL=page.css.map */

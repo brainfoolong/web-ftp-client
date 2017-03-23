@@ -4,14 +4,14 @@
  * Storage handling
  * @type {object}
  */
-var storage = {}
+gl.storage = {}
 
 /**
  * Get data from storage, from sessionstorage or localstorage, try both
  * @param {string} key
  * @returns {*}
  */
-storage.get = function (key) {
+gl.storage.get = function (key) {
   var s = window.sessionStorage
   var value = s.getItem(key)
   if (value === null) {
@@ -28,7 +28,7 @@ storage.get = function (key) {
  * @param {*} value
  * @param {boolean=} session
  */
-storage.set = function (key, value, session) {
+gl.storage.set = function (key, value, session) {
   var s = session ? window.sessionStorage : window.localStorage
   if (value === null || typeof value === 'undefined') {
     s.removeItem(key)

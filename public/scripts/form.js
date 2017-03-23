@@ -8,19 +8,19 @@ var form = {}
 
 /**
  * Create a form table by given props
- * @param {JQuery} container
+ * @param {jQuery} container
  * @param {string} formName
  * @param {object} fields
  * @param {function=} onSubmit
  * @param {object=} values
- * @return {JQuery}
+ * @return {jQuery}
  */
 form.create = function (container, formName, fields, onSubmit, values) {
   if (!values) values = {}
   var $form = $('<form>').attr('name', formName).attr('onsubmit', 'return false').attr('id', 'form-' + formName)
   for (var fieldName in fields) {
     var field = fields[fieldName]
-    var currentValue = global.getObjectValue(values, fieldName)
+    var currentValue = gl.getObjectValue(values, fieldName)
     if (typeof currentValue === 'undefined') currentValue = field.defaultValue
     if (typeof currentValue === 'undefined') currentValue = null
     var $input = null
@@ -29,10 +29,10 @@ form.create = function (container, formName, fields, onSubmit, values) {
       '<div class="form-input"></div>' +
       '</div>')
     if (field.label) {
-      $el.find('.form-label').append($('<strong>').text(global.t(field.label)))
+      $el.find('.form-label').append($('<strong>').text(gl.t(field.label)))
     }
     if (field.description) {
-      $el.find('.form-label').append($('<small>').text(global.t(field.description)))
+      $el.find('.form-label').append($('<small>').text(gl.t(field.description)))
     }
     switch (field.type) {
       case 'textarea':
@@ -65,7 +65,7 @@ form.create = function (container, formName, fields, onSubmit, values) {
         $input = $('<select class="form-control" name="' + name + '">')
         if (field.multiple) $input.attr('multiple', true)
         for (var valueKey in field.values) {
-          $input.append($('<option>').attr('value', valueKey).text(global.t(field.values[valueKey])))
+          $input.append($('<option>').attr('value', valueKey).text(gl.t(field.values[valueKey])))
         }
         if (currentValue !== null) {
           $input.val(currentValue)
@@ -76,7 +76,7 @@ form.create = function (container, formName, fields, onSubmit, values) {
         var fieldValues = ['true', 'false']
         for (var i = 0; i < fieldValues.length; i++) {
           var valueKey1 = fieldValues[i]
-          $input.append($('<option>').attr('value', valueKey1).text(global.t(valueKey1 === 'true' ? 'yes' : 'no')))
+          $input.append($('<option>').attr('value', valueKey1).text(gl.t(valueKey1 === 'true' ? 'yes' : 'no')))
         }
         if (currentValue !== null) {
           $input.val(currentValue ? 'true' : 'false')
@@ -91,7 +91,7 @@ form.create = function (container, formName, fields, onSubmit, values) {
         $input.attr('required', true)
       }
       if (field.placeholder) {
-        $input.attr('placeholder', global.t(field.placeholder))
+        $input.attr('placeholder', gl.t(field.placeholder))
       }
       if (field.attributes) {
         for (var i2 in field.attributes) {
@@ -118,7 +118,7 @@ form.create = function (container, formName, fields, onSubmit, values) {
     $btn.append('&nbsp;<a href="' + window.location.pathname + '" data-translate="cancel.edit" class="btn btn-default page-link"></a>')
   }
   $form.append($btn)
-  lang.replaceInHtml($form)
+  gl.lang.replaceInHtml($form)
   $form.find(':input').not('button').after('<span class="invalid">')
   container.append($form)
   $form.on('click', '.submit-form', function () {

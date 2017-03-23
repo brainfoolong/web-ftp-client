@@ -4,14 +4,7 @@
  * Templates
  * @type {object}
  */
-var tpl = {}
-
-/**
- * The template cache
- * @type {object<string, string>}
- * @private
- */
-tpl._cache = {}
+gl.tpl = {}
 
 /**
  * Reload a template for the given name
@@ -19,8 +12,8 @@ tpl._cache = {}
  * @param {function=} callback
  * @return jQuery
  */
-tpl.reload = function (name, callback) {
-  tpl.reloadContainer($('.template').filter('[data-name=\'' + name + '\']'), callback)
+gl.tpl.reload = function (name, callback) {
+  gl.tpl.reloadContainer($('.template').filter('[data-name=\'' + name + '\']'), callback)
 }
 
 /**
@@ -29,8 +22,8 @@ tpl.reload = function (name, callback) {
  * @param {function=} callback
  * @return jQuery
  */
-tpl.reloadContainer = function (container, callback) {
-  tpl.loadInto(container.attr('data-name'), container, callback)
+gl.tpl.reloadContainer = function (container, callback) {
+  gl.tpl.loadInto(container.attr('data-name'), container, callback)
 }
 
 /**
@@ -40,8 +33,8 @@ tpl.reloadContainer = function (container, callback) {
  * @param {function=} callback
  * @return jQuery
  */
-tpl.loadInto = function (name, container, callback) {
-  tpl.load(name, function ($tpl) {
+gl.tpl.loadInto = function (name, container, callback) {
+  gl.tpl.load(name, function ($tpl) {
     $(container).html($tpl)
     if (callback) callback($tpl)
   })
@@ -53,13 +46,13 @@ tpl.loadInto = function (name, container, callback) {
  * @param {function=} callback
  * @return jQuery
  */
-tpl.load = function (name, callback) {
+gl.tpl.load = function (name, callback) {
   var $tpl = $('<div class="template">')
   $tpl.attr('data-name', name)
   $tpl.addClass('template-' + name)
   var cb = function (htmlData) {
     $tpl.append(htmlData)
-    lang.replaceInHtml($tpl)
+    gl.lang.replaceInHtml($tpl)
     if (callback) callback($tpl)
     // load the script to that
     $.getScript('/tpl/' + name + '.js')

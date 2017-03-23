@@ -4,49 +4,49 @@
  * socket stuff
  * @type {object}
  */
-var socket = {}
+gl.socket = {}
 
 /** @type {WebSocket} */
-socket.con = null
+gl.socket.con = null
 
 /** @type {function[]} */
-socket.callbacks = []
+gl.socket.callbacks = []
 
 /** @type {object} */
-socket.queue = []
+gl.socket.queue = []
 
 /** @type {{}} */
-socket.onMessageEvents = {}
+gl.socket.onMessageEvents = {}
 
 /** @type {number|null} */
-socket.port = null
+gl.socket.port = null
 
 /**
  * Send the queue
  */
-socket.sendQueue = function () {
+gl.socket.sendQueue = function () {
   // send all messages in the queue
-  for (var i = 0; i < socket.queue.length; i++) {
-    var q = socket.queue[i]
-    socket.send(q.action, q.message, q.callback)
+  for (var i = 0; i < gl.socket.queue.length; i++) {
+    var q = gl.socket.queue[i]
+    gl.socket.send(q.action, q.message, q.callback)
   }
-  socket.queue = []
+  gl.socket.queue = []
 }
 
 /**
  * Connect to WebSocket
  * @param {function=} callback If connection is established
  */
-socket.connect = function (callback) {
+gl.socket.connect = function (callback) {
   var cb = function () {
-    var con = new window.WebSocket('ws://' + window.location.hostname + ':' + socket.port)
+    var con = new window.WebSocket('ws://' + window.location.hostname + ':' + gl.socket.port)
     /**
      * On open connection
      */
     con.onopen = function () {
-      socket.con = con
+      gl.socket.con = con
       callback()
-      socket.sendQueue()
+      gl.socket.sendQueue()
     }
 
     /**
@@ -66,11 +66,11 @@ socket.connect = function (callback) {
         if (data.action) {
           if (typeof data.callbackId !== 'undefined') {
             var callbackId = data.callbackId
-            if (socket.callbacks[callbackId] === null) {
+            if (gl.socket.callbacks[callbackId] === null) {
               console.error('No socket callback for id ' + callbackId + ', maybe dupe callback in backend?')
             } else {
-              socket.callbacks[callbackId](data.message)
-              socket.callbacks[callbackId] = null
+              gl.socket.callbacks[callbackId](data.message)
+              gl.socket.callbacks[callbackId] = null
             }
           }
         }
@@ -81,20 +81,20 @@ socket.connect = function (callback) {
      * On connection close
      */
     con.onclose = function () {
-      socket.con = null
+      gl.socket.con = null
       // reload page after 5 seconds
-      global.note('socket.disconnect', 'danger')
+      gl.note('gl.socket.disconnect', 'danger')
       setTimeout(function () {
         window.location.reload()
       }, 5000)
     }
   }
-  if (socket.port) {
+  if (gl.socket.port) {
     cb()
   } else {
     // load the required port number
     $.get('wsport', function (port) {
-      socket.port = parseInt(port)
+      gl.socket.port = parseInt(port)
       cb()
     })
   }
@@ -106,15 +106,15 @@ socket.connect = function (callback) {
  * @param {object=} message
  * @param {function=} callback
  */
-socket.send = function (action, message, callback) {
+gl.socket.send = function (action, message, callback) {
   var receiveCallback = function (receivedMessage) {
     if (receivedMessage && receivedMessage.error) {
       var message = 'Server Error: ' + receivedMessage.error.message
       if (receivedMessage.error.stack) {
         message = '<strong>Server Error</strong>\n' + receivedMessage.error.stack
       }
-      global.note(message, 'danger')
-      socket.callbacks = []
+      gl.note(message, 'danger')
+      gl.socket.callbacks = []
       return
     }
     if (callback) callback(receivedMessage)
@@ -123,8 +123,8 @@ socket.send = function (action, message, callback) {
     message = null
   }
   // if connection not yet established add to queue
-  if (socket.con === null) {
-    socket.queue.push({
+  if (gl.socket.con === null) {
+    gl.socket.queue.push({
       'action': action,
       'message': message,
       'callback': callback
@@ -133,9 +133,9 @@ socket.send = function (action, message, callback) {
   }
   var data = {
     'action': action,
-    'callbackId': socket.callbacks.length,
+    'callbackId': gl.socket.callbacks.length,
     'message': message
   }
-  socket.callbacks.push(receiveCallback)
-  socket.con.send(JSON.stringify(data))
+  gl.socket.callbacks.push(receiveCallback)
+  gl.socket.con.send(JSON.stringify(data))
 }
