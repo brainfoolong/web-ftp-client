@@ -15,5 +15,16 @@
     "request": "^2.79.0",
     "ws": "^1.1.1",
     "unzip": "^0.1.11"
+  },
+  "devDependencies": {
+    "standard": "^9.0.2"
+  },
+  "scripts": {
+    "test": "standard --fix && node my-tests.js"
+  },
+  "standard": {
+    "globals": [
+      "$"
+    ]
   }
 }

@@ -5,5 +5,5 @@
   storage.set('login.hash', null, false)
   storage.set('login.hash', null, true)
   socket.con.close()
-  note('Cya later buddy')
+  global.note('Cya later buddy')
 })()

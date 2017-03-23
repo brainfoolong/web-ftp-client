@@ -1,12 +1,18 @@
 'use strict'
 
 /**
+ * The global object
+ * @type {object}
+ */
+var global = {}
+
+/**
  * Just get a translation value for given key
  * @param {string} key
  * @param {object=} params
  * @return {string}
  */
-function t (key, params) {
+global.t = function (key, params) {
   return lang.get(key, params)
 }
 
@@ -14,7 +20,7 @@ function t (key, params) {
  * Show/Hide loading indicator
  * @param {boolean} flag
  */
-function loading (flag) {
+global.loading = function (flag) {
   $('.loader').toggleClass('hidden', !flag)
 }
 
@@ -24,17 +30,17 @@ function loading (flag) {
  * @param {string=} type
  * @param {number=} delay
  */
-function note (message, type, delay) {
+global.note = function (message, type, delay) {
   if (delay === -1) delay = 99999999
   $.notify({
-    'message': t(message)
+    'message': global.t(message)
   }, {
     'type': typeof type === 'undefined' ? 'info' : type,
     placement: {
       from: 'top',
       align: 'center'
     },
-    'delay': delay || 5000,
+    'delay': delay || 5000
   })
 }
 
@@ -44,7 +50,7 @@ function note (message, type, delay) {
  * @param {string} key
  * @returns {*|undefined}
  */
-function getObjectValue (object, key) {
+global.getObjectValue = function (object, key) {
   var spl = key.split('[')
   var o = object
   for (var i = 0; i < spl.length; i++) {
@@ -60,7 +66,7 @@ function getObjectValue (object, key) {
  * @param {string} tpl
  * @param {*?} params
  */
-function addTab (tpl, params) {
+global.addTab = function (tpl, params) {
   var $li = $('<li role="presentation"><a href="#"><span class="text"></span></a></li>').data('params', params)
   $li.attr('data-template', tpl)
   $li.find('a').append(' <span class="glyphicon glyphicon-remove"></span>')
@@ -70,11 +76,11 @@ function addTab (tpl, params) {
 
 $(function () {
   if (typeof WebSocket === 'undefined') {
-    note('Your browser is not supported in this application (Outdated Browser). Please upgrade to the newest version')
+    global.note('Your browser is not supported in this application (Outdated Browser). Please upgrade to the newest version')
     return
   }
   var body = $('body')
-  var hasTouch = true === ('ontouchstart' in window || window.DocumentTouch && document instanceof DocumentTouch)
+  var hasTouch = ('ontouchstart' in window || window.DocumentTouch && document instanceof DocumentTouch) === true
   body.addClass(hasTouch ? 'no-touch' : 'touch')
   // bind tooltips
   $(document).tooltip({
@@ -82,7 +88,7 @@ $(function () {
     'container': 'body',
     'html': true,
     'title': function () {
-      return t($(this).attr('data-tooltip'))
+      return global.t($(this).attr('data-tooltip'))
     }
   }).on('inserted.bs.tooltip', function (ev) {
     // hide if we are on mobile touch device
@@ -111,7 +117,7 @@ $(function () {
 
   // tab load trigger
   $(document).on('click', '.tab-load-trigger[data-template]', function () {
-    addTab($(this).attr('data-template'))
+    global.addTab($(this).attr('data-template'))
   })
 
   // tab click trigger
@@ -134,11 +140,11 @@ $(function () {
     }, function (data) {
       if (!data) {
         tpl.loadInto('login', '#wrapper', function () {
-          loading(false)
+          global.loading(false)
         })
       } else {
         tpl.loadInto('main', '#wrapper', function () {
-          loading(false)
+          global.loading(false)
         })
       }
     })

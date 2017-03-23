@@ -25,7 +25,6 @@ action.execute = function (user, message, callback) {
     user.userData = userData
   }
   callback(valid)
-
 }
 
 module.exports = action

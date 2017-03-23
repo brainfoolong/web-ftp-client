@@ -3,3 +3,6 @@ A web based FTP client. Like filezilla but for your browser. The main goal of th
 
 # Work in progress
 No release or function yet. Watch/star if you like it.
+
+# Code standards we use
+JS: https://standardjs.com

@@ -13,11 +13,11 @@
   }, function (formData) {
     socket.send('loginFormSubmit', formData, function (userData) {
       if (!userData) {
-        note('Login failed', 'danger')
+        global.note('Login failed', 'danger')
       } else {
         storage.set('login.id', userData.id, !formData.remember)
         storage.set('login.hash', userData.loginHash, !formData.remember)
-        note('Login successfull', 'success')
+        global.note('Login successfull', 'success')
         tpl.loadInto('main', '#wrapper')
       }
     })

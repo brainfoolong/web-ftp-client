@@ -19,7 +19,7 @@ Form.create = function (container, formName, fields, onSubmit, values) {
   var $form = $('<form>').attr('name', formName).attr('onsubmit', 'return false').attr('id', 'form-' + formName)
   for (var fieldName in fields) {
     var field = fields[fieldName]
-    var currentValue = getObjectValue(values, fieldName)
+    var currentValue = global.getObjectValue(values, fieldName)
     if (typeof currentValue === 'undefined') currentValue = field.defaultValue
     if (typeof currentValue === 'undefined') currentValue = null
     var $input = null
@@ -28,10 +28,10 @@ Form.create = function (container, formName, fields, onSubmit, values) {
       '<div class="form-input"></div>' +
       '</div>')
     if (field.label) {
-      $el.find('.form-label').append($('<strong>').text(t(field.label)))
+      $el.find('.form-label').append($('<strong>').text(global.t(field.label)))
     }
     if (field.description) {
-      $el.find('.form-label').append($('<small>').text(t(field.description)))
+      $el.find('.form-label').append($('<small>').text(global.t(field.description)))
     }
     switch (field.type) {
       case 'textarea':
@@ -64,7 +64,7 @@ Form.create = function (container, formName, fields, onSubmit, values) {
         $input = $('<select class="form-control" name="' + name + '">')
         if (field.multiple) $input.attr('multiple', true)
         for (var valueKey in field.values) {
-          $input.append($('<option>').attr('value', valueKey).text(t(field.values[valueKey])))
+          $input.append($('<option>').attr('value', valueKey).text(global.t(field.values[valueKey])))
         }
         if (currentValue !== null) {
           $input.val(currentValue)
@@ -75,7 +75,7 @@ Form.create = function (container, formName, fields, onSubmit, values) {
         var fieldValues = ['true', 'false']
         for (var i = 0; i < fieldValues.length; i++) {
           var valueKey = fieldValues[i]
-          $input.append($('<option>').attr('value', valueKey).text(t(valueKey == 'true' ? 'yes' : 'no')))
+          $input.append($('<option>').attr('value', valueKey).text(global.t(valueKey === 'true' ? 'yes' : 'no')))
         }
         if (currentValue !== null) {
           $input.val(currentValue ? 'true' : 'false')
@@ -90,7 +90,7 @@ Form.create = function (container, formName, fields, onSubmit, values) {
         $input.attr('required', true)
       }
       if (field.placeholder) {
-        $input.attr('placeholder', t(field.placeholder))
+        $input.attr('placeholder', global.t(field.placeholder))
       }
       if (field.attributes) {
         for (var i in field.attributes) {

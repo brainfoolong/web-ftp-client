@@ -13,9 +13,9 @@ var lang = {}
  */
 lang.get = function (key, params) {
   var v = key
-  if (typeof lang.values[lang.language] !== 'undefined' && typeof lang.values[lang.language][key] != 'undefined') {
+  if (typeof lang.values[lang.language] !== 'undefined' && typeof lang.values[lang.language][key] !== 'undefined') {
     v = lang.values[lang.language][key]
-  } else if (typeof lang.values['en'] !== 'undefined' && typeof lang.values['en'][key] != 'undefined') {
+  } else if (typeof lang.values['en'] !== 'undefined' && typeof lang.values['en'][key] !== 'undefined') {
     v = lang.values['en'][key]
   }
   if (typeof params !== 'undefined') {
@@ -72,7 +72,7 @@ if (navigator.languages) {
   (function () {
     for (var i = 0; i < navigator.languages.length; i++) {
       var l = navigator.languages[i]
-      if (typeof lang.values[l] != 'undefined') {
+      if (typeof lang.values[l] !== 'undefined') {
         lang.language = l
         break
       }

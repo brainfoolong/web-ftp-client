@@ -89,7 +89,7 @@ function WebSocketUser (socket) {
     } else {
       sendCallback({
         'error': {
-          'message': 'Action ' + frontendMessage.action + ' not exist in ' + actionPath,
+          'message': 'Action ' + frontendMessage.action + ' not exist in ' + actionPath
         }
       })
     }

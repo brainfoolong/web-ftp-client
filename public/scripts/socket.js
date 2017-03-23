@@ -82,7 +82,7 @@ socket.connect = function (callback) {
     con.onclose = function () {
       socket.con = null
       // reload page after 5 seconds
-      note('socket.disconnect', 'danger')
+      global.note('socket.disconnect', 'danger')
       setTimeout(function () {
         window.location.reload()
       }, 5000)
@@ -112,13 +112,13 @@ socket.send = function (action, message, callback) {
       if (receivedMessage.error.stack) {
         message = '<strong>Server Error</strong>\n' + receivedMessage.error.stack
       }
-      note(message, 'danger')
+      global.note(message, 'danger')
       socket.callbacks = []
       return
     }
     if (callback) callback(receivedMessage)
   }
-  if (typeof message == 'undefined') {
+  if (typeof message === 'undefined') {
     message = null
   }
   // if connection not yet established add to queue
