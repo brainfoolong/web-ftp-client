@@ -53,7 +53,7 @@ html {
     }
 }
 
-#wrapper{
+#wrapper {
     height: 100%;
 }
 
@@ -88,13 +88,13 @@ html {
     background: #75ff00;
 }
 
-.browser {
+.splitbox {
     padding: 10px;
     background: #00ffa3;
     height: 100%;
     flex-direction: row;
     display: flex;
-    .local, .server {
+    .left, .right {
         flex: 1;
     }
 }
@@ -102,4 +102,49 @@ html {
 .transfer {
     padding: 10px;
     background: #00deff;
+}
+
+.form-field {
+    margin-bottom: 10px;
+}
+
+.template-login {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+
+    .box {
+        width: 50%;
+        max-width: 500px;
+        align-self: center;
+        .logo {
+            text-align: center;
+        }
+    }
+}
+
+.form-input {
+    position: relative;
+}
+
+input:invalid + span,
+select:invalid + span,
+textarea:invalid + span {
+    height: 0;
+    display: block;
+    width: 100%;
+}
+
+input:invalid + span:after,
+select:invalid + span:after,
+textarea:invalid + span:after {
+    font-family: 'Glyphicons Halflings';
+    content: "\e014";
+    font-weight: normal;
+    font-size: 20px;
+    position: absolute;
+    right: -30px;
+    top: 10px;
+    color: #ffaeb3;
 }

@@ -14,10 +14,10 @@ if (!mode) {
 }
 
 if (mode == "start") {
-    require(__dirname + "/routes");
-    require(__dirname + "/websocketmgr");
-    require(__dirname + "/config");
-    require(__dirname + "/core");
+    require("./routes");
+    require("./websocketmgr");
+    require("./config");
+    require("./core");
     return;
 }
 
@@ -26,7 +26,7 @@ if (mode == "update-core") {
     const request = require("request");
     const fs = require("fs");
     const unzip = require("unzip");
-    const dir = __dirname + "/..";
+    const dir = "./..";
     request("https://codeload.github.com/brainfoolong/web-ftp-client/zip/master", function () {
         fs.createReadStream(dir + "/master.zip").pipe(unzip.Parse()).on('entry', function (entry) {
             const fileName = entry.path.split("/").slice(1).join("/");

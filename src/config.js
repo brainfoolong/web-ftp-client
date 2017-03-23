@@ -12,8 +12,8 @@ let config = {
 };
 
 // load config.js if exist
-if (fs.existsSync(__dirname + "/../config.js")) {
-    config = require(__dirname + "/../config.js");
+if (fs.existsSync("./../config.js")) {
+    config = require("./../config.js");
 }
 
 module.exports = config;

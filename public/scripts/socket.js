@@ -21,29 +21,6 @@ socket.onMessageEvents = {};
 socket.port = null;
 
 /**
- * The user data from the logged in user
- * @type {null|object}
- */
-socket.userData = null;
-
-/**
- * Bind a callback to be triggered everytime a message is received
- * @param {string} id The handler id
- * @param {function} callback
- */
-socket.onMessage = function (id, callback) {
-    socket.onMessageEvents[id] = callback;
-};
-
-/**
- * Unbind a callback
- * @param {string} id
- */
-socket.offMessage = function (id) {
-    delete socket.onMessageEvents[id];
-};
-
-/**
  * Send the queue
  */
 socket.sendQueue = function () {
@@ -67,31 +44,8 @@ socket.connect = function (callback) {
          */
         con.onopen = function () {
             socket.con = con;
-            // send init ping to backend
-            socket.send("init", null, function (message) {
-                if (message.userData) {
-                    socket.userData = message.userData;
-                }
-                var b = $("body");
-                if (socket.userData) {
-                    b.addClass("is-logged-in");
-                    if (socket.userData.admin) {
-                        b.addClass("is-admin");
-                    } else {
-                        b.addClass("is-not-admin");
-                    }
-                } else {
-                    b.addClass("is-not-logged-in is-not-admin");
-                }
-                if (message.package.version) {
-                    $(".app-version").text(message.package.version);
-                    if (message.latestVersion && message.package.version && message.latestVersion != message.package.version) {
-                        $(".top-logo .update").removeClass("hidden");
-                    }
-                }
-                if (callback) callback(message);
-                socket.sendQueue();
-            });
+            callback();
+            socket.sendQueue();
         };
 
         /**
@@ -117,16 +71,6 @@ socket.connect = function (callback) {
                             socket.callbacks[callbackId](data.message);
                             socket.callbacks[callbackId] = null;
                         }
-                    }
-                    for (var i in socket.onMessageEvents) {
-                        if (socket.onMessageEvents.hasOwnProperty(i)) {
-                            var cb = socket.onMessageEvents[i];
-                            if (cb) cb(data.action, data.message);
-                        }
-                    }
-                    // show server disconnect message
-                    if (data.action == "serverDisconnect") {
-                        note(t("server.disconnect") + ": " + data.message.servername, "danger");
                     }
                 }
             }
@@ -168,7 +112,7 @@ socket.send = function (action, message, callback) {
             if (receivedMessage.error.stack) {
                 message = "<strong>Server Error</strong>\n" + receivedMessage.error.stack;
             }
-            $("#content").html($('<div class="alert alert-danger" style="white-space: pre-wrap"></div>').html(message));
+            note(message, "danger");
             socket.callbacks = [];
             return;
         }
@@ -189,9 +133,7 @@ socket.send = function (action, message, callback) {
     var data = {
         "action": action,
         "callbackId": socket.callbacks.length,
-        "message": message,
-        "loginName": storage.get("loginName"),
-        "loginHash": storage.get("loginHash")
+        "message": message
     };
     socket.callbacks.push(receiveCallback);
     socket.con.send(JSON.stringify(data));

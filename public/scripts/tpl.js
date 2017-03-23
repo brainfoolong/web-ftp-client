@@ -60,18 +60,10 @@ tpl.load = function (name, callback) {
         $tpl.append(htmlData);
         lang.replaceInHtml($tpl);
         if (callback) callback($tpl);
+        // load the script to that
+        $.getScript("/tpl/" + name + ".js");
     };
-    if (typeof tpl._cache[name] === "undefined") {
-        tpl._cache[name] = false;
-        $.get("/tpl/" + name + ".html", function (htmlData) {
-            tpl._cache[name] = htmlData;
-            cb(htmlData);
-        });
-    } else {
-        if (tpl._cache[name] === false) {
-            console.error("Template does not exist");
-            return;
-        }
-        cb(tpl._cache[name]);
-    }
+    $.get("/tpl/" + name + ".html", function (htmlData) {
+        cb(htmlData);
+    });
 };

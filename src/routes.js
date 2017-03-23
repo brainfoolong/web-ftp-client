@@ -5,7 +5,7 @@
 const express = require('express');
 const path = require('path');
 const app = express();
-const config = require(__dirname + "/config");
+const config = require("./config");
 const fs = require("fs");
 
 const routes = {
@@ -17,10 +17,10 @@ app.get("/wsport", function (req, res) {
     res.send((config.port + 1).toString());
 });
 
-app.use(express.static(__dirname + "/../public"));
+app.use(express.static("./../public"));
 
 app.get(/^\/view\/([a-z0-9\-\_\.]+)/, function (req, res, next) {
-    let filepath = path.resolve(__dirname + "/../views/" + res.req.params[0]);
+    let filepath = path.resolve("./../views/" + res.req.params[0]);
     if (fs.existsSync(filepath)) {
         res.sendFile(filepath);
         return;

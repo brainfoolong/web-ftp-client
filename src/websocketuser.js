@@ -1,8 +1,8 @@
 "use strict";
 
-const db = require(__dirname + "/db");
+const db = require("./db");
 const fs = require("fs");
-let hash = require(__dirname + "/hash");
+let hash = require("./hash");
 
 /**
  * A single websocket user
@@ -21,6 +21,9 @@ function WebSocketUser(socket) {
      * @type {null}
      */
     this.userData = null;
+
+    self.id = WebSocketUser.instances.length;
+    WebSocketUser.instances.push(self);
 
     /**
      * Send message to client
@@ -45,6 +48,15 @@ function WebSocketUser(socket) {
     };
 
     /**
+     * If the socket gettin closed
+     */
+    this.closed = function () {
+        WebSocketUser.instances.splice(self.id, 1);
+        self.socket = null;
+        self.userData = null;
+    };
+
+    /**
      * On receive message from socket
      * @param {object} frontendMessage
      */
@@ -53,43 +65,31 @@ function WebSocketUser(socket) {
         const sendCallback = function (message) {
             self.send(frontendMessage.action, message, frontendMessage.callbackId);
         };
-        try {
-            switch (frontendMessage.action) {
-                case "closed":
-                    WebSocketUser.instances.splice(self.id, 1);
-                    self.socket = null;
-                    self.userData = null;
-                    break;
-                case "init":
-                    const userData = db.get("users").find({
-                        "username": frontendMessage.loginName,
-                        "loginHash": frontendMessage.loginHash
-                    }).cloneDeep().value();
-                    self.userData = null;
-                    if (userData) {
-                        delete userData["password"];
-                        self.userData = userData;
-                        // add instance of this is a complete new user
-                        if (self.id === null) {
-                            self.id = WebSocketUser.instances.length;
-                            WebSocketUser.instances.push(self);
-                        }
+        const actionPath = "./actions/" + frontendMessage.action.replace(/[^a-z0-9_-]/ig, "") + ".js";
+        if (fs.existsSync(actionPath)) {
+            const action = require(actionPath);
+            if (action.requireUser && !self.userData) {
+                sendCallback({
+                    "error": {
+                        "message": "Require a valid user for this action " + frontendMessage.action
                     }
-                    sendCallback({
-                        "userData": userData,
-                        "package": require(__dirname + "/../package"),
-                        "latestVersion": require(__dirname + "/core").latestVersion,
-                    });
-                    break;
-                default:
-                    throw "Action " + frontendMessage.action + " not catched";
-                    break;
+                });
+                return;
             }
-        } catch (e) {
+            try {
+                action.execute(self, frontendMessage.message, sendCallback);
+            } catch (e) {
+                sendCallback({
+                    "error": {
+                        "message": e.message,
+                        "stack": e.stack
+                    }
+                });
+            }
+        } else {
             sendCallback({
                 "error": {
-                    "message": e.message,
-                    "stack": self.userData && self.userData.admin ? e.stack : null
+                    "message": "Action " + frontendMessage.action + " not exist in " + actionPath,
                 }
             });
         }

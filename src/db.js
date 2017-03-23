@@ -2,7 +2,7 @@
 
 const Low = require("lowdb");
 let fs = require("fs");
-const hash = require(__dirname + "/hash");
+const hash = require("./hash");
 
 /**
  * LowDB helper

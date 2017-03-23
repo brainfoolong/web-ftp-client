@@ -55,7 +55,7 @@ lang.values = {"en": {}, "de": {}};
 
 // en values
 lang.values.en = {
-
+    "user.username" : "Username"
 };
 
 // de values

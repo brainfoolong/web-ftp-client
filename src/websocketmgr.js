@@ -1,8 +1,8 @@
 "use strict";
 
-const WebSocketUser = require(__dirname + "/websocketuser");
+const WebSocketUser = require("./websocketuser");
 const WebSocketServer = require("ws").Server;
-const config = require(__dirname + "/config");
+const config = require("./config");
 
 /**
  * Some tools for web socket server management
@@ -33,7 +33,7 @@ WebSocketMgr.startServer = function () {
                 });
                 ws.on("close", function () {
                     try {
-                        user.onMessage({"action": "closed"});
+                        user.closed();
                     } catch (e) {
                         console.error(new Date(), e.stack);
                     }
