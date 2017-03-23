@@ -6,7 +6,7 @@
       $box.find('.well').toggleClass('hidden')
     }
   })
-  var $form = form.create($box.children('.form'), 'login', {
+  var $form = gl.form.create($box.children('.form'), 'login', {
     'username': {'type': 'text', 'label': 'Username', 'required': true},
     'password': {'type': 'password', 'label': 'Password', 'required': true},
     'remember': {'type': 'switch', 'label': 'Remember'}

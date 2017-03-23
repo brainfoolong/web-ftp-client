@@ -5,4 +5,7 @@
   gl.tpl.loadInto('quick-connect-bar', '.quick-connect-bar')
   gl.tpl.loadInto('logs', '.logs')
   gl.tpl.loadInto('transfer', '.transfer')
+
+  // initialize tabs
+  gl.splitbox.tabRestore()
 })()

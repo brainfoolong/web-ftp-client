@@ -51,19 +51,6 @@ gl.getObjectValue = function (object, key) {
   return o
 }
 
-/**
- * Add a tab and open it
- * @param {string} tpl
- * @param {*?} params
- */
-gl.addTab = function (tpl, params) {
-  var $li = $('<li role="presentation"><a href="#"><span class="text"></span></a></li>').data('params', params)
-  $li.attr('data-template', tpl)
-  $li.find('a').append(' <span class="glyphicon glyphicon-remove"></span>')
-  $('.splitbox-tabs .nav-tabs').append($li)
-  $li.trigger('click')
-}
-
 $(function () {
   if (typeof window.WebSocket === 'undefined') {
     gl.note('Your browser is not supported in this application (Outdated Browser). Please upgrade to the newest version')
@@ -72,6 +59,7 @@ $(function () {
   var body = $('body')
   var hasTouch = ('ontouchstart' in window || (typeof window.DocumentTouch !== 'undefined' && document instanceof window.DocumentTouch)) === true
   body.addClass(hasTouch ? 'no-touch' : 'touch')
+
   // bind tooltips
   $(document).tooltip({
     'selector': '[data-tooltip]',
@@ -88,6 +76,8 @@ $(function () {
       }, 1000)
     }
   })
+
+  // replace language html placeholders
   gl.lang.replaceInHtml(body)
 
   // template load trigger
@@ -98,26 +88,18 @@ $(function () {
   // tab delete trigger
   $(document).on('click', '.splitbox-tabs .glyphicon-remove', function (ev) {
     ev.stopPropagation()
-    var $tab = $(this).closest('li')
-    if ($tab.hasClass('active')) {
-      $('.splitbox').children().html('')
-    }
-    $tab.remove()
+    gl.splitbox.tabDelete($(this).closest('li'))
   })
 
   // tab load trigger
   $(document).on('click', '.tab-load-trigger[data-template]', function () {
-    gl.addTab($(this).attr('data-template'))
+    gl.splitbox.tabAdd($(this).attr('data-template')).trigger('click')
   })
 
   // tab click trigger
   $(document).on('click', '.splitbox-tabs li', function (ev) {
     ev.preventDefault()
-    var tabs = $(this).parent().children()
-    tabs.removeClass('active')
-    $(this).addClass('active')
-    gl.tpl.loadInto($(this).attr('data-template') + '-left', '.splitbox .left')
-    gl.tpl.loadInto($(this).attr('data-template') + '-right', '.splitbox .right')
+    gl.splitbox.tabClick($(this))
   })
 
   // socket connection

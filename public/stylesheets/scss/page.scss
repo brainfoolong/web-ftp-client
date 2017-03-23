@@ -154,10 +154,9 @@ textarea:invalid + span:after {
     display: flex;
     height:100%;
     .tree {
-        background: red;
         height: 100%;
     }
     .buttons {
-        background: blue;
+        
     }
 }

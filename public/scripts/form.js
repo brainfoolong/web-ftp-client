@@ -4,7 +4,7 @@
  * form creator
  * @type {object}
  */
-var form = {}
+gl.form = {}
 
 /**
  * Create a form table by given props
@@ -15,7 +15,7 @@ var form = {}
  * @param {object=} values
  * @return {jQuery}
  */
-form.create = function (container, formName, fields, onSubmit, values) {
+gl.form.create = function (container, formName, fields, onSubmit, values) {
   if (!values) values = {}
   var $form = $('<form>').attr('name', formName).attr('onsubmit', 'return false').attr('id', 'form-' + formName)
   for (var fieldName in fields) {

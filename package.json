@@ -25,12 +25,7 @@
   "standard": {
     "globals": [
       "$",
-      "form",
-      "global",
-      "socket",
-      "lang",
-      "storage",
-      "tpl"
+      "gl"
     ]
   }
 }
