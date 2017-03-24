@@ -23,5 +23,6 @@ gl.lang.values.en = {
   "server.auth" : "Authentication",
   "server.auth.anonym" : "Anonym",
   "server.auth.normal" : "Username + Password",
-  "server.auth.keyfile" : "PPK Keyfile"
+  "server.auth.keyfile" : "PPK Keyfile",
+  "saved" : "Saved"
 }

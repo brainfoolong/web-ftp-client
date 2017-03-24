@@ -17,7 +17,7 @@ action.requireUser = true
  * @param {function} callback
  */
 action.execute = function (user, message, callback) {
-  callback(db.get('servers').cloneDeep())
+  callback(db.get('servers').cloneDeep().value())
 }
 
 module.exports = action

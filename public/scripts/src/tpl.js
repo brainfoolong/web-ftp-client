@@ -47,10 +47,10 @@ gl.tpl.loadInto = function (name, container, callback) {
  * @return jQuery
  */
 gl.tpl.load = function (name, callback) {
-  var $tpl = $('<div class="template">')
+  const $tpl = $('<div class="template">')
   $tpl.attr('data-name', name)
   $tpl.addClass('template-' + name)
-  var cb = function (htmlData) {
+  const cb = function (htmlData) {
     $tpl.append(htmlData)
     gl.lang.replaceInHtml($tpl)
     if (callback) callback($tpl)

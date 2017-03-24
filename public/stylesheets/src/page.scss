@@ -10,6 +10,10 @@ html {
     margin: 0;
 }
 
+.boilerplate {
+    display: none;
+}
+
 .loader {
     height: 4px;
     width: 100%;
@@ -93,14 +97,20 @@ html {
     height: 100%;
     flex-direction: row;
     display: flex;
+    align-items: stretch;
     .center {
+        position: relative;
         width: 5px;
         background: #e5e5e5;
+        cursor: w-resize;
+        z-index: 1;
     }
     .left, .right {
         overflow: auto;
-        width: 50%;
         padding: 10px;
+    }
+    .right{
+        flex-grow:1;
     }
 }
 

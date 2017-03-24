@@ -1,7 +1,7 @@
 'use strict';
 (function () {
-  var $tpl = $('.template-servermanager-right')
-  var forms = {
+  const $tpl = $('.template-servermanager-right')
+  const forms = {
     'general': {
       'name': {'type': 'text', 'label': 'server.name', 'required': true},
       'host': {'type': 'text', 'label': 'server.host', 'required': true},
@@ -18,15 +18,19 @@
       }
     }
   }
-  var loadForm = function (values) {
-    for (var i in forms) {
-      gl.form.create($('.template-servermanager-right .form-' + i), 'server-' + i, forms[i], function () {
-        var formData = {}
+  const loadForm = function (values) {
+    for (let i in forms) {
+      const $form = $('.template-servermanager-right .form-' + i)
+      $form.html('')
+      gl.form.create($form, 'server-' + i, forms[i], function () {
+        const formData = {}
         $tpl.find('.form form').each(function () {
           $.extend(formData, $(this).serializeJSON())
         })
-        gl.socket.send("")
-        console.log(formData)
+        gl.socket.send('servermanagerFormSubmit', {'formData': formData, 'id': null}, function (result) {
+          gl.note(gl.t('saved'), 'success')
+          gl.splitbox.tabReload()
+        })
       }, values)
     }
   }

@@ -1,12 +1,12 @@
 'use strict';
 (function () {
-  var $box = $('.template-login .box')
+  const $box = $('.template-login .box')
   gl.socket.send('getSystemStatus', null, function (data) {
     if (!data.installed) {
       $box.find('.well').toggleClass('hidden')
     }
   })
-  var $form = gl.form.create($box.children('.form'), 'login', {
+  const $form = gl.form.create($box.children('.form'), 'login', {
     'username': {'type': 'text', 'label': 'username', 'required': true},
     'password': {'type': 'password', 'label': 'password', 'required': true},
     'remember': {'type': 'switch', 'label': 'login.remember'}

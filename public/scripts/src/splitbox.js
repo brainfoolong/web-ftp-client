@@ -10,14 +10,16 @@ gl.splitbox = {}
  * Add a tab
  * @param {string} tpl
  * @param {*?} params
+ * @param {string} label
  * @return jQuery
  */
-gl.splitbox.tabAdd = function (tpl, params) {
-  var $li = $('<li role="presentation"><a href="#"><span class="text"></span></a></li>').data('params', params)
+gl.splitbox.tabAdd = function (tpl, params, label) {
+  const $li = $('<li role="presentation"><a href="#"><span class="text"></span></a></li>')
   $li.attr('data-template', tpl)
   $li.find('a').append(' <span class="glyphicon glyphicon-remove"></span>')
+  $li.find('.text').text(gl.t(label))
   $('.splitbox-tabs .nav-tabs').append($li)
-  gl.splitbox.tabSave()
+  $li.data('params', params)
   return $li
 }
 
@@ -37,20 +39,21 @@ gl.splitbox.tabDelete = function ($tab) {
  * On tab click
  * @param {jQuery} $tab
  */
-gl.splitbox.tabClick = function ($tab) {
-  var tabs = $tab.parent().children()
+gl.splitbox.tabLoad = function ($tab) {
+  const tabs = $tab.parent().children()
   tabs.removeClass('active')
   $tab.addClass('active')
   gl.tpl.loadInto($tab.attr('data-template') + '-left', '.splitbox .left')
   gl.tpl.loadInto($tab.attr('data-template') + '-right', '.splitbox .right')
-  gl.splitbox.tabSave()
+  const $splitLeft = $('.splitbox .left')
+  $splitLeft.css('flex', '0 0 ' + ($tab.data('params').widthLeft || 50) + '%')
 }
 
 /**
  * Save current tabs to storage
  */
 gl.splitbox.tabSave = function () {
-  var tabs = []
+  const tabs = []
   $('.splitbox-tabs li').each(function () {
     tabs.push({
       'template': $(this).attr('data-template'),
@@ -66,16 +69,22 @@ gl.splitbox.tabSave = function () {
  * Restore tabs from latest save
  */
 gl.splitbox.tabRestore = function () {
-  var tabs = gl.storage.get('tabs')
+  const tabs = gl.storage.get('tabs')
   if (tabs) {
-    var $ul = $('.splitbox-tabs ul')
-    for (var i = 0; i < tabs.length; i++) {
-      var row = tabs[i]
-      var $li = gl.splitbox.tabAdd(row.template, row.params)
-      $li.find('.text').text(row.text).toggleClass('active', row.active)
+    for (let i = 0; i < tabs.length; i++) {
+      const row = tabs[i]
+      const $li = gl.splitbox.tabAdd(row.template, row.params, row.text)
+      $li.toggleClass('active', row.active)
       if (row.active) {
-        $li.trigger('click')
+        gl.splitbox.tabLoad($li)
       }
     }
   }
+}
+
+/**
+ * Reload current active tab
+ */
+gl.splitbox.tabReload = function () {
+  gl.splitbox.tabLoad($('.splitbox-tabs .active'))
 }

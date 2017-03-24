@@ -4,7 +4,7 @@
  * The global object
  * @type {object}
  */
-var gl = {}
+const gl = {}
 
 /**
  * Show/Hide loading indicator
@@ -41,10 +41,10 @@ gl.note = function (message, type, delay) {
  * @returns {*|undefined}
  */
 gl.getObjectValue = function (object, key) {
-  var spl = key.split('[')
-  var o = object
-  for (var i = 0; i < spl.length; i++) {
-    var keySplit = spl[i].replace(/\]$/g, '')
+  const spl = key.split('[')
+  let o = object
+  for (let i = 0; i < spl.length; i++) {
+    const keySplit = spl[i].replace(/\]$/g, '')
     if (typeof o[keySplit] === 'undefined') return undefined
     o = o[keySplit]
   }
@@ -56,8 +56,8 @@ $(function () {
     gl.note('Your browser is not supported in this application (Outdated Browser). Please upgrade to the newest version')
     return
   }
-  var body = $('body')
-  var hasTouch = ('ontouchstart' in window || (typeof window.DocumentTouch !== 'undefined' && document instanceof window.DocumentTouch)) === true
+  const body = $('body')
+  const hasTouch = ('ontouchstart' in window || (typeof window.DocumentTouch !== 'undefined' && document instanceof window.DocumentTouch)) === true
   body.addClass(hasTouch ? 'no-touch' : 'touch')
 
   // bind tooltips
@@ -93,13 +93,15 @@ $(function () {
 
   // tab load trigger
   $(document).on('click', '.tab-load-trigger[data-template]', function () {
-    gl.splitbox.tabAdd($(this).attr('data-template')).trigger('click')
+    gl.splitbox.tabAdd($(this).attr('data-template'), {}, $(this).attr("data-translate-tab")).trigger('click')
+    gl.splitbox.tabSave()
   })
 
   // tab click trigger
   $(document).on('click', '.splitbox-tabs li', function (ev) {
     ev.preventDefault()
-    gl.splitbox.tabClick($(this))
+    gl.splitbox.tabLoad($(this))
+    gl.splitbox.tabSave()
   })
 
   // socket connection
