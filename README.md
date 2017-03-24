@@ -4,5 +4,12 @@ A web based FTP client. Like filezilla but for your browser. The main goal of th
 # Work in progress
 No release or function yet. Watch/star if you like it.
 
-# Code standards we use
+# Code languages and standards we use
 JS: https://standardjs.com
+ES6 (with Babel converter for frontend): https://babeljs.io/docs/plugins/preset-env/
+SCSS (with converter for frontend): http://sass-lang.com/
+ 
+# Development setup
+* Git clone master to a directory of your choice
+* `npm install --dev`
+* `npm run build` (and also everytime you change some frontend code)

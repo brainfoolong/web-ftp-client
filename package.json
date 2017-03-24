@@ -17,15 +17,25 @@
     "unzip": "^0.1.11"
   },
   "devDependencies": {
+    "babel-core": "^6.24.0",
+    "babel-preset-env": "^1.2.2",
+    "node-minify": "^2.0.3",
+    "node-sass": "^4.5.1",
+    "node-zip": "^1.1.1",
     "standard": "^9.0.2"
   },
   "scripts": {
-    "test": "standard"
+    "test": "standard",
+    "build": "node dev/build.js dev",
+    "release": "node dev/release.js prod"
   },
   "standard": {
     "globals": [
       "$",
       "gl"
+    ],
+    "ignore": [
+      "**/_generated/*"
     ]
   }
 }
