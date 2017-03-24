@@ -62,15 +62,7 @@ gl.lang.replaceInHtml = function (el) {
  * The translation values
  * @type {object.<string, object<string, string>>}
  */
-gl.lang.values = {'en': {}, 'de': {}}
-
-// en values
-gl.lang.values.en = {
-  'user.username': 'Username'
-}
-
-// de values
-gl.lang.values.de = {}
+gl.lang.values = {}
 
 /**
  * The current language, default to en

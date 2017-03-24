@@ -83,7 +83,7 @@ gl.socket.connect = function (callback) {
     con.onclose = function () {
       gl.socket.con = null
       // reload page after 5 seconds
-      gl.note('gl.socket.disconnect', 'danger')
+      gl.note('socket.disconnect', 'danger')
       setTimeout(function () {
         window.location.reload()
       }, 5000)

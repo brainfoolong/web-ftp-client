@@ -71,12 +71,16 @@ html {
 
 .splitbox {
   padding: 10px;
-  background: #00ffa3;
   height: 100%;
   flex-direction: row;
   display: flex; }
+  .splitbox .center {
+    width: 5px;
+    background: #e5e5e5; }
   .splitbox .left, .splitbox .right {
-    flex: 1; }
+    overflow: auto;
+    width: 50%;
+    padding: 10px; }
 
 .transfer {
   padding: 10px;
@@ -125,5 +129,12 @@ textarea:invalid + span:after {
   height: 100%; }
   .template-servermanager-left .tree {
     height: 100%; }
+
+.flex-row {
+  display: flex; }
+  .flex-row .flex-row-item {
+    width: 100%; }
+    .flex-row .flex-row-item.padding {
+      padding: 5px; }
 
 /*# sourceMappingURL=page.css.map */

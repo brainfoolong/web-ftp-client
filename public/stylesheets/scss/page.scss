@@ -90,12 +90,17 @@ html {
 
 .splitbox {
     padding: 10px;
-    background: #00ffa3;
     height: 100%;
     flex-direction: row;
     display: flex;
+    .center {
+        width: 5px;
+        background: #e5e5e5;
+    }
     .left, .right {
-        flex: 1;
+        overflow: auto;
+        width: 50%;
+        padding: 10px;
     }
 }
 
@@ -152,11 +157,21 @@ textarea:invalid + span:after {
 .template-servermanager-left {
     flex-direction: column;
     display: flex;
-    height:100%;
+    height: 100%;
     .tree {
         height: 100%;
     }
     .buttons {
-        
+
+    }
+}
+
+.flex-row {
+    display: flex;
+    .flex-row-item {
+        width: 100%;
+        &.padding {
+            padding: 5px;
+        }
     }
 }
