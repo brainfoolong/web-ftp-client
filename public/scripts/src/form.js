@@ -18,11 +18,13 @@ gl.form = {}
  * @param {string} formName
  * @param {object} fields
  * @param {function=} onSubmit
+ * @param {function=} onCancel
  * @param {object=} values
  * @return {jQuery}
  */
-gl.form.create = function (container, formName, fields, onSubmit, values) {
+gl.form.create = function (container, formName, fields, onSubmit, onCancel, values) {
   if (!values) values = {}
+  container.html('')
   const $form = $('<form>').attr('name', formName).attr('onsubmit', 'return false').attr('id', 'form-' + formName)
   for (let fieldName in fields) {
     const field = fields[fieldName]
@@ -121,7 +123,8 @@ gl.form.create = function (container, formName, fields, onSubmit, values) {
   const $btn = $('<div><span data-name="save" data-translate="save" class="btn btn-info submit-form"></span></div>')
   if (Object.keys(values).length) {
     $btn.children().attr('data-translate', 'save.edited')
-    $btn.append('&nbsp;<a href="' + window.location.pathname + '" data-translate="cancel.edit" class="btn btn-default page-link"></a>')
+    $btn.append('&nbsp;<span data-translate="cancel.edit" class="btn btn-default cancel"></span>')
+    $btn.find(".cancel").on("click", onCancel)
   }
   $form.append($btn)
   gl.lang.replaceInHtml($form)

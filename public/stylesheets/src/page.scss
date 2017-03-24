@@ -93,24 +93,30 @@ html {
 }
 
 .splitbox {
-    padding: 10px;
     height: 100%;
-    flex-direction: row;
     display: flex;
-    align-items: stretch;
-    .center {
-        position: relative;
-        width: 5px;
-        background: #e5e5e5;
-        cursor: w-resize;
-        z-index: 1;
-    }
-    .left, .right {
-        overflow: auto;
+    > .template {
         padding: 10px;
-    }
-    .right{
-        flex-grow:1;
+        width: 100%;
+        height: 100%;
+        flex-direction: row;
+        display: flex;
+        align-items: stretch;
+        .center {
+            position: relative;
+            width: 5px;
+            background: #e5e5e5;
+            cursor: w-resize;
+            z-index: 1;
+        }
+        .left, .right {
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .right {
+            flex-grow: 1;
+        }
     }
 }
 
@@ -165,7 +171,7 @@ textarea:invalid + span:after {
     /*asdfd*/
 }
 
-.template-servermanager-left {
+.template-servermanager .left {
     flex-direction: column;
     display: flex;
     height: 100%;
@@ -183,6 +189,27 @@ textarea:invalid + span:after {
         width: 100%;
         &.padding {
             padding: 5px;
+        }
+    }
+}
+
+.entry {
+    padding: 5px;
+    border-bottom: 1px solid #e5e5e5;
+    cursor: pointer;
+    border-radius: 3px;
+    &:hover, &.active {
+        background: rgba(0, 0, 0, 0.1);
+    }
+}
+
+.tree {
+    .entry {
+        padding: 5px;
+        border-bottom: 1px solid #e5e5e5;
+        cursor: pointer;
+        &:hover {
+            background: rgba(0, 0, 0, 0.1);
         }
     }
 }

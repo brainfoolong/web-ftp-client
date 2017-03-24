@@ -7,6 +7,12 @@
 gl.splitbox = {}
 
 /**
+ * The current active tab
+ * @type {null|jQuery}
+ */
+gl.splitbox.tabActive = null
+
+/**
  * Add a tab
  * @param {string} tpl
  * @param {*?} params
@@ -40,13 +46,28 @@ gl.splitbox.tabDelete = function ($tab) {
  * @param {jQuery} $tab
  */
 gl.splitbox.tabLoad = function ($tab) {
-  const tabs = $tab.parent().children()
-  tabs.removeClass('active')
+  if (gl.splitbox.tabActive) {
+    gl.splitbox.tabActive.removeClass('active')
+  }
+  gl.splitbox.tabActive = $tab
   $tab.addClass('active')
-  gl.tpl.loadInto($tab.attr('data-template') + '-left', '.splitbox .left')
-  gl.tpl.loadInto($tab.attr('data-template') + '-right', '.splitbox .right')
-  const $splitLeft = $('.splitbox .left')
-  $splitLeft.css('flex', '0 0 ' + ($tab.data('params').widthLeft || 50) + '%')
+  gl.tpl.loadInto($tab.attr('data-template'), '.splitbox', function ($tpl) {
+    const $splitLeft = $tpl.find('.left').first()
+    $splitLeft.css('flex', '0 0 ' + ($tab.data('params').widthLeft || 50) + '%')
+
+    // make center draggable
+    $tpl.find('.center').first().draggable({
+      'axis': 'x',
+      'stop': function (ev, ui) {
+        const left = 100 / $(window).width() * $(this).offset().left
+        let params = gl.splitbox.tabActive.data('params')
+        params.widthLeft = left
+        gl.splitbox.tabSave()
+        gl.splitbox.tabReload()
+        $(this).removeAttr('style')
+      }
+    })
+  })
 }
 
 /**
