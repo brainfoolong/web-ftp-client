@@ -28,8 +28,9 @@ function FtpServer (id) {
 
   /**
    * Connect
+   * @param {function} callback
    */
-  this.connect = function () {
+  this.connect = function (callback) {
     if (self.server.data.protocol === 'ftp') {
       self.ftpClient = new FtpClient()
     }
@@ -39,11 +40,16 @@ function FtpServer (id) {
         self.sshClient.sftp(function (err, sftp) {
           if (err) {
             self.server.log(err, 'error')
+            callback(false)
             self.disconnect()
             return
           }
           self.sftp = sftp
+          callback(true)
         })
+      }).on('error', function (err) {
+        self.server.log(err, 'error')
+        callback(false)
       }).connect({
         host: self.server.data.host,
         port: self.server.data.port,
@@ -67,6 +73,10 @@ function FtpServer (id) {
           self.server.log(err, 'error')
           return
         }
+        for (let i = 0; i < list.length; i++) {
+          let file = list[i]
+          file.directory = file.longname.substr(0, 1) === 'd'
+        }
         callback(list)
       })
     }
@@ -89,15 +99,21 @@ function FtpServer (id) {
 /**
  * Get a ftp instance for a server
  * @param {string} id
- * @return FtpServer
+ * @param {function} callback
  */
-FtpServer.get = function (id) {
+FtpServer.get = function (id, callback) {
   if (typeof FtpServer.instances[id] !== 'undefined') {
-    return FtpServer.instances[id]
+    callback(FtpServer.instances[id])
+    return
   }
   const server = new FtpServer(id)
-  server.connect()
-  return server
+  server.connect(function (status) {
+    if (status) {
+      callback(server)
+      return
+    }
+    callback()
+  })
 }
 
 /** @type {object<string, FtpServer>} */

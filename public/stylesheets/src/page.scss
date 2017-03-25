@@ -213,3 +213,38 @@ textarea:invalid + span:after {
         }
     }
 }
+
+.table-files {
+    table {
+        width: 100%;
+        thead th {
+            text-align: left;
+        }
+        td{
+            padding:2px;
+        }
+    }
+    .icon {
+        border-radius: 3px;
+        display: inline-block;
+        width: 18px;
+        text-align: center;
+        margin-right: 10px;
+        img{
+            display: none;
+            width: 80%
+        }
+        &.icon-file{
+            background: #a5a5a5;
+            .file{
+                display: inline-block;
+            }
+        }
+        &.icon-directory{
+            background: #ffd200;
+            .directory{
+                display: inline-block;
+            }
+        }
+    }
+}

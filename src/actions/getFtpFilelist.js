@@ -18,9 +18,15 @@ action.requireUser = true
  * @param {function} callback
  */
 action.execute = function (user, message, callback) {
-  var server = FtpServer.get(message.server)
-  callback()
-
+  FtpServer.get(message.server, function (server) {
+    if(!server){
+      callback()
+      return
+    }
+    server.readdir(message.directory, function (list) {
+      callback(list)
+    })
+  })
 }
 
 module.exports = action
