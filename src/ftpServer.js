@@ -39,7 +39,7 @@ function FtpServer (id) {
       self.sshClient.on('ready', function () {
         self.sshClient.sftp(function (err, sftp) {
           if (err) {
-            self.server.log(err, 'error')
+            self.server.log(err.message, 'error')
             callback(false)
             self.disconnect()
             return
@@ -48,7 +48,7 @@ function FtpServer (id) {
           callback(true)
         })
       }).on('error', function (err) {
-        self.server.log(err, 'error')
+        self.server.log(err.message, 'error')
         callback(false)
       }).connect({
         host: self.server.data.host,
@@ -68,14 +68,19 @@ function FtpServer (id) {
 
     }
     if (this.sshClient) {
-      self.sftp.readdir('/', function (err, list) {
+      self.sftp.readdir(directory, function (err, list) {
         if (err) {
-          self.server.log(err, 'error')
+          self.server.log(err.message, 'error')
           return
         }
         for (let i = 0; i < list.length; i++) {
           let file = list[i]
           file.directory = file.longname.substr(0, 1) === 'd'
+          file.path = directory
+          if (file.path.substr(-1) !== '/') {
+            file.path += '/'
+          }
+          file.path += file.filename
         }
         callback(list)
       })

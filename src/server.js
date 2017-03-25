@@ -32,12 +32,13 @@ function Server (id) {
     if (!this.data.logs) {
       this.data.logs = []
     }
-    this.data.logs = this.data.slice(-200)
+    this.data.logs = this.data.logs.slice(-200)
     this.data.logs.push({
       'time': new Date(),
       'message': message,
       'type': type
     })
+    this.update()
   }
 }
 

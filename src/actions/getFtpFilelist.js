@@ -1,5 +1,6 @@
 'use strict'
 
+const path = require('path')
 const db = require('./../db')
 const FtpServer = require('./../ftpServer')
 
@@ -24,7 +25,10 @@ action.execute = function (user, message, callback) {
       return
     }
     server.readdir(message.directory, function (list) {
-      callback(list)
+      callback({
+        "currentDirectory" : message.directory,
+        "files" : list
+      })
     })
   })
 }
