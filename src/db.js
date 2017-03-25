@@ -15,10 +15,23 @@ const db = {}
  * @private
  */
 db._defaults = {
+  'id': {'id': 0},
   'servers': {},
   'settings': {},
   'users': {},
-  'logs': {}
+  'logs': {},
+  'transfers': {}
+}
+
+/**
+ * Get next id
+ * @returns {number}
+ */
+db.getNextId = function () {
+  let id = db.get('id').value()
+  id.id++
+  db.get('id').set('id', id.id).value()
+  return id.id
 }
 
 /**

@@ -7,7 +7,7 @@
     $log.addClass('type-' + msg.type)
     $log.find('.time').text(new Date(msg.time).toLocaleString())
     $log.find('.server').text(msg.server)
-    $log.find('.message').text(gl.t(msg.message, msg.params))
+    $log.find('.message').html(gl.t(msg.message, msg.params, true))
     $log.removeClass('boilerplate')
     $tpl.append($log)
     $tpl.parent()[0].scrollTop = 9999999

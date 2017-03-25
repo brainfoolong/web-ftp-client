@@ -32,4 +32,6 @@ gl.lang.values.en = {
   'log.ftpserver.sftpready': 'SSH connection successfull',
   'log.ftpserver.readdir': 'Read directory list of {directory}',
   'log.ftpserver.disconnect': 'Disconnected',
+  'logs.transfer.queue.added.download': 'File added to download queue: {serverPath} to {localPath}',
+  'logs.transfer.queue.added.upload': 'File added to upload queue: {localPath} to {serverPath}'
 }

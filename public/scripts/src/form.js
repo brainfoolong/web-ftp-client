@@ -124,7 +124,7 @@ gl.form.create = function (container, formName, fields, onSubmit, onCancel, valu
   if (Object.keys(values).length) {
     $btn.children().attr('data-translate', 'save.edited')
     $btn.append('&nbsp;<span data-translate="cancel.edit" class="btn btn-default cancel"></span>')
-    $btn.find(".cancel").on("click", onCancel)
+    $btn.find('.cancel').on('click', onCancel)
   }
   $form.append($btn)
   gl.lang.replaceInHtml($form)

@@ -89,12 +89,20 @@ html {
 
 .logs {
     padding: 10px;
-    max-height: 200px;
+    height: 200px;
     overflow-x: auto;
     font-size: 90%;
     .log {
         border-bottom: 1px solid #f5f5f5;
         padding: 3px;
+        .param {
+            background: #f5f5f5;
+            display: inline-block;
+            padding: 3px;
+            border-radius: 3px;
+            color: #888888;
+            font-size: 90%;
+        }
         .time {
             display: inline-block;
             background: #a5a5a5;
@@ -142,11 +150,6 @@ html {
             flex-grow: 1;
         }
     }
-}
-
-.transfer {
-    padding: 10px;
-    background: #00deff;
 }
 
 .form-field {
@@ -218,7 +221,6 @@ textarea:invalid + span:after {
 }
 
 .tree {
-
     .entry {
         padding: 5px;
         border-bottom: 1px solid #e5e5e5;
@@ -249,6 +251,7 @@ textarea:invalid + span:after {
         td {
             padding: 2px;
             vertical-align: middle;
+            cursor: pointer;
         }
         .entry {
             &:hover {
@@ -315,6 +318,7 @@ textarea:invalid + span:after {
 }
 
 .contextmenu {
+    font-size: 12px;
     position: absolute;
     padding: 10px;
     box-shadow: rgba(0, 0, 0, 0.3) 0 0 10px;
@@ -326,12 +330,56 @@ textarea:invalid + span:after {
     > div {
         border-bottom: 1px solid #e5e5e5;
         padding: 3px;
+        cursor: pointer;
         &:hover {
             background: #f5f5f5;
         }
+    }
+    &.stick-right{
+        left:auto !important;
+        right:10px !important;
+    }
+    &.stick-bottom{
+        top:auto !important;
+        bottom:10px !important;
     }
 }
 
 .contextmenu.show {
     display: block;
+}
+
+.tabs {
+    border-bottom: 1px solid #e5e5e5;
+    .tab {
+        display: inline-block;
+        padding: 5px;
+        padding-left: 15px;
+        padding-right: 15px;
+        position: relative;
+        background: #e5e5e5;
+        border-bottom: 3px solid #cccccc;
+        cursor: pointer;
+        &.active {
+            background: white;
+            top: 1px;
+            border: 1px solid #e5e5e5;
+            padding-bottom: 8px;
+            border-bottom: 0;
+        }
+    }
+}
+
+.tab-container {
+    display: none;
+    padding: 10px;
+    &.active {
+        display: block;
+    }
+}
+
+.transfer {
+    font-size: 90%;
+    height: 300px;
+    overflow-y: auto;
 }

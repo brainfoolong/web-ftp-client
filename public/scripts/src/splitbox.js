@@ -20,11 +20,11 @@ gl.splitbox.tabActive = null
  * @return jQuery
  */
 gl.splitbox.tabAdd = function (tpl, params, label) {
-  const $li = $('<li role="presentation"><a href="#"><span class="text"></span></a></li>')
+  const $li = $('<div class="tab"><span class="text"></span></li>')
   $li.attr('data-template', tpl)
-  $li.find('a').append(' <span class="glyphicon glyphicon-remove"></span>')
+  $li.append(' <span class="glyphicon glyphicon-remove"></span>')
   $li.find('.text').text(gl.t(label))
-  $('.splitbox-tabs .nav-tabs').append($li)
+  $('.splitbox-tabs.tabs').append($li)
   $li.data('params', params)
   return $li
 }
@@ -75,7 +75,7 @@ gl.splitbox.tabLoad = function ($tab) {
  */
 gl.splitbox.tabSave = function () {
   const tabs = []
-  $('.splitbox-tabs li').each(function () {
+  $('.splitbox-tabs .tab').each(function () {
     tabs.push({
       'template': $(this).attr('data-template'),
       'params': $(this).data('params'),

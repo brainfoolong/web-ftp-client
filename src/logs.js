@@ -2,7 +2,6 @@
 
 const path = require('path')
 const db = require('./db')
-const WebSocketUser = require('./websocketuser')
 
 const logs = {}
 

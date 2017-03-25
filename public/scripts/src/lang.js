@@ -10,19 +10,21 @@ gl.lang = {}
  * Alias for gl.lang.get
  * @param {string} key
  * @param {object=} params
+ * @param {boolean=} wrapParamsWithSpans
  * @return {string}
  */
-gl.t = function (key, params) {
-  return gl.lang.get(key, params)
+gl.t = function (key, params, wrapParamsWithSpans) {
+  return gl.lang.get(key, params, wrapParamsWithSpans)
 }
 
 /**
  * Just get a translation value for given key
  * @param {string} key
  * @param {object=} params
+ * @param {boolean=} wrapParamsWithSpans
  * @return {string}
  */
-gl.lang.get = function (key, params) {
+gl.lang.get = function (key, params, wrapParamsWithSpans) {
   let v = key
   if (typeof gl.lang.values[gl.lang.language] !== 'undefined' && typeof gl.lang.values[gl.lang.language][key] !== 'undefined') {
     v = gl.lang.values[gl.lang.language][key]
@@ -32,7 +34,7 @@ gl.lang.get = function (key, params) {
   if (typeof params !== 'undefined') {
     for (let i in params) {
       if (params.hasOwnProperty(i)) {
-        v = v.replace(new RegExp('{' + i + '}', 'ig'), params[i])
+        v = v.replace(new RegExp('{' + i + '}', 'ig'), wrapParamsWithSpans ? '<span class="param param-' + i + '">' + params[i] + '</span>' : params[i])
       }
     }
   }

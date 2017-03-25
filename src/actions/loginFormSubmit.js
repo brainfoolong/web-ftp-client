@@ -32,7 +32,7 @@ action.execute = function (user, message, callback) {
     // create user as admin if not yet exist
     if (!db.get('users').size().value()) {
       userData = {
-        'id': hash.random(32),
+        'id': db.getNextId(),
         'username': formData.username,
         'passwordHash': pwHash,
         'loginHash': hash.random(32),

@@ -71,7 +71,7 @@
   $tpl.on('click', '.server-add', function () {
     loadForm()
   }).on('click', '.server-connect', function () {
-    gl.splitbox.tabLoad(gl.splitbox.tabAdd('serverbrowser', {'id': editId}, servers[editId].name))
+    gl.splitbox.tabLoad(gl.splitbox.tabAdd('serverbrowser', {'server': editId}, servers[editId].name))
     gl.splitbox.tabSave()
   }).on('click', '.tree .entry', function () {
     $tree.find('.entry').removeClass('active')

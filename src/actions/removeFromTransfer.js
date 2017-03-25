@@ -1,7 +1,7 @@
 'use strict'
 
+const transfers = require('./../transfers')
 const path = require('path')
-const db = require('./../db')
 const FtpServer = require('./../ftpServer')
 
 const action = {}
@@ -19,18 +19,12 @@ action.requireUser = true
  * @param {function} callback
  */
 action.execute = function (user, message, callback) {
-  FtpServer.get(message.server, function (server) {
-    if (!server) {
-      callback()
-      return
-    }
-    server.readdir(message.directory, function (list) {
-      callback({
-        'currentDirectory': message.directory,
-        'files': list
-      })
-    })
-  })
+  let entries = transfers.getEntries()
+  for (let i = 0; i < message.entries.length; i++) {
+    delete entries[message.entries[i]]
+  }
+  transfers.saveEntries(entries)
+  callback()
 }
 
 module.exports = action

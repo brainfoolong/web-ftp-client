@@ -2,7 +2,7 @@
 
 const db = require('./../db')
 const hash = require('./../hash')
-const extend = require("extend")
+const extend = require('extend')
 const Server = require('./../server')
 
 const action = {}
@@ -23,11 +23,11 @@ action.execute = function (user, message, callback) {
   const formData = message.formData
   if (formData.host && formData.port) {
     let storedData = {}
-    if(message.id){
-      storedData = Server.get(message.id).data;
-    } else{
+    if (message.id) {
+      storedData = Server.get(message.id).data
+    } else {
       storedData = {
-        "id" : hash.random(32)
+        'id': db.getNextId()
       }
     }
     extend(true, storedData, formData)

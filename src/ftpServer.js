@@ -51,8 +51,10 @@ function FtpServer (id) {
           callback(true)
         })
       }).on('error', function (err) {
+        self.disconnect()
         self.server.log(err.message, null, 'error')
-        callback(false)
+      }).on('end', function () {
+        self.disconnect()
       }).connect({
         host: self.server.data.host,
         port: self.server.data.port,

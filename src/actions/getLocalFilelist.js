@@ -32,7 +32,7 @@ action.execute = function (user, message, callback) {
   try {
     fs.statSync(path.join(message.directory))
   } catch (e) {
-    server.log(e.message, "error")
+    server.log(e.message, 'error')
     callback()
     return
   }
