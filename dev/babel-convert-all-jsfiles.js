@@ -8,7 +8,7 @@ const babel = require('babel-core')
 const mode = process.argv[2] || "dev"
 const singleFile = process.argv[3]
 
-const directories = ['public/scripts/src']
+const directories = ['public/scripts/src', 'public/tpl/src']
 const options = {
   "dev" : {'sourceMaps': 'both'},
   "prod" : {'minified': true}

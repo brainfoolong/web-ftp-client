@@ -16,6 +16,8 @@ const ignoreFiles = [
   'public/scripts/dist/.gitignore',
   'public/stylesheets/src',
   'public/stylesheets/dist/.gitignore',
+  'public/tpl/src',
+  'public/tpl/dist/.gitignore',
   'dev',
   'logs/',
   'node_modules/',
