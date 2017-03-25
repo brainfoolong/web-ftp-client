@@ -89,7 +89,31 @@ html {
 
 .logs {
     padding: 10px;
-    background: #75ff00;
+    max-height: 200px;
+    overflow-x: auto;
+    font-size: 90%;
+    .log {
+        border-bottom: 1px solid #f5f5f5;
+        padding: 3px;
+        .time {
+            display: inline-block;
+            background: #a5a5a5;
+            color: white;
+            border-radius: 3px;
+            margin-right: 10px;
+            padding: 3px;
+            font-size: 90%;
+        }
+        .message {
+            display: inline-block;
+        }
+        .server {
+            display: none;
+        }
+        &.type-error {
+            color: red;
+        }
+    }
 }
 
 .splitbox {
@@ -288,4 +312,26 @@ textarea:invalid + span:after {
         color: white;
         left: 0;
     }
+}
+
+.contextmenu {
+    position: absolute;
+    padding: 10px;
+    box-shadow: rgba(0, 0, 0, 0.3) 0 0 10px;
+    border-top: 3px solid #e5e5e5;
+    z-index: 2;
+    background: white;
+    display: none;
+    min-width: 250px;
+    > div {
+        border-bottom: 1px solid #e5e5e5;
+        padding: 3px;
+        &:hover {
+            background: #f5f5f5;
+        }
+    }
+}
+
+.contextmenu.show {
+    display: block;
 }

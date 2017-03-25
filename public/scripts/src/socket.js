@@ -13,8 +13,8 @@ gl.socket = {
   /** @type {object} */
   queue: [],
 
-  /** @type {{}} */
-  onMessageEvents: {},
+  /** @type {[]} */
+  onMessageEvents: [],
 
   /** @type {number|null} */
   port: null,
@@ -70,6 +70,9 @@ gl.socket = {
                 gl.socket.callbacks[callbackId](data.message)
                 gl.socket.callbacks[callbackId] = null
               }
+            }
+            for (let i = 0; i < gl.socket.onMessageEvents.length; i++) {
+              gl.socket.onMessageEvents[i](data)
             }
           }
         }
@@ -136,5 +139,13 @@ gl.socket = {
     }
     gl.socket.callbacks.push(receiveCallback)
     gl.socket.con.send(JSON.stringify(data))
+  },
+
+  /**
+   * Bind a handler to be called everytime a message is received
+   * @param {function} callback
+   */
+  bind(callback){
+    this.onMessageEvents.push(callback)
   }
 }

@@ -31,24 +31,27 @@ function FtpServer (id) {
    * @param {function} callback
    */
   this.connect = function (callback) {
+    self.server.log('log.ftpserver.connect')
     if (self.server.data.protocol === 'ftp') {
       self.ftpClient = new FtpClient()
     }
     if (self.server.data.protocol === 'sftp') {
       self.sshClient = new SshClient()
       self.sshClient.on('ready', function () {
+        self.server.log('log.ftpserver.ready')
         self.sshClient.sftp(function (err, sftp) {
           if (err) {
-            self.server.log(err.message, 'error')
+            self.server.log(err.message, null, 'error')
             callback(false)
             self.disconnect()
             return
           }
+          self.server.log('log.ftpserver.sftpready')
           self.sftp = sftp
           callback(true)
         })
       }).on('error', function (err) {
-        self.server.log(err.message, 'error')
+        self.server.log(err.message, null, 'error')
         callback(false)
       }).connect({
         host: self.server.data.host,
@@ -64,13 +67,14 @@ function FtpServer (id) {
    * @param {function} callback
    */
   this.readdir = function (directory, callback) {
+    self.server.log('log.ftpserver.readdir', {'directory': directory})
     if (this.ftpClient) {
 
     }
     if (this.sshClient) {
       self.sftp.readdir(directory, function (err, list) {
         if (err) {
-          self.server.log(err.message, 'error')
+          self.server.log(err.message, null, 'error')
           return
         }
         for (let i = 0; i < list.length; i++) {
@@ -91,6 +95,7 @@ function FtpServer (id) {
    * Disconnect
    */
   this.disconnect = function () {
+    self.server.log('log.ftpserver.disconnect')
     delete FtpServer.instances[self.id]
     if (this.ftpClient) {
       self.ftpClient.end()

@@ -2,6 +2,11 @@
 (function () {
   const $tpl = $('.template-serverbrowser')
   const tabParams = gl.splitbox.tabActive.data('params')
+  const $contextmenu = $tpl.find('.contextmenu')
+  const $local = $tpl.children('.local')
+  const $localDirectoryInput = $local.find(".input-directory input")
+  const $server = $tpl.children('.server')
+  const $serverDirectoryInput = $server.find(".input-directory input")
 
   /**
    * Build the files into the given container
@@ -24,8 +29,8 @@
       $tr.find('.name').attr('data-sortValue', (file.directory ? 'a' : 'b') + file.filename)
       $tr.find('.name .icon').addClass('icon-' + icon)
       $tr.find('.name .text').text(file.filename)
-      $tr.find(".size").text((file.attrs.size / 1024).toPrecision(2)+"kB")
-      $tr.find(".mtime").text(mtime.toLocaleString()).attr("data-sortValue", mtime.getTime())
+      $tr.find('.size').text((file.attrs.size / 1024).toPrecision(2) + 'kB')
+      $tr.find('.mtime').text(mtime.toLocaleString()).attr('data-sortValue', mtime.getTime())
       $tbody.append($tr)
     }
     $container.append($table)
@@ -35,9 +40,6 @@
         return (n.attr('data-sortValue') || n.text()).toLowerCase()
       },
       'sortList': [[0, 0]]
-    })
-    $tpl.find('.right').on('click', function () {
-      $table.find('.active').removeClass('active')
     })
     $table.on('click', 'tbody tr', function (ev) {
       ev.stopPropagation()
@@ -61,10 +63,18 @@
       if (type === 'server') {
         loadServerDirectory($(this).attr('data-path'))
       }
+    }).on('contextmenu', 'tbody tr', function (ev) {
+      $(this).addClass('active')
+      ev.stopPropagation()
+      ev.preventDefault()
+      $contextmenu.filter('.' + type).addClass('show').offset({
+        left: ev.pageX,
+        top: ev.pageY
+      })
     }).on('dblclick', '.directory-parent', function (ev) {
       ev.stopPropagation()
       if (type === 'local') {
-        let v = $tpl.find('.left .input-directory input').val()
+        let v = $localDirectoryInput.val()
         v = v.replace(/\\/g, '/')
         let spl = v.split('/')
         if (spl.length > 1) {
@@ -77,7 +87,7 @@
         }
       }
       if (type === 'server') {
-        let v = $tpl.find('.right .input-directory input').val()
+        let v = $serverDirectoryInput.val()
         let spl = v.split('/')
         if (spl.length > 1) {
           spl.pop()
@@ -100,8 +110,8 @@
       if (!data) {
         return
       }
-      $tpl.find('.left .input-directory input').val(data.currentDirectory)
-      buildFilelist('local', $tpl.find('.left .files'), data.files)
+      $localDirectoryInput.val(data.currentDirectory)
+      buildFilelist('local', $local.find('.files'), data.files)
     })
   }
 
@@ -114,21 +124,31 @@
       if (!data) {
         return
       }
-      $tpl.find('.right .input-directory input').val(data.currentDirectory)
-      buildFilelist('server', $tpl.find('.right .files'), data.files)
+      $serverDirectoryInput.val(data.currentDirectory)
+      buildFilelist('server', $server.find('.files'), data.files)
     })
   }
 
-  $tpl.find('.left .input-directory input').on('keyup', function (ev) {
+  $tpl.on('click', function () {
+    $tpl.find('tr.active').removeClass('active')
+    $tpl.find('.contextmenu').removeClass('show')
+  })
+
+  $localDirectoryInput.on('keyup', function (ev) {
     if (ev.keyCode === 13) {
       loadLocalDirectory(this.value)
     }
   })
 
-  $tpl.find('.right .input-directory input').on('keyup', function (ev) {
+  $serverDirectoryInput.on('keyup', function (ev) {
     if (ev.keyCode === 13) {
       loadServerDirectory(this.value)
     }
+  })
+
+  $contextmenu.on('click', '.download', function (ev) {
+    ev.stopPropagation()
+
   })
 
   loadServerDirectory(tabParams.serverDirectory || '/')

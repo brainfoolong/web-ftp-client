@@ -26,5 +26,10 @@ gl.lang.values.en = {
   'server.auth.keyfile': 'PPK Keyfile',
   'saved': 'Saved',
   'save.edited': 'Save edited',
-  'cancel.edit': 'Cancel'
+  'cancel.edit': 'Cancel',
+  'log.ftpserver.connect': 'Connecting to server',
+  'log.ftpserver.ready': 'Server connection successfull',
+  'log.ftpserver.sftpready': 'SSH connection successfull',
+  'log.ftpserver.readdir': 'Read directory list of {directory}',
+  'log.ftpserver.disconnect': 'Disconnected',
 }

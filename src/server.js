@@ -1,7 +1,7 @@
 'use strict'
 
-const path = require('path')
 const db = require('./db')
+const logs = require('./logs')
 
 /**
  * Server container
@@ -26,19 +26,11 @@ function Server (id) {
   /**
    * Log a message
    * @param {string} message
-   * @param {string} type
+   * @param {object=} params
+   * @param {string=} type
    */
-  this.log = function (message, type) {
-    if (!this.data.logs) {
-      this.data.logs = []
-    }
-    this.data.logs = this.data.logs.slice(-200)
-    this.data.logs.push({
-      'time': new Date(),
-      'message': message,
-      'type': type
-    })
-    this.update()
+  this.log = function (message, params, type) {
+    logs.log(this.id, message, params, type)
   }
 }
 
@@ -51,8 +43,7 @@ Server.get = function (id) {
   if (typeof Server.instances[id] !== 'undefined') {
     return Server.instances[id]
   }
-  const server = new Server(id)
-  return server
+  return new Server(id)
 }
 
 /** @type {object<string, Server>} */

@@ -17,7 +17,8 @@ const db = {}
 db._defaults = {
   'servers': {},
   'settings': {},
-  'users': {}
+  'users': {},
+  'logs': {}
 }
 
 /**
