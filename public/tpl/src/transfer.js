@@ -9,7 +9,7 @@
     let $tr = $('#transfer-entry-' + entry.id)
     if (!$tr.length) {
       $tr = $table.find('tbody tr.boilerplate').clone()
-      $tr.attr('#transfer-entry-' + entry.id)
+      $tr.attr('id', 'transfer-entry-' + entry.id)
       $tr.removeClass('boilerplate')
       $tbody.append($tr)
     }
@@ -19,8 +19,38 @@
     $tr.find('.server-path').text(entry.serverPath)
     $tr.find('.local-path').text(entry.localPath)
     $tr.find('.local-path').text(entry.localPath)
-    $tr.find('.size').text(entry.size)
+    $tr.find('.size').text(gl.humanFilesize(entry.size))
     $table.trigger('update')
+    updateEntryCounter()
+  }
+
+  const updateEntryCounter = function () {
+    $tpl.find('table').each(function () {
+      let $tabContainer = $(this).closest('.tab-container')
+      let $tab = $tpl.find('.tab').filter('[data-id=\'' + $tabContainer.attr('data-id') + '\']')
+      $tab.find('.counter').text('(' + ($(this).find('tbody tr').length - 1) + ')')
+    })
+  }
+
+  const loadTransfers = function (callback) {
+    gl.socket.send('getTransfers', null, function (entries) {
+      const $tableBoiler = $tpl.find('.boilerplate.table-files').clone()
+      $tableBoiler.removeClass('boilerplate')
+      $tpl.find('.tab-container').html($tableBoiler)
+      $tpl.find('.tab-container').find('table').tablesorter({
+        'sortList': [[0, 0]],
+        'sortForce': [[5, 1]]
+      }).on('sortEnd', function () {
+        let $table = $(this).closest('table')
+        if ($table.hasClass('status-queue')) {
+
+        }
+      })
+      for (let i in entries) {
+        addEntry(entries[i])
+      }
+      if (callback) callback()
+    })
   }
 
   $tpl.on('contextmenu', 'tbody tr', function (ev) {
@@ -29,7 +59,6 @@
     $(this).addClass('active')
     gl.showContextmenu($contextmenu, ev)
   }).on('click', function () {
-    $tpl.find('tr.active').removeClass('active')
     gl.hideContextmenu()
   })
 
@@ -38,7 +67,9 @@
   })
 
   $contextmenu.on('click', '.stop', function () {
-    gl.socket.send('stopTransfer')
+    gl.socket.send('stopTransfer', null, function () {
+      loadTransfers()
+    })
   })
 
   $contextmenu.on('click', '.remove', function () {
@@ -48,22 +79,36 @@
       $(this).remove()
       entries.push($(this).attr('data-id'))
     })
+    updateEntryCounter()
     gl.socket.send('removeFromTransfer', {'entries': entries})
   })
 
-  gl.socket.send('getTransfers', null, function (entries) {
-    const $table = $tpl.find('.boilerplate.table-files').clone()
-    $table.removeClass('boilerplate')
-    $tpl.find('.tab-container').append($table)
-    $tpl.find('.tab-container').find('table').tablesorter({
-      'sortList': [[0, 0]]
-    })
-    for (let i in entries) {
-      addEntry(entries[i])
-    }
+  loadTransfers(function () {
     gl.socket.bind(function (message) {
       if (message.action === 'transfer') {
         addEntry(message.message)
+      }
+      if (message.action === 'transfer-move') {
+        let $entry = $('#transfer-entry-' + message.message.id)
+        if ($entry.length) {
+          $tpl.find('.tab-container.status-' + message.message.to).find('tbody').append($entry).trigger('update')
+          updateEntryCounter()
+        }
+      }
+      if (message.action === 'transfer-progress') {
+        let $entry = $('#transfer-entry-' + message.message.id)
+        if ($entry.length) {
+          const percent = 100 / message.message.filesize * message.message.transfered
+          $entry.find('.transfered').find('.text').text(parseInt(percent) + '%')
+          $entry.find('.transfered').find('.progress-bar-info').css('width', percent + '%')
+        }
+      }
+      if (message.action === 'transfer-stopped') {
+        let $entry = $('#transfer-entry-' + message.message.id)
+        if ($entry.length) {
+          $entry.find('.transfered').find('.text').text('')
+          $entry.find('.transfered').find('.progress-bar-info').css('width', 0)
+        }
       }
     })
   })

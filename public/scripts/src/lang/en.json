@@ -29,6 +29,9 @@
   "server.protocol": "Protocol",
   "servermanager": "Servermanager",
   "socket.disconnect": "Socket closed. Retry in 5 seconds...",
+  "transfer.error": "Error",
+  "transfer.queue": "Queue",
+  "transfer.success": "Success",
   "usermanager": "Usermanager",
   "username": "Username",
   "yes": "Yes"

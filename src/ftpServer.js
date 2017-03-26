@@ -4,6 +4,8 @@ const FtpClient = require('ftp')
 const SshClient = require('ssh2').Client
 const path = require('path')
 const db = require('./db')
+const fs = require('fs')
+const fstools = require('./fstools')
 const Server = require('./server')
 
 /**
@@ -89,6 +91,39 @@ function FtpServer (id) {
           file.path += file.filename
         }
         callback(list)
+      })
+    }
+  }
+
+  /**
+   * Download a file from the server
+   * @param {string} serverPath
+   * @param {string} localPath
+   * @param {string} mode Could be: replace-always, replace-newer, replace-sizediff, replace-newer-or-sizediff, continue, rename
+   * @param {function} step
+   * @param {function} end
+   * @param {function} error
+   * @param {function} stop
+   */
+  this.download = function (serverPath, localPath, mode, step, end, error, stop) {
+    self.server.log('log.ftpserver.download', {'serverPath': serverPath, 'localPath': localPath})
+    if (this.ftpClient) {
+
+    }
+    if (this.sshClient) {
+      self.sftp.fastGet(serverPath, localPath, {
+        'concurrency' : 1024,
+        'chunkSize' : 32768 * 8,
+        'step': function (total_transferred, chunk, total) {
+          step(chunk)
+          if (total_transferred === total) {
+            end()
+          }
+        }
+      }, function (err) {
+        if (err) {
+          error(err)
+        }
       })
     }
   }

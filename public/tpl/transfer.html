@@ -1,14 +1,14 @@
 <div class="tabs">
-    <div class="tab active" data-id="transfer.queue">Queue</div>
-    <div class="tab" data-id="transfer.error">Errors</div>
-    <div class="tab" data-id="transfer.success">Success</div>
+    <div class="tab active" data-id="transfer.queue"><span data-translate="transfer.queue"></span> <span class="counter"></span></div>
+    <div class="tab" data-id="transfer.error"><span data-translate="transfer.error"></span> <span class="counter"></span></div>
+    <div class="tab" data-id="transfer.success"><span data-translate="transfer.success"></span> <span class="counter"></span></div>
 </div>
 
 <div class="tab-container active status-queue" data-id="transfer.queue"></div>
 <div class="tab-container status-error" data-id="transfer.error"></div>
 <div class="tab-container status-success" data-id="transfer.success"></div>
 
-<div class="boilerplate table-files">
+<div class="boilerplate table-files" data-id="transfer">
     <table>
         <thead>
         <tr class="header">
@@ -17,7 +17,7 @@
             <th class="server-path">Server Path</th>
             <th class="local-path">Local Path</th>
             <th class="size">Size</th>
-            <th class="progress">Progress</th>
+            <th class="transfered">Progress</th>
         </tr>
         </thead>
         <tbody>
@@ -27,14 +27,19 @@
             <td class="server-path"></td>
             <td class="local-path"></td>
             <td class="size"></td>
-            <td class="progress"></td>
+            <td class="transfered">
+                <div class="text"></div>
+                <div class="progress progress-striped">
+                    <div class="progress-bar progress-bar-info"></div>
+                </div>
+            </td>
         </tr>
         </tbody>
     </table>
 </div>
 
 
-<div class="contextmenu">
+<div class="contextmenu" data-id="transfer">
     <div class="start">Start transfer</div>
     <div class="stop">Stop transfer</div>
     <div class="remove">Remove selected</div>

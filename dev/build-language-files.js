@@ -21,7 +21,9 @@ for (let i = 0; i < directories.length; i++) {
       let data = fs.readFileSync(filepath)
       let json = sortObject(JSON.parse(data))
       distFileData += 'gl.lang.values[\'' + path.basename(file, '.json') + '\'] = ' + JSON.stringify(json) + '\n'
-      updateJsonFile(json, filepath)
+      if (process.argv[4] !== 'skip-resort') {
+        updateJsonFile(json, filepath)
+      }
     }
   }
 }

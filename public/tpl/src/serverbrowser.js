@@ -17,6 +17,7 @@
   const buildFilelist = function (type, $container, files) {
     $container.html('')
     const $table = $tpl.find('.boilerplate.table-files').clone()
+    $table.attr('data-id', type)
     const $tbody = $table.find('tbody')
     $table.removeClass('boilerplate')
     for (let i = 0; i < files.length; i++) {
@@ -28,7 +29,7 @@
       $tr.find('.name').attr('data-sortValue', (file.directory ? 'a' : 'b') + file.filename)
       $tr.find('.name .icon').addClass('icon-' + icon)
       $tr.find('.name .text').text(file.filename)
-      $tr.find('.size').text((file.attrs.size / 1024).toPrecision(2) + 'kB')
+      $tr.find('.size').text(gl.humanFilesize(file.attrs.size))
       $tr.find('.mtime').text(mtime.toLocaleString()).attr('data-sortValue', mtime.getTime())
       $tbody.append($tr)
       $tr.data('file', file)
@@ -53,7 +54,7 @@
       $(this).addClass('active')
       ev.stopPropagation()
       ev.preventDefault()
-      gl.showContextmenu($contextmenu.filter('.' + type), ev)
+      gl.showContextmenu($contextmenu.filter('[data-id=\'' + $(this).closest('.table-files').attr('data-id') + '\']'), ev)
     }).on('dblclick', '.directory-parent', function (ev) {
       ev.stopPropagation()
       if (type === 'local') {
@@ -117,7 +118,6 @@
   }
 
   $tpl.on('click', function () {
-    $tpl.find('tr.active').removeClass('active')
     gl.hideContextmenu()
   })
 

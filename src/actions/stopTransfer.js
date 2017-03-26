@@ -2,6 +2,7 @@
 
 const transfers = require('./../transfers')
 const db = require('./../db')
+const FtpServer = require('./../FtpServer')
 
 const action = {}
 
@@ -18,9 +19,10 @@ action.requireUser = true
  * @param {function} callback
  */
 action.execute = function (user, message, callback) {
-  db.get('transfers').set('enabled', true).value()
-  transfers.startTransferNext()
-
+  db.get('transfers').set('enabled', false).value()
+  for (let i in FtpServer.instances) {
+    FtpServer.instances[i].disconnect()
+  }
 }
 
 module.exports = action

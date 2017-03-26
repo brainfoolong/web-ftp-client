@@ -78,6 +78,24 @@ gl.showContextmenu = function ($container, ev) {
   }
 }
 
+/**
+ * Get a human filesize
+ * @param {number} bytes
+ * @returns {string}
+ */
+gl.humanFilesize = function (bytes) {
+  let map = ['B', 'KB', 'MB', 'GB', 'TB']
+  let i = 0
+  while (bytes > 1024) {
+    bytes /= 1024
+    i++
+  }
+  if (i === 0) {
+    return bytes + map[i]
+  }
+  return bytes.toFixed(2) + map[i]
+}
+
 $(function () {
   if (typeof window.WebSocket === 'undefined') {
     gl.note('Your browser is not supported in this application (Outdated Browser). Please upgrade to the newest version')
@@ -139,16 +157,37 @@ $(function () {
     gl.splitbox.tabSave()
   })
 
+  // close contextmenu after click in there
+  $(document).on('click', '.contextmenu', function (ev) {
+    gl.hideContextmenu()
+  })
+
+  $(document).on('keydown', function (ev) {
+    // table select all files with shortcut ctrl+a
+    if (ev.ctrlKey && ev.keyCode === 65) {
+      $('.table-files').find('tr.active').closest('table').each(function () {
+        $(this).find('tbody tr').not('.boilerplate').addClass('active')
+      })
+      ev.preventDefault()
+    }
+    // del key - trigger remove in the contextmenu
+    if (ev.keyCode === 46) {
+      $('.table-files').find('tr.active').closest('.table-files').each(function () {
+        $('.contextmenu').filter('[data-id="' + $(this).attr('data-id') + '"]').find('.remove').trigger('click')
+      })
+    }
+  })
+
   // table select files
   $(document).on('click', '.table-files tbody tr', function (ev) {
     ev.stopPropagation()
     const $table = $(this).closest('table')
     let selection = [this, this]
-    if (ev.shiftKey) {
-      selection[1] = $table.find('tbody tr.active').first()[0]
-    }
     let $trs = $table.find('tbody tr')
-    $trs.removeClass('active')
+    if (ev.shiftKey) {
+      selection[1] = $trs.filter('.active').first()[0]
+    }
+    $('.table-files').find('tr.active').removeClass('active')
     let $selection = $trs.filter(selection)
     if ($selection.length === 1) {
       $selection.addClass('active')

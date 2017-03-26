@@ -20,7 +20,7 @@ db._defaults = {
   'settings': {},
   'users': {},
   'logs': {},
-  'transfers': {}
+  'transfers': {'entries': {}, 'sort': [], 'enabled': false}
 }
 
 /**
