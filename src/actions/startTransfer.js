@@ -2,6 +2,8 @@
 
 const transfers = require('./../transfers')
 const db = require('./../db')
+const fs = require('fs')
+const path = require('path')
 
 const action = {}
 
@@ -19,8 +21,6 @@ action.requireUser = true
  */
 action.execute = function (user, message, callback) {
   db.get('transfers').set('enabled', true).value()
-  transfers.startTransferNext()
-
 }
 
 module.exports = action

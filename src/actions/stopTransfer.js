@@ -21,7 +21,8 @@ action.requireUser = true
 action.execute = function (user, message, callback) {
   db.get('transfers').set('enabled', false).value()
   for (let i in FtpServer.instances) {
-    FtpServer.instances[i].disconnect()
+    FtpServer.instances[i].stopTransfers()
+    FtpServer.instances[i].server.log('log.server.transfers.stopped')
   }
 }
 

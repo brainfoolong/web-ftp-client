@@ -18,14 +18,15 @@ action.requireUser = false
  * @param {function} callback
  */
 action.execute = function (user, message, callback) {
-  var formData = message
+  const formData = message
   if (formData.username && formData.password) {
-    var pwHash = hash.saltedMd5(formData.password)
-    var userData = db.get('users').find({
+    const pwHash = hash.saltedMd5(formData.password)
+    let userData = db.get('users').find({
       'username': formData.username,
       'passwordHash': pwHash
     }).cloneDeep().value()
     if (userData) {
+      user.userData = userData
       callback({'id': userData.id, 'loginHash': userData.loginHash})
       return
     }
@@ -38,6 +39,7 @@ action.execute = function (user, message, callback) {
         'loginHash': hash.random(32),
         'admin': true
       }
+      user.userData = userData
       db.get('users').set(userData.id, userData).value()
       callback({'id': userData.id, 'loginHash': userData.loginHash})
     }

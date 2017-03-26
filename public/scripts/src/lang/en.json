@@ -34,5 +34,8 @@
   "transfer.success": "Success",
   "usermanager": "Usermanager",
   "username": "Username",
-  "yes": "Yes"
+  "yes": "Yes",
+  "log.server.transfers.stopped": "All transfers stopped",
+  "log.ftpserver.download": "Download started from {localPath} to {serverPath}",
+  "log.ftpserver.download.complete": "File downloaded from {localPath} to {serverPath}"
 }

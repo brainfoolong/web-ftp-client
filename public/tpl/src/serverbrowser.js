@@ -52,7 +52,6 @@
       }
     }).on('contextmenu', 'tbody tr', function (ev) {
       $(this).addClass('active')
-      ev.stopPropagation()
       ev.preventDefault()
       gl.showContextmenu($contextmenu.filter('[data-id=\'' + $(this).closest('.table-files').attr('data-id') + '\']'), ev)
     }).on('dblclick', '.directory-parent', function (ev) {
@@ -133,8 +132,7 @@
     }
   })
 
-  $contextmenu.on('click', '.download', function (ev) {
-    ev.stopPropagation()
+  $contextmenu.on('click', '.download, .queue', function (ev) {
     const $selectedFiles = $server.find('tr.active')
     let files = []
     $selectedFiles.each(function () {
@@ -147,7 +145,8 @@
       'files': files,
       'type': 'download',
       'server': tabParams.server,
-      'recursive': true
+      'recursive': true,
+      'download': $(this).hasClass('download')
     })
   })
 

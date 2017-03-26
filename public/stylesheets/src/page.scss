@@ -386,4 +386,7 @@ textarea:invalid + span:after {
 
 .progress{
     margin: 0;
+    .progress-bar-info{
+        transition: none;
+    }
 }

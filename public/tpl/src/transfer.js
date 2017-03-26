@@ -3,7 +3,7 @@
   const $tpl = $('.template-transfer').parent()
   const $contextmenu = $tpl.find('.contextmenu')
 
-  const addEntry = function (entry) {
+  const addEntry = function (entry, updateTable) {
     const $table = $tpl.find('.tab-container.status-' + entry.status).find('table')
     const $tbody = $table.find('tbody')
     let $tr = $('#transfer-entry-' + entry.id)
@@ -20,7 +20,9 @@
     $tr.find('.local-path').text(entry.localPath)
     $tr.find('.local-path').text(entry.localPath)
     $tr.find('.size').text(gl.humanFilesize(entry.size))
-    $table.trigger('update')
+    if (updateTable) {
+      $table.trigger('update')
+    }
     updateEntryCounter()
   }
 
@@ -37,18 +39,22 @@
       const $tableBoiler = $tpl.find('.boilerplate.table-files').clone()
       $tableBoiler.removeClass('boilerplate')
       $tpl.find('.tab-container').html($tableBoiler)
+      for (let i in entries) {
+        addEntry(entries[i])
+      }
       $tpl.find('.tab-container').find('table').tablesorter({
-        'sortList': [[0, 0]],
-        'sortForce': [[5, 1]]
+        'sortList': [[5, 1], [0, 0]],
+        'sortForce': [[5, 1]],
+        textExtraction: function (node) {
+          let n = $(node)
+          return (n.attr('data-sortValue') || n.text()).toLowerCase()
+        }
       }).on('sortEnd', function () {
         let $table = $(this).closest('table')
         if ($table.hasClass('status-queue')) {
 
         }
       })
-      for (let i in entries) {
-        addEntry(entries[i])
-      }
       if (callback) callback()
     })
   }
@@ -85,29 +91,35 @@
 
   loadTransfers(function () {
     gl.socket.bind(function (message) {
-      if (message.action === 'transfer') {
-        addEntry(message.message)
+      if (message.action === 'transfer-add') {
+        addEntry(message.message, true)
       }
-      if (message.action === 'transfer-move') {
-        let $entry = $('#transfer-entry-' + message.message.id)
-        if ($entry.length) {
-          $tpl.find('.tab-container.status-' + message.message.to).find('tbody').append($entry).trigger('update')
+      let $entry = null
+      let $transfered = null
+      if (message.message && typeof message.message.id !== 'undefined') {
+        $entry = $('#transfer-entry-' + message.message.id)
+        $transfered = $entry.find('.transfered')
+      }
+      if ($entry && $entry.length) {
+        if (message.action === 'transfer-end') {
+          $tpl.find('.tab-container.status-' + message.message.to).find('tbody').append($entry).trigger('update', [true])
           updateEntryCounter()
         }
-      }
-      if (message.action === 'transfer-progress') {
-        let $entry = $('#transfer-entry-' + message.message.id)
-        if ($entry.length) {
-          const percent = 100 / message.message.filesize * message.message.transfered
-          $entry.find('.transfered').find('.text').text(parseInt(percent) + '%')
-          $entry.find('.transfered').find('.progress-bar-info').css('width', percent + '%')
+        if (message.action === 'transfer-start') {
+          $transfered.attr('data-sortValue', 0)
+          $entry.closest('table').trigger('update', [true])
         }
-      }
-      if (message.action === 'transfer-stopped') {
-        let $entry = $('#transfer-entry-' + message.message.id)
-        if ($entry.length) {
-          $entry.find('.transfered').find('.text').text('')
-          $entry.find('.transfered').find('.progress-bar-info').css('width', 0)
+        if (message.action === 'transfer-progress' || message.action === 'transfer-end' || message.action === 'transfer-stopped') {
+          let percent = -1
+          if (message.action === 'transfer-progress') {
+            percent = 100 / message.message.filesize * message.message.transfered
+          }
+          $transfered.attr('data-sortValue', percent)
+          $transfered.find('.text').text(percent >= 0 ? parseInt(percent) + '%' : '')
+          $transfered.find('.progress-bar-info').css('width', percent >= 0 ? percent + '%' : 0)
+          if (message.action !== 'transfer-progress') {
+            $entry.closest('table').trigger('update', [true])
+          }
         }
       }
     })

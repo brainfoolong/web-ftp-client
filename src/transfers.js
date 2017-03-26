@@ -14,6 +14,12 @@ const FtpServer = require('./FtpServer')
 const transfers = {}
 
 /**
+ * Which files are currently transfering
+ * @type {object<string, boolean>}
+ */
+transfers.transfering = {}
+
+/**
  * Save give entry
  * @param {object} entry
  */
@@ -71,35 +77,51 @@ transfers.addToQueue = function (type, serverId, localPath, serverPath, director
   }
   transfers.saveEntry(entry)
   server.log('logs.transfer.queue.added.' + type, {'localPath': localPath, 'serverPath': serverPath})
-  transfers.sendToListeners('transfer', entry)
+  transfers.sendToListeners('transfer-add', entry)
 }
 
 /**
  * Transfering next in the queue
+ * @param {function=} downloadStarted When the download has begun
+ * @param {function=} queueDone When the complete queue has been transfered
  */
-transfers.startTransferNext = function () {
+transfers.transferNext = function (downloadStarted, queueDone) {
   if (!db.get('transfers').get('enabled').value()) {
     return
   }
   let entries = transfers.getEntries()
   let entriesArr = []
   for (let i in entries) {
-    if (entries[i].status === 'queue') {
-      entriesArr.push(entries[i])
+    let entry = entries[i]
+    let streamId = entry.serverPath + '_' + entry.localPath
+    if (entry.status === 'queue' && !transfers.transfering[streamId]) {
+      entriesArr.push(entry)
     }
   }
   entriesArr.sort(function (a, b) {
     if (a.priority > b.priority) {
       return 1
     } else if (a.priority < b.priority) {
-      return -0
+      return -1
+    } else {
+      return 0
+    }
+  })
+  entriesArr.sort(function (a, b) {
+    if (a.id > b.id) {
+      return 1
+    } else if (a.id < b.id) {
+      return -1
     } else {
       return 0
     }
   })
   let nextEntry = entriesArr.shift()
-  if (nextEntry) {
-    const cb = function () {
+  if (!nextEntry) {
+    if (queueDone) queueDone()
+  } else {
+    const transferId = nextEntry.serverPath + '_' + nextEntry.localPath
+    const progress = function () {
       let stat = fs.statSync(nextEntry.localPath)
       transfers.sendToListeners('transfer-progress', {
         'id': nextEntry.id,
@@ -107,13 +129,13 @@ transfers.startTransferNext = function () {
         'transfered': stat.size
       })
     }
-
     const setStatus = function (status) {
+      delete transfers.transfering[transferId]
       nextEntry.status = status
       transfers.saveEntry(nextEntry)
-      transfers.sendToListeners('transfer-move', {'id': nextEntry.id, 'to': status})
+      transfers.sendToListeners('transfer-end', {'id': nextEntry.id, 'to': status})
       if (status === 'success') {
-        transfers.startTransferNext()
+        transfers.transferNext(downloadStarted, queueDone)
       }
     }
     if (nextEntry.directory) {
@@ -122,6 +144,7 @@ transfers.startTransferNext = function () {
       }
       setStatus('success')
     } else {
+      transfers.transfering[transferId] = true
       FtpServer.get(nextEntry.server, function (ftpServer) {
         if (ftpServer) {
           // create directory of not yet exist
@@ -129,16 +152,19 @@ transfers.startTransferNext = function () {
           if (!fs.existsSync(directory)) {
             fs.mkdirSync(directory, {'mode': fsttools.defaultMask})
           }
-          ftpServer.download(nextEntry.serverPath, nextEntry.localPath, 'replace-always', function () {
-            cb()
+          transfers.sendToListeners('transfer-start', {
+            'id': nextEntry.id
+          })
+          if (downloadStarted) downloadStarted()
+          ftpServer.download(nextEntry.serverPath, nextEntry.localPath, 'replace-newer', function () {
+            progress()
           }, function () {
-            cb()
             setStatus('success')
           }, function () {
-            cb()
             setStatus('error')
           }, function () {
             transfers.sendToListeners('transfer-stopped', {'id': nextEntry.id})
+            delete transfers.transfering[transferId]
           })
         } else {
           setStatus('error')

@@ -3,6 +3,7 @@
 const transfers = require('./../transfers')
 const path = require('path')
 const FtpServer = require('./../ftpServer')
+const db = require('./../db')
 
 const action = {}
 
@@ -41,6 +42,12 @@ action.execute = function (user, message, callback) {
   FtpServer.get(message.server, function (ftpServer) {
     if (ftpServer) {
       addFiles(ftpServer, message.files)
+      if (message.download) {
+        setTimeout(function () {
+          db.get('transfers').set('enabled', true).value()
+          require('./startTransfer').execute(user, message, callback)
+        }, 3000)
+      }
     }
   })
 }
