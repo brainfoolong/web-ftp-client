@@ -86,9 +86,6 @@ transfers.addToQueue = function (type, serverId, localPath, serverPath, director
  * @param {function=} queueDone When the complete queue has been transfered
  */
 transfers.transferNext = function (downloadStarted, queueDone) {
-  if (!db.get('transfers').get('enabled').value()) {
-    return
-  }
   let entries = transfers.getEntries()
   let entriesArr = []
   for (let i in entries) {

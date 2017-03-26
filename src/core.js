@@ -1,6 +1,7 @@
 'use strict'
 
 const request = require('request')
+
 /**
  * Core
  * @type {object}

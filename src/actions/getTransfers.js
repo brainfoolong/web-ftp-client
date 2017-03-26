@@ -18,6 +18,8 @@ action.requireUser = true
  */
 action.execute = function (user, message, callback) {
   callback(transfers.getEntries())
+  // add the user to the logs listeners
+  // will receive messages when something in the transfers changes
   transfers.listeners.push(user)
 }
 

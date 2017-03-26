@@ -22,17 +22,23 @@ action.requireUser = true
 action.execute = function (user, message, callback) {
   let filesout = []
   let server = Server.get(message.server)
+  // special handler, dot refers to web client root
   if (message.directory === '.') {
     message.directory = path.join(__dirname, '../..')
   }
+  // add a separator if non exist
   if (!message.directory.match(/[\\\/]/)) {
     message.directory += path.sep
   }
   message.directory = path.normalize(message.directory)
+  // check if directory exist and return valid stats
   try {
-    fs.statSync(path.join(message.directory))
+    let stat = fs.statSync(path.join(message.directory))
+    if (!stat.isDirectory()) {
+      throw message.directory + ' is not a directory'
+    }
   } catch (e) {
-    server.log(e.message, 'error')
+    server.logError(e)
     callback()
     return
   }
@@ -40,6 +46,8 @@ action.execute = function (user, message, callback) {
   for (let i = 0; i < files.length; i++) {
     let file = files[i]
     let stat = null
+    // if can't read specific file, ignore
+    // those are generally some system files that the user is not allowed to see
     try {
       stat = fs.statSync(path.join(message.directory, file))
     } catch (e) {

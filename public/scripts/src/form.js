@@ -1,11 +1,5 @@
 'use strict'
 
-class form {
-  constructor () {
-
-  }
-}
-
 /**
  * form creator
  * @type {object}

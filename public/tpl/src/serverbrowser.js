@@ -116,10 +116,6 @@
     })
   }
 
-  $tpl.on('click', function () {
-    gl.hideContextmenu()
-  })
-
   $localDirectoryInput.on('keyup', function (ev) {
     if (ev.keyCode === 13) {
       loadLocalDirectory(this.value)

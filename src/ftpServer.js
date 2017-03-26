@@ -57,7 +57,7 @@ function FtpServer (id) {
         self.server.log('log.ftpserver.ready')
         self.sshClient.sftp(function (err, sftp) {
           if (err) {
-            self.server.log(err.message, null, 'error')
+            self.server.logError(err)
             callback(false)
             self.disconnect()
             return
@@ -68,7 +68,7 @@ function FtpServer (id) {
         })
       }).on('error', function (err) {
         self.disconnect()
-        self.server.log(err.message, null, 'error')
+        self.server.logError(err)
       }).on('end', function () {
         self.disconnect()
       }).connect({
@@ -92,7 +92,7 @@ function FtpServer (id) {
     if (this.sshClient) {
       self.sftp.readdir(directory, function (err, list) {
         if (err) {
-          self.server.log(err.message, null, 'error')
+          self.server.logError(err)
           return
         }
         for (let i = 0; i < list.length; i++) {
@@ -135,15 +135,18 @@ function FtpServer (id) {
 
       self.sftp.stat(serverPath, function (err, stat) {
         if (err) {
-          self.server.log(err.message, null, 'error')
+          self.server.logError(err)
           error(err)
           return
         }
 
+        // 128kb chunk size
         let chunkSize = 1024 * 128
         let chunks = Math.ceil(stat.size / chunkSize)
         let chunkParts = []
-        let concurrency = 512
+        // some number to play with, should not be too high and not too low, about 100 is good if we want to fill
+        // a 100mbit transfer
+        let concurrency = 100
 
         let chunkStart = 0
         let byteStart = 0
@@ -168,6 +171,7 @@ function FtpServer (id) {
             }
             localPath = newPath
           }
+          // skip if file not need to be transfered
           if (skip) {
             end()
             return
@@ -190,23 +194,25 @@ function FtpServer (id) {
           chunkParts.push([start, end])
         }
 
-        // open file
         fs.open(localPath, 'w+', fstools.defaultMask, function (err, fd) {
           if (err) {
-            self.server.log(err.message, null, 'error')
+            self.server.logError(err)
             error(err)
             return
           }
+
+
           let chunksEnded = 0
           let streamsOpened = 0
           let stepCallbackTimer = null
 
           const processNextChunk = function () {
+            // if we have as many streams opened as needed, skip
             if (streamsOpened >= concurrency) {
               return
             }
             let nextChunk = chunkParts.shift()
-            // we're done
+            // we're done with all chunks
             if (!nextChunk) {
               return
             }
@@ -220,6 +226,7 @@ function FtpServer (id) {
               'stop': stop
             })
             rstream.on('data', function (chunk) {
+              // if something go weird with the file during the download
               try {
                 fs.writeSync(fd, chunk, 0, chunk.length, offset)
               } catch (e) {
@@ -229,7 +236,7 @@ function FtpServer (id) {
               }
               offset += chunk.length
               bytesLoaded += chunk.length
-              // the step callback only called each x ms to prevent mass spam of this step to frontend
+              // limit step callback only call each x ms to prevent mass spam of this step to frontend
               if (!stepCallbackTimer) {
                 stepCallbackTimer = setTimeout(function () {
                   stepCallbackTimer = null
@@ -237,7 +244,7 @@ function FtpServer (id) {
                 }, 150)
               }
             }).on('error', function (err) {
-              self.server.log(err.message, null, 'error')
+              self.server.logError(err)
               self.streams[streamId] = null
               error(err)
               clearTimeout(stepCallbackTimer)
@@ -247,14 +254,19 @@ function FtpServer (id) {
               self.streams[streamId] = null
               clearTimeout(stepCallbackTimer)
               if (chunksEnded >= chunks) {
+                // if we are done with all chunks, the end is coming
                 fs.close(fd)
                 end()
               } else {
+                // next chunk if a chunk is done, funny, isn't it
                 processNextChunk()
               }
             })
+            // next chunk
+            // fill up to concurrency
             processNextChunk()
           }
+          // initialize the whole process
           processNextChunk()
         })
 
@@ -297,6 +309,7 @@ function FtpServer (id) {
 
 /**
  * Get a ftp instance for a server
+ * If not yet connected, try to connect and than get the instance
  * @param {string} id
  * @param {function} callback
  */

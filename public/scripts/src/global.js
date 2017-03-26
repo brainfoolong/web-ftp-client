@@ -51,12 +51,15 @@ gl.getObjectValue = function (object, key) {
   return o
 }
 
+/**
+ * Hide all contextmenus
+ */
 gl.hideContextmenu = function () {
   $('.contextmenu').removeClass('show')
 }
 
 /**
- * Set contextmenu position
+ * Show contextmenu at given position
  * @param {jQuery} $container
  * @param {event} ev
  */
@@ -96,14 +99,16 @@ gl.humanFilesize = function (bytes) {
   return bytes.toFixed(2) + map[i]
 }
 
+// on document ready
 $(function () {
   if (typeof window.WebSocket === 'undefined') {
     gl.note('Your browser is not supported in this application (Outdated Browser). Please upgrade to the newest version')
     return
   }
-  const body = $('body')
+  // add flag class for touch support
+  const $body = $('body')
   const hasTouch = ('ontouchstart' in window || (typeof window.DocumentTouch !== 'undefined' && document instanceof window.DocumentTouch)) === true
-  body.addClass(hasTouch ? 'no-touch' : 'touch')
+  $body.addClass(hasTouch ? 'no-touch' : 'touch')
 
   // bind tooltips
   $(document).tooltip({
@@ -123,8 +128,9 @@ $(function () {
   })
 
   // replace language html placeholders
-  gl.lang.replaceInHtml(body)
+  gl.lang.replaceInHtml($body)
 
+  // tab click handler
   $(document).on('click', '.tabs .tab[data-id]', function () {
     let $container = $('.tab-container').filter('[data-id=\'' + $(this).attr('data-id') + '\']')
     $(this).parent().children().removeClass('active')
@@ -138,27 +144,28 @@ $(function () {
     gl.tpl.loadInto($(this).attr('data-template'), $(this).attr('data-container'))
   })
 
-  // tab delete trigger
+  // splitbox tab delete trigger
   $(document).on('click', '.splitbox-tabs .glyphicon-remove', function (ev) {
     ev.stopPropagation()
     gl.splitbox.tabDelete($(this).closest('.tab'))
   })
 
-  // tab load trigger
+  // splitbox tab load trigger
   $(document).on('click', '.splitbox-tab-load-trigger[data-template]', function () {
     gl.splitbox.tabAdd($(this).attr('data-template'), {}, $(this).attr('data-translate-tab')).trigger('click')
     gl.splitbox.tabSave()
   })
 
-  // tab click trigger
+  // splitbox tab click trigger
   $(document).on('click', '.splitbox-tabs .tab', function (ev) {
     ev.preventDefault()
     gl.splitbox.tabLoad($(this))
     gl.splitbox.tabSave()
   })
 
-  // close contextmenu after click in there
-  $(document).on('click', '.contextmenu', function (ev) {
+  // close contextmenu after click somewhere in the page
+  // if you want to prevent this, use preventPropagation and to upper event
+  $(document).on('click', function (ev) {
     gl.hideContextmenu()
   })
 
@@ -176,9 +183,14 @@ $(function () {
         $('.contextmenu').filter('[data-id="' + $(this).attr('data-id') + '"]').find('.remove').trigger('click')
       })
     }
+    // esc key - close and deselect everything
+    if (ev.keyCode === 27) {
+      gl.hideContextmenu()
+      $('tr.active').removeClass('active')
+    }
   })
 
-  // table select files
+  // table of files selection
   $(document).on('click', '.table-files tbody tr', function (ev) {
     ev.stopPropagation()
     const $table = $(this).closest('table')

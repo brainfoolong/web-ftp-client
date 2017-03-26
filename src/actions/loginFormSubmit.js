@@ -26,6 +26,7 @@ action.execute = function (user, message, callback) {
       'passwordHash': pwHash
     }).cloneDeep().value()
     if (userData) {
+      // set the socket userdata if valid login
       user.userData = userData
       callback({'id': userData.id, 'loginHash': userData.loginHash})
       return
@@ -39,6 +40,7 @@ action.execute = function (user, message, callback) {
         'loginHash': hash.random(32),
         'admin': true
       }
+      // set the socket userdata with newly created credentials
       user.userData = userData
       db.get('users').set(userData.id, userData).value()
       callback({'id': userData.id, 'loginHash': userData.loginHash})

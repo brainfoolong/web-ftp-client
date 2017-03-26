@@ -46,7 +46,7 @@ function WebSocketUser (socket) {
   }
 
   /**
-   * If the socket gettin closed
+   * If the socket got closed
    */
   this.closed = function () {
     WebSocketUser.instances.splice(self.id, 1)

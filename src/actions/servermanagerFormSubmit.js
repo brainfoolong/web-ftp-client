@@ -1,7 +1,6 @@
 'use strict'
 
 const db = require('./../db')
-const hash = require('./../hash')
 const extend = require('extend')
 const Server = require('./../server')
 
@@ -11,7 +10,7 @@ const action = {}
  * Require user
  * @type {boolean}
  */
-action.requireUser = false
+action.requireUser = true
 
 /**
  * Execute the action
@@ -30,6 +29,7 @@ action.execute = function (user, message, callback) {
         'id': db.getNextId()
       }
     }
+    // simply merging data from form into data object
     extend(true, storedData, formData)
     Server.get(message.id).update()
   }

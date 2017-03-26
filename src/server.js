@@ -32,10 +32,17 @@ function Server (id) {
   this.log = function (message, params, type) {
     logs.log(this.id, message, params, type)
   }
+  /**
+   * Log an error message
+   * @param {Error} err
+   */
+  this.logError = function (err) {
+    logs.logError(this.id, err)
+  }
 }
 
 /**
- * Get a ftp instance for a server
+ * Get a server instance, simply hold the server data and provide fancy log methods
  * @param {string} id
  * @return Server
  */

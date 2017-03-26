@@ -47,6 +47,15 @@ logs.log = function (server, message, params, type) {
 }
 
 /**
+ * Log an error message
+ * @param {string} server
+ * @param {Error} err
+ */
+logs.logError = function (server, err) {
+  logs.log(server, err.message, null, 'error')
+}
+
+/**
  * The websocket users that listen for new log messages
  * @type {WebSocketUser[]}
  */

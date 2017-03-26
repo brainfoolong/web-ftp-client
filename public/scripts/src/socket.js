@@ -9,13 +9,10 @@ gl.socket = {
   con: null,
   /** @type {function[]} */
   callbacks: [],
-
   /** @type {object} */
   queue: [],
-
   /** @type {[]} */
   onMessageEvents: [],
-
   /** @type {number|null} */
   port: null,
 

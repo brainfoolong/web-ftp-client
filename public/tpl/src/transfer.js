@@ -64,8 +64,6 @@
     ev.preventDefault()
     $(this).addClass('active')
     gl.showContextmenu($contextmenu, ev)
-  }).on('click', function () {
-    gl.hideContextmenu()
   })
 
   $contextmenu.on('click', '.start', function () {

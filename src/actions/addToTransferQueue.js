@@ -42,9 +42,9 @@ action.execute = function (user, message, callback) {
   FtpServer.get(message.server, function (ftpServer) {
     if (ftpServer) {
       addFiles(ftpServer, message.files)
+      // start transfer if requested
       if (message.download) {
         setTimeout(function () {
-          db.get('transfers').set('enabled', true).value()
           require('./startTransfer').execute(user, message, callback)
         }, 3000)
       }

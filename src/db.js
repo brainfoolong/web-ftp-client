@@ -17,10 +17,10 @@ const db = {}
 db._defaults = {
   'id': {'id': 0},
   'servers': {},
-  'settings': {},
+  'settings': {'salt': hash.random(64)},
   'users': {},
   'logs': {},
-  'transfers': {'entries': {}, 'enabled': false, 'settings': {}}
+  'transfers': {'entries': {}, 'settings': {}}
 }
 
 /**
@@ -44,15 +44,7 @@ db.get = function (file, folder) {
   let filepath = path.join(__dirname, '../db')
   if (folder) filepath = path.join(filepath, folder)
   filepath = path.join(filepath, file + '.json')
-  const inst = Low(filepath)
-  // if getting settings than set some defaults
-  if (typeof db._defaults[file] !== 'undefined') {
-    if (file === 'settings') {
-      db._defaults[file].salt = hash.random(64)
-    }
-    inst.defaults(db._defaults[file]).value()
-  }
-  return inst
+  return Low(filepath)
 }
 
 module.exports = db
