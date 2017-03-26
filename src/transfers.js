@@ -153,7 +153,7 @@ transfers.transferNext = function (downloadStarted, queueDone) {
             'id': nextEntry.id
           })
           if (downloadStarted) downloadStarted()
-          ftpServer.download(nextEntry.serverPath, nextEntry.localPath, 'replace-newer', function () {
+          ftpServer.download(nextEntry.serverPath, nextEntry.localPath, function () {
             progress()
           }, function () {
             setStatus('success')

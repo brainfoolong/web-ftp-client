@@ -48,10 +48,11 @@ function FtpServer (id) {
    */
   this.connect = function (callback) {
     self.server.log('log.ftpserver.connect')
-    if (self.server.data.protocol === 'ftp') {
+    const serverData = self.server.getServerData()
+    if (serverData.protocol === 'ftp') {
       self.ftpClient = new FtpClient()
     }
-    if (self.server.data.protocol === 'sftp') {
+    if (serverData.protocol === 'sftp') {
       self.sshClient = new SshClient()
       self.sshClient.on('ready', function () {
         self.server.log('log.ftpserver.ready')
@@ -72,10 +73,10 @@ function FtpServer (id) {
       }).on('end', function () {
         self.disconnect()
       }).connect({
-        host: self.server.data.host,
-        port: self.server.data.port,
-        username: self.server.data.username,
-        password: self.server.data.password
+        host: serverData.host,
+        port: serverData.port,
+        username: serverData.username,
+        password: serverData.password
       })
     }
   }
@@ -115,14 +116,14 @@ function FtpServer (id) {
    * Download a file from the server
    * @param {string} serverPath
    * @param {string} localPath
-   * @param {string} mode Could be: replace-always, replace-newer, replace-sizediff, replace-newer-or-sizediff, rename
    * @param {function} step
    * @param {function} end
    * @param {function} error
    * @param {function} stop
    */
-  this.download = function (serverPath, localPath, mode, step, end, error, stop) {
+  this.download = function (serverPath, localPath, step, end, error, stop) {
     self.server.log('log.ftpserver.download', {'serverPath': serverPath, 'localPath': localPath})
+    const transferSettings = db.get('transfers').get('settings').value()
     const _end = end
     end = function () {
       self.server.log('log.ftpserver.download.complete', {'serverPath': serverPath, 'localPath': localPath})
@@ -156,6 +157,7 @@ function FtpServer (id) {
         if (fs.existsSync(localPath)) {
           let localstat = fs.statSync(localPath)
           let skip = true
+          let mode = transferSettings.mode
           if (mode === 'replace-always') {
             skip = false
           } else if ((mode === 'replace-newer' || mode === 'replace-newer-or-sizediff') && self.getDateOfTime(localstat.mtime) < self.getDateOfTime(stat.mtime)) {
@@ -200,7 +202,6 @@ function FtpServer (id) {
             error(err)
             return
           }
-
 
           let chunksEnded = 0
           let streamsOpened = 0

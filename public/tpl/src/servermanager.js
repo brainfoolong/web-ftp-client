@@ -27,7 +27,7 @@
       'auth': {
         'type': 'select',
         'label': 'server.auth',
-        'values': {'normal': 'server.auth.normal', 'anonym': 'server.auth.anonym', 'keyfile': 'server.auth.keyfile'}
+        'values': {'normal': 'server.auth.normal', 'keyfile': 'server.auth.keyfile'}
       },
       'username': {'type': 'text', 'label': 'username'},
       'password': {'type': 'password', 'label': 'password'}

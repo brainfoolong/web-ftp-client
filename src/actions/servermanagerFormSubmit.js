@@ -23,7 +23,7 @@ action.execute = function (user, message, callback) {
   if (formData.host && formData.port) {
     let storedData = {}
     if (message.id) {
-      storedData = Server.get(message.id).data
+      storedData = Server.get(message.id).getServerData()
     } else {
       storedData = {
         'id': db.getNextId()
@@ -31,7 +31,7 @@ action.execute = function (user, message, callback) {
     }
     // simply merging data from form into data object
     extend(true, storedData, formData)
-    Server.get(message.id).update()
+    Server.get(message.id).setServerData(storedData)
   }
   callback()
 }

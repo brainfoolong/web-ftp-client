@@ -38,7 +38,7 @@
     gl.socket.send('getTransfers', null, function (entries) {
       const $tableBoiler = $tpl.find('.boilerplate.table-files').clone()
       $tableBoiler.removeClass('boilerplate')
-      $tpl.find('.tab-container').html($tableBoiler)
+      $tpl.find('.tab-container.transfers').html($tableBoiler)
       for (let i in entries) {
         addEntry(entries[i])
       }

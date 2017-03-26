@@ -21,7 +21,7 @@ db._defaults = {
   'users': {},
   'logs': {},
   'splitboxtabs': {},
-  'transfers': {'entries': {}, 'settings': {}}
+  'transfers': {'entries': {}, 'settings': {'mode': 'replace-always'}}
 }
 
 /**
@@ -45,6 +45,12 @@ db.get = function (file, folder) {
   let filepath = path.join(__dirname, '../db')
   if (folder) filepath = path.join(filepath, folder)
   filepath = path.join(filepath, file + '.json')
+  const inst = Low(filepath)
+  // settings defaults
+  if (typeof db._defaults[file] !== 'undefined') {
+    inst.defaults(db._defaults[file]).value()
+  }
+  return inst
   return Low(filepath)
 }
 

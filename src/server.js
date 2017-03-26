@@ -13,14 +13,21 @@ function Server (id) {
 
   /** @type {string} */
   this.id = id
-  /** @type {object} */
-  this.data = db.get('servers').get(id).cloneDeep().value()
 
   /**
-   * Update the server data in the database
+   * Get server data
+   * @return object
    */
-  this.update = function () {
-    db.get('servers').set(id, this.data).value()
+  this.getServerData = function () {
+    return db.get('servers').get(id).cloneDeep().value()
+  }
+
+  /**
+   * Set server data
+   * @param {object} data
+   */
+  this.setServerData = function (data) {
+    db.get('servers').set(id, data).value()
   }
 
   /**
