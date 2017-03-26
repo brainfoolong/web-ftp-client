@@ -4,6 +4,7 @@
 
 const path = require('path')
 const fs = require('fs')
+const fstools = require('./../src/fstools')
 const babel = require('babel-core')
 const mode = process.argv[2] || "dev"
 const singleFile = process.argv[3]
@@ -27,7 +28,7 @@ for (let i = 0; i < directories.length; i++) {
       }
       let filepathGen = path.join(path.dirname(directory), 'dist', file)
       let data = babel.transformFileSync(filepath, options[mode])
-      fs.writeFileSync(filepathGen, data.code)
+      fs.writeFileSync(filepathGen, data.code, {"mode" : fstools.defaultMask})
     }
   }
 }

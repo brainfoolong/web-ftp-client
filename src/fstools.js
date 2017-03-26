@@ -8,6 +8,12 @@ const fs = require('fs')
 const fstools = {}
 
 /**
+ * The default mask for file operations
+ * @type {number}
+ */
+fstools.defaultMask = parseInt('0777', 8) & ~process.umask()
+
+/**
  * Delete directories and files recursive
  * Use with caution
  * @param {string} path

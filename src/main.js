@@ -4,8 +4,6 @@
  */
 Error.stackTraceLimit = Infinity
 
-process.umask(0)
-
 let mode = process.argv[2]
 if (!mode) {
   process.stdout.write('Usage: node main.js start|update-core')
@@ -23,6 +21,7 @@ if (mode === 'start') {
 if (mode === 'update-core') {
   const request = require('request')
   const fs = require('fs')
+  const fstools = require('./fstools')
   const unzip = require('unzip')
   const dir = './..'
   request('https://codeload.github.com/brainfoolong/web-ftp-client/zip/master', function () {
@@ -31,10 +30,10 @@ if (mode === 'update-core') {
       if (!fileName.length) return
       const path = dir + '/' + fileName
       if (entry.type === 'Directory') {
-        if (!fs.existsSync(path)) fs.mkdirSync(path, 0o777)
+        if (!fs.existsSync(path)) fs.mkdirSync(path, fstools.defaultMask)
         entry.autodrain()
       } else {
-        entry.pipe(fs.createWriteStream(path))
+        entry.pipe(fs.createWriteStream(path, {'mode': fstools.defaultMask}))
       }
     }).on('close', function () {
       process.stdout.write('Application successfully updated\n')
