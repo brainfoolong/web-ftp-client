@@ -1,12 +1,10 @@
 'use strict'
 
-// does convert every required js file in the project
+// build the language files and resort all translation json files
 
 const path = require('path')
 const fs = require('fs')
 const fstools = require('./../src/fstools')
-const mode = process.argv[2] || 'dev'
-const singleFile = process.argv[3]
 
 const directories = ['public/scripts/src/lang']
 const distFile = path.join(__dirname, '..', 'public/scripts/dist/lang.values.js')
@@ -45,6 +43,6 @@ function updateJsonFile (values, file) {
   for (let i in values) {
     fileData += '  ' + JSON.stringify(i) + ': ' + JSON.stringify(values[i]) + ',\n'
   }
-  fileData += '}'
+  fileData = fileData.substr(0, fileData.length - 2) + '\n}'
   fs.writeFileSync(file, fileData, {'mode': fstools.defaultMask})
 }
