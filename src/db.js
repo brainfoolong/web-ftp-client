@@ -20,6 +20,7 @@ db._defaults = {
   'settings': {'salt': hash.random(64)},
   'users': {},
   'logs': {},
+  'splitboxtabs': {},
   'transfers': {'entries': {}, 'settings': {}}
 }
 

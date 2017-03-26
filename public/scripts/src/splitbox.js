@@ -83,24 +83,25 @@ gl.splitbox.tabSave = function () {
       'active': $(this).hasClass('active')
     })
   })
-  gl.storage.set('tabs', tabs)
+  gl.socket.send('saveSplitboxTabs', tabs)
 }
 
 /**
  * Restore tabs from latest save
  */
 gl.splitbox.tabRestore = function () {
-  const tabs = gl.storage.get('tabs')
-  if (tabs) {
-    for (let i = 0; i < tabs.length; i++) {
-      const row = tabs[i]
-      const $li = gl.splitbox.tabAdd(row.template, row.params, row.text)
-      $li.toggleClass('active', row.active)
-      if (row.active) {
-        gl.splitbox.tabLoad($li)
+  gl.socket.send('getSplitboxTabs', null, function (tabs) {
+    if (tabs) {
+      for (let i = 0; i < tabs.length; i++) {
+        const row = tabs[i]
+        const $li = gl.splitbox.tabAdd(row.template, row.params, row.text)
+        $li.toggleClass('active', row.active)
+        if (row.active) {
+          gl.splitbox.tabLoad($li)
+        }
       }
     }
-  }
+  })
 }
 
 /**
