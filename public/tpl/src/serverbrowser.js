@@ -50,10 +50,6 @@
       if (type === 'server') {
         loadServerDirectory($(this).data('file').path)
       }
-    }).on('contextmenu', 'tbody tr', function (ev) {
-      $(this).addClass('active')
-      ev.preventDefault()
-      gl.showContextmenu($contextmenu.filter('[data-id=\'' + $(this).closest('.table-files').attr('data-id') + '\']'), ev)
     }).on('dblclick', '.directory-parent', function (ev) {
       ev.stopPropagation()
       if (type === 'local') {
@@ -128,6 +124,17 @@
     }
   })
 
+  // expose those function to be used from another tpl
+  $tpl.on('reloadServerDirectory', function (ev, data) {
+    loadServerDirectory($serverDirectoryInput.val())
+  })
+  $tpl.on('reloadLocalDirectory', function (ev, data) {
+    // only reload if current directory is the same as the passed one
+    if (data && data.localDirectory === $localDirectoryInput.val()) {
+      loadLocalDirectory($localDirectoryInput.val())
+    }
+  })
+
   $contextmenu.on('click', '.download, .queue', function (ev) {
     const $selectedFiles = $server.find('tr.active')
     let files = []
@@ -141,7 +148,7 @@
       'type': 'download',
       'server': tabParams.server,
       'recursive': true,
-      'download': $(this).hasClass('download')
+      'forceTransfer': $(this).hasClass('download')
     })
   })
 

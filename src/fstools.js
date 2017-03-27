@@ -1,6 +1,7 @@
 'use strict'
 
 const fs = require('fs')
+const path = require('path')
 
 /**
  * FS helper tools
@@ -12,6 +13,23 @@ const fstools = {}
  * @type {number}
  */
 fstools.defaultMask = parseInt('0777', 8) & ~process.umask()
+
+/**
+ * Slug invalid characters in given path to be safe to use on every OS
+ * Helpful when transfering files from one OS to another
+ * @param {string} fullpath
+ * @returns {string}
+ */
+fstools.slugifyPath = function (fullpath) {
+  fullpath = fullpath.replace(/\\/g, '/')
+  let newPath = ''
+  let spl = fullpath.split('/')
+  // windows drive letter
+  if (spl[0].match(/[a-z]+:/i)) {
+    newPath = spl.shift() + '/'
+  }
+  return path.normalize(newPath + spl.join('/').replace(/[:?*"><|]/g, ''))
+}
 
 /**
  * Delete directories and files recursive

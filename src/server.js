@@ -26,7 +26,7 @@ function Server (id) {
    * @param {object} data
    */
   this.setServerData = function (data) {
-    db.get('servers').set(id, data).value()
+    db.get('servers').set(id, data).write()
   }
 
   /**

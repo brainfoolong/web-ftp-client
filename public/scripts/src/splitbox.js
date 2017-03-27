@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * The global object
+ * The splitbox
  * @type {object}
  */
 gl.splitbox = {}
@@ -20,6 +20,26 @@ gl.splitbox.tabActive = null
  * @return jQuery
  */
 gl.splitbox.tabAdd = function (tpl, params, label) {
+  // check if we already have opened such a tab
+  let found = false
+  $('.splitbox-tabs.tabs .tab').each(function () {
+
+    if ($(this).attr('data-template') === tpl) {
+      if (tpl === 'serverbrowser') {
+        if ($(this).data('params').server === params.server) {
+          found = $(this)
+          return false
+        }
+      } else {
+        found = $(this)
+        return false
+      }
+    }
+  })
+  if (found) {
+    gl.splitbox.tabLoad(found)
+    return found
+  }
   const $li = $('<div class="tab"><span class="text"></span></li>')
   $li.attr('data-template', tpl)
   $li.append(' <span class="glyphicon glyphicon-remove"></span>')
@@ -34,6 +54,10 @@ gl.splitbox.tabAdd = function (tpl, params, label) {
  * @param {jQuery} $tab
  */
 gl.splitbox.tabDelete = function ($tab) {
+  // if is a servertab the also disconnect
+  if ($tab.attr('data-template') === 'serverbrowser') {
+    gl.socket.send('disconnectFtpServer', {'server': $tab.data('params').server})
+  }
   if ($tab.hasClass('active')) {
     $('.splitbox').children().html('')
   }

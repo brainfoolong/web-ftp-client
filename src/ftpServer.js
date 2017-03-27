@@ -50,6 +50,21 @@ function FtpServer (id) {
     const serverData = self.server.getServerData()
     if (serverData.protocol === 'ftp') {
       self.ftpClient = new FtpClient()
+      self.ftpClient.on('ready', function () {
+        self.server.log('log.ftpserver.ready')
+        callback(true)
+      }).on('error', function (err) {
+        self.disconnect()
+        self.server.logError(err)
+      }).on('end', function () {
+        self.disconnect()
+      }).connect({
+        host: serverData.host,
+        port: serverData.port,
+        user: serverData.username,
+        password: serverData.password,
+        secure: serverData.encryption === 'none' ? false : serverData.encryption
+      })
     }
     if (serverData.protocol === 'sftp') {
       self.sshClient = new SshClient()
@@ -87,7 +102,36 @@ function FtpServer (id) {
   this.readdir = function (directory, callback) {
     self.server.log('log.ftpserver.readdir', {'directory': directory})
     if (this.ftpClient) {
-
+      this.ftpClient.list(directory, function (err, list) {
+        if (err) {
+          self.server.logError(err)
+          return
+        }
+        if (typeof list === 'undefined') {
+          self.server.logError(new Error('Could not read directory ' + directory))
+          return
+        }
+        const files = []
+        for (let i = 0; i < list.length; i++) {
+          let file = list[i]
+          let path = directory
+          if (path.substr(-1) !== '/') {
+            path += '/'
+          }
+          path += file.name
+          files.push({
+            'attrs': {
+              'mtime': new Date(file.date),
+              'ctime': new Date(file.date),
+              'size': file.size
+            },
+            'filename': file.name,
+            'directory': file.type === 'd',
+            'path': path
+          })
+        }
+        callback(files)
+      })
     }
     if (this.sshClient) {
       self.sftp.readdir(directory, function (err, list) {
@@ -124,12 +168,74 @@ function FtpServer (id) {
     self.server.log('log.ftpserver.download', {'serverPath': serverPath, 'localPath': localPath})
     const transferSettings = db.get('transfers').get('settings').value()
     const _end = end
-    end = function () {
-      self.server.log('log.ftpserver.download.complete', {'serverPath': serverPath, 'localPath': localPath})
-      _end()
-    }
-    if (this.ftpClient) {
+    const _error = error
+    const _stop = stop
+    const stepInverval = setInterval(step, 150)
 
+    // override handlers to provide some more functionality
+    end = function () {
+      _end()
+      clearInterval(stepInverval)
+      self.server.log('log.ftpserver.download.complete', {'serverPath': serverPath, 'localPath': localPath})
+    }
+    error = function (err) {
+      self.server.logError(err)
+      _error(err)
+      clearInterval(stepInverval)
+    }
+    stop = function () {
+      _stop()
+      clearInterval(stepInverval)
+    }
+
+    // determine what we should do with existing files
+    if (fs.existsSync(localPath)) {
+      let localstat = fs.statSync(localPath)
+      if (!localstat.isDirectory()) {
+        let skip = true
+        let mode = transferSettings.mode
+        if (mode === 'replace-always') {
+          skip = false
+        } else if ((mode === 'replace-newer' || mode === 'replace-newer-or-sizediff') && self.getDateOfTime(localstat.mtime) < self.getDateOfTime(stat.mtime)) {
+          skip = false
+        } else if ((mode === 'replace-sizediff' || mode === 'replace-newer-or-sizediff') && localstat.size !== stat.size) {
+          skip = false
+        } else if (mode === 'rename') {
+          let renameCount = 0
+          let newPath = localPath
+          while (fs.existsSync(newPath)) {
+            newPath = path.join(path.dirname(localPath), renameCount + '_' + path.basename(localPath))
+            renameCount++
+          }
+          localPath = newPath
+        }
+        // skip if file not need to be transfered
+        if (skip) {
+          end()
+          return
+        }
+        fs.unlinkSync(localPath)
+      }
+    }
+
+    if (this.ftpClient) {
+      self.ftpClient.get(serverPath, function (err, stream) {
+        if (err) {
+          self.server.logError(err)
+          error(err)
+          return
+        }
+        try {
+          let wstream = fs.createWriteStream(localPath, {'flags': 'w'})
+          wstream.on('error', error)
+
+          stream.once('close', end)
+          stream.on('error', error)
+          stream.pipe(wstream)
+        } catch (err) {
+          error(err)
+        }
+      })
     }
     if (this.sshClient) {
       self.sftp.stat(serverPath, function (err, stat) {
@@ -149,34 +255,6 @@ function FtpServer (id) {
 
         let chunkStart = 0
         let byteStart = 0
-
-        // determine what we should do with existing files
-        if (fs.existsSync(localPath)) {
-          let localstat = fs.statSync(localPath)
-          let skip = true
-          let mode = transferSettings.mode
-          if (mode === 'replace-always') {
-            skip = false
-          } else if ((mode === 'replace-newer' || mode === 'replace-newer-or-sizediff') && self.getDateOfTime(localstat.mtime) < self.getDateOfTime(stat.mtime)) {
-            skip = false
-          } else if ((mode === 'replace-sizediff' || mode === 'replace-newer-or-sizediff') && localstat.size !== stat.size) {
-            skip = false
-          } else if (mode === 'rename') {
-            let renameCount = 0
-            let newPath = localPath
-            while (fs.existsSync(newPath)) {
-              newPath = path.join(path.dirname(localPath), renameCount + '_' + path.basename(localPath))
-              renameCount++
-            }
-            localPath = newPath
-          }
-          // skip if file not need to be transfered
-          if (skip) {
-            end()
-            return
-          }
-          fs.unlinkSync(localPath)
-        }
 
         // calculate required chunks for this download
         // we split up the read process because of speed improvements
@@ -202,7 +280,6 @@ function FtpServer (id) {
 
           let chunksEnded = 0
           let streamsOpened = 0
-          let stepCallbackTimer = null
 
           const processNextChunk = function () {
             // if we have as many streams opened as needed, skip
@@ -227,29 +304,19 @@ function FtpServer (id) {
               // if something go weird with the file during the download
               try {
                 fs.writeSync(fd, chunk, 0, chunk.length, offset)
-              } catch (e) {
+              } catch (err) {
                 rstream.destroy()
-                error(e.message, null, 'error')
+                error(err)
                 return
               }
               offset += chunk.length
-              // limit step callback only call each x ms to prevent mass spam of this step to frontend
-              if (!stepCallbackTimer) {
-                stepCallbackTimer = setTimeout(function () {
-                  stepCallbackTimer = null
-                  step()
-                }, 150)
-              }
             }).on('error', function (err) {
-              self.server.logError(err)
               self.streams[streamId] = null
               error(err)
-              clearTimeout(stepCallbackTimer)
             }).on('end', function () {
               chunksEnded++
               streamsOpened--
               self.streams[streamId] = null
-              clearTimeout(stepCallbackTimer)
               if (chunksEnded >= chunks) {
                 // if we are done with all chunks, the end is coming
                 fs.close(fd)
@@ -275,7 +342,7 @@ function FtpServer (id) {
    */
   this.stopTransfers = function () {
     if (this.ftpClient) {
-
+      this.ftpClient.abort()
     }
     if (this.sshClient) {
       for (let i = 0; i < this.streams.length; i++) {

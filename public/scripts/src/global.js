@@ -167,11 +167,12 @@ $(function () {
   // if you want to prevent this, use preventPropagation and to upper event
   $(document).on('click', function (ev) {
     gl.hideContextmenu()
+    $('tr.active').removeClass('active')
   })
 
   $(document).on('keydown', function (ev) {
     // table select all files with shortcut ctrl+a
-    if (ev.ctrlKey && ev.keyCode === 65) {
+    if (ev.ctrlKey && ev.keyCode === 65 && !$(ev.target).is(':input')) {
       $('.table-files').find('tr.active').closest('table').each(function () {
         $(this).find('tbody tr').not('.boilerplate').addClass('active')
       })
@@ -206,6 +207,16 @@ $(function () {
     } else {
       $selection.first().nextUntil($selection.last()).addBack().add($selection.last()).addClass('active')
     }
+  })
+
+  // table of files contextmenu
+  $(document).on('contextmenu', '.table-files tbody tr', function (ev) {
+    if (!$(this).hasClass('active')) {
+      $(this).parent().children('.active').removeClass('active')
+    }
+    $(this).addClass('active')
+    ev.preventDefault()
+    gl.showContextmenu($('.contextmenu').filter('[data-id=\'' + $(this).closest('.table-files').attr('data-id') + '\']'), ev)
   })
 
   // socket connection

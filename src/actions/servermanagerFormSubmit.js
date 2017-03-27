@@ -31,7 +31,7 @@ action.execute = function (user, message, callback) {
     }
     // simply merging data from form into data object
     extend(true, storedData, formData)
-    Server.get(message.id).setServerData(storedData)
+    Server.get(storedData.id).setServerData(storedData)
   }
   callback()
 }

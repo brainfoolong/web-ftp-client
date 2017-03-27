@@ -42,7 +42,7 @@ action.execute = function (user, message, callback) {
       }
       // set the socket userdata with newly created credentials
       user.userData = userData
-      db.get('users').set(userData.id, userData).value()
+      db.get('users').set(userData.id, userData).write()
       callback({'id': userData.id, 'loginHash': userData.loginHash})
     }
   }

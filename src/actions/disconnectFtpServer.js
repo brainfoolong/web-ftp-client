@@ -1,6 +1,7 @@
 'use strict'
 
 const db = require('./../db')
+const FtpServer = require('./../ftpServer')
 
 const action = {}
 
@@ -17,7 +18,11 @@ action.requireUser = true
  * @param {function} callback
  */
 action.execute = function (user, message, callback) {
-  db.get('splitboxtabs').set('tabs', message).write()
+  FtpServer.get(message.server, function (ftpServer) {
+    if (ftpServer) {
+      ftpServer.disconnect()
+    }
+  })
   callback()
 }
 

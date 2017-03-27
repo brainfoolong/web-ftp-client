@@ -43,7 +43,6 @@
         addEntry(entries[i])
       }
       $tpl.find('.tab-container').find('table').tablesorter({
-        'sortList': [[5, 1], [0, 0]],
         'sortForce': [[5, 1]],
         textExtraction: function (node) {
           let n = $(node)
@@ -58,13 +57,6 @@
       if (callback) callback()
     })
   }
-
-  $tpl.on('contextmenu', 'tbody tr', function (ev) {
-    ev.stopPropagation()
-    ev.preventDefault()
-    $(this).addClass('active')
-    gl.showContextmenu($contextmenu, ev)
-  })
 
   $contextmenu.on('click', '.start', function () {
     gl.socket.send('startTransfer')
@@ -92,20 +84,30 @@
       if (message.action === 'transfer-add') {
         addEntry(message.message, true)
       }
+      if (message.action === 'transfer-add-bulk') {
+        for (let i = 0; i < message.message.length; i++) {
+          addEntry(message.message[i], true)
+        }
+      }
       let $entry = null
       let $transfered = null
       if (message.message && typeof message.message.id !== 'undefined') {
         $entry = $('#transfer-entry-' + message.message.id)
         $transfered = $entry.find('.transfered')
+        // re-add this entry to the begin of the tbody to always show processed entries ontop
+        $entry.closest('tbody').prepend($entry)
       }
       if ($entry && $entry.length) {
+        const $browser = $('.template-serverbrowser')
         if (message.action === 'transfer-end') {
           $tpl.find('.tab-container.status-' + message.message.to).find('tbody').append($entry).trigger('update', [true])
           updateEntryCounter()
+          $browser.trigger('reloadLocalDirectory', [message.message])
         }
         if (message.action === 'transfer-start') {
           $transfered.attr('data-sortValue', 0)
           $entry.closest('table').trigger('update', [true])
+          $browser.trigger('reloadLocalDirectory', [message.message])
         }
         if (message.action === 'transfer-progress' || message.action === 'transfer-end' || message.action === 'transfer-stopped') {
           let percent = -1

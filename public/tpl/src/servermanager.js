@@ -14,9 +14,10 @@
         'type': 'select',
         'label': 'server.encryption',
         'values': {
-          'both': 'TLS for control and data connection',
-          'control': 'TLS for control connection',
-          'implicit': 'Implicit encrypted control connection'
+          'none': 'server.encryption.none',
+          'both': 'server.encryption.both',
+          'control': 'server.encryption.control',
+          'implicit': 'server.encryption.implicit'
         }
       },
       'protocol': {
@@ -69,6 +70,7 @@
   }
 
   $tpl.on('click', '.server-add', function () {
+    editId = null
     loadForm()
   }).on('click', '.server-connect', function () {
     gl.splitbox.tabLoad(gl.splitbox.tabAdd('serverbrowser', {'server': editId}, servers[editId].name))

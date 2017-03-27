@@ -38,7 +38,7 @@ logs.log = function (server, message, params, type) {
     'type': type || 'info'
   }
   logsDb.messages.push(msg)
-  db.get('logs').set('messages', logsDb.messages).value()
+  db.get('logs').set('messages', logsDb.messages).write()
   // send to all listeners
   for (let i = 0; i < logs.listeners.length; i++) {
     logs.listeners[i].send('log', msg)

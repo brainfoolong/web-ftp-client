@@ -24,7 +24,7 @@ transfers.transfering = {}
  * @param {object} entry
  */
 transfers.saveEntry = function (entry) {
-  db.get('transfers').get('entries').set(entry.id, entry).value()
+  db.get('transfers').get('entries').set(entry.id, entry).write()
 }
 
 /**
@@ -32,7 +32,7 @@ transfers.saveEntry = function (entry) {
  * @param {object} entries
  */
 transfers.saveEntries = function (entries) {
-  db.get('transfers').set('entries', entries).value()
+  db.get('transfers').set('entries', entries).write()
 }
 
 /**
@@ -50,6 +50,23 @@ transfers.getEntry = function (id) {
  */
 transfers.getEntries = function () {
   return db.get('transfers').get('entries').cloneDeep().value()
+}
+
+/**
+ * Add to queue bulk
+ * @param {string} serverId
+ * @param {[]} addEntries
+ */
+transfers.addToQueueBulk = function (serverId, addEntries) {
+  const server = Server.get(serverId)
+  let entries = transfers.getEntries()
+  for (let i = 0; i < addEntries.length; i++) {
+    let file = addEntries[i]
+    entries[file.id] = file
+    server.log('logs.transfer.queue.added.' + file.type, {'localPath': file.localPath, 'serverPath': file.serverPath})
+  }
+  transfers.saveEntries(entries)
+  transfers.sendToListeners('transfer-add-bulk', addEntries)
 }
 
 /**
@@ -119,18 +136,24 @@ transfers.transferNext = function (downloadStarted, queueDone) {
   } else {
     const transferId = nextEntry.serverPath + '_' + nextEntry.localPath
     const progress = function () {
-      let stat = fs.statSync(nextEntry.localPath)
-      transfers.sendToListeners('transfer-progress', {
-        'id': nextEntry.id,
-        'filesize': nextEntry.size,
-        'transfered': stat.size
-      })
+      if (fs.existsSync(nextEntry.localPath)) {
+        let stat = fs.statSync(nextEntry.localPath)
+        transfers.sendToListeners('transfer-progress', {
+          'id': nextEntry.id,
+          'filesize': nextEntry.size,
+          'transfered': stat.size
+        })
+      }
     }
     const setStatus = function (status) {
       delete transfers.transfering[transferId]
       nextEntry.status = status
       transfers.saveEntry(nextEntry)
-      transfers.sendToListeners('transfer-end', {'id': nextEntry.id, 'to': status})
+      transfers.sendToListeners('transfer-end', {
+        'id': nextEntry.id,
+        'to': status,
+        'localDirectory': path.dirname(nextEntry.localPath)
+      })
       if (status === 'success') {
         transfers.transferNext(downloadStarted, queueDone)
       }
@@ -150,7 +173,8 @@ transfers.transferNext = function (downloadStarted, queueDone) {
             fs.mkdirSync(directory, {'mode': fsttools.defaultMask})
           }
           transfers.sendToListeners('transfer-start', {
-            'id': nextEntry.id
+            'id': nextEntry.id,
+            'localDirectory': path.dirname(nextEntry.localPath)
           })
           if (downloadStarted) downloadStarted()
           ftpServer.download(nextEntry.serverPath, nextEntry.localPath, function () {

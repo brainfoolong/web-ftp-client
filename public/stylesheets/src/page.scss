@@ -243,6 +243,9 @@ textarea:invalid + span:after {
             padding: 2px;
             padding-top: 10px;
         }
+        th{
+            cursor: pointer;
+        }
         .header th {
             text-align: left;
             border-bottom: 1px solid #e5e5e5;

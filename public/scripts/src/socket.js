@@ -7,15 +7,15 @@
 gl.socket = {}
 
 /** @type {WebSocket} */
-gl.socketcon = null
+gl.socket.con = null
 /** @type {function[]} */
-gl.socketcallbacks = []
+gl.socket.callbacks = []
 /** @type {object} */
-gl.socketqueue = []
+gl.socket.queue = []
 /** @type {[]} */
-gl.socketonMessageEvents = []
+gl.socket.onMessageEvents = []
 /** @type {number|null} */
-gl.socketport = null
+gl.socket.port = null
 
 /**
  * Send the queue
@@ -33,7 +33,7 @@ gl.socket.sendQueue = function () {
  * Connect to WebSocket
  * @param {function=} callback If connection is established
  */
-gl.socketconnect = function (callback) {
+gl.socket.connect = function (callback) {
   const cb = function () {
     const con = new window.WebSocket('ws://' + window.location.hostname + ':' + gl.socket.port)
     /**
