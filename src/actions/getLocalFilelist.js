@@ -1,6 +1,5 @@
 'use strict'
 
-const db = require('./../db')
 const Server = require('./../server')
 const fs = require('fs')
 const path = require('path')
@@ -27,7 +26,7 @@ action.execute = function (user, message, callback) {
     message.directory = path.join(__dirname, '../..')
   }
   // add a separator if non exist
-  if (!message.directory.match(/[\\\/]/)) {
+  if (!message.directory.match(/[\\/]/)) {
     message.directory += path.sep
   }
   message.directory = path.normalize(message.directory)
@@ -35,7 +34,7 @@ action.execute = function (user, message, callback) {
   try {
     let stat = fs.statSync(path.join(message.directory))
     if (!stat.isDirectory()) {
-      throw message.directory + ' is not a directory'
+      throw Error(message.directory + ' is not a directory')
     }
   } catch (e) {
     server.logError(e)

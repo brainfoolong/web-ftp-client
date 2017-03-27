@@ -5,9 +5,10 @@ require('./build')
 
 const path = require('path')
 const fs = require('fs')
+const Zip = require('node-zip')
 
 // pack all required files into a release zip
-const zip = new require('node-zip')()
+const zipArchive = new Zip()
 const pkg = require('./../package')
 const zipFile = path.join(__dirname, 'release-' + pkg.version + '.zip')
 const ignoreFiles = [
@@ -46,16 +47,15 @@ function packfiles (directory) {
     const relative = path.relative(rootDir, filepath)
 
     if (stat.isDirectory()) {
-      zip.folder(relative)
+      zipArchive.folder(relative)
       packfiles(filepath)
     } else {
-      zip.file(relative, fs.readFileSync(filepath))
-
+      zipArchive.file(relative, fs.readFileSync(filepath))
     }
   }
 }
 
 packfiles(rootDir)
 
-var data = zip.generate({base64: false, compression: 'DEFLATE'})
+const data = zipArchive.generate({base64: false, compression: 'DEFLATE'})
 fs.writeFileSync(zipFile, data, 'binary')

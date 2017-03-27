@@ -1,7 +1,5 @@
 'use strict'
 
-const transfers = require('./../transfers')
-const db = require('./../db')
 const FtpServer = require('./../FtpServer')
 
 const action = {}

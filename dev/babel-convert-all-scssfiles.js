@@ -27,10 +27,10 @@ for (let i = 0; i < directories.length; i++) {
         continue
       }
       let filepathGen = path.join(path.dirname(directory), 'dist', path.basename(file, '.scss') + '.css')
-      var opt = options[mode]
+      const opt = options[mode]
       opt.file = filepath
       let data = sass.renderSync(opt)
-      fs.writeFileSync(filepathGen, data.css, {"mode" : fstools.defaultMask})
+      fs.writeFileSync(filepathGen, data.css, {'mode': fstools.defaultMask})
     }
   }
 }

@@ -8,7 +8,6 @@ const logs = require('./logs')
  * @param {string} id
  */
 function Server (id) {
-
   Server.instances[id] = this
 
   /** @type {string} */

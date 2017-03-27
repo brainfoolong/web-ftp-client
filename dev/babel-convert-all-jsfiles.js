@@ -6,13 +6,13 @@ const path = require('path')
 const fs = require('fs')
 const fstools = require('./../src/fstools')
 const babel = require('babel-core')
-const mode = process.argv[2] || "dev"
+const mode = process.argv[2] || 'dev'
 const singleFile = process.argv[3]
 
 const directories = ['public/scripts/src', 'public/tpl/src']
 const options = {
-  "dev" : {'sourceMaps': 'both'},
-  "prod" : {'minified': true}
+  'dev': {'sourceMaps': 'both'},
+  'prod': {'minified': true}
 }
 
 for (let i = 0; i < directories.length; i++) {
@@ -28,7 +28,7 @@ for (let i = 0; i < directories.length; i++) {
       }
       let filepathGen = path.join(path.dirname(directory), 'dist', file)
       let data = babel.transformFileSync(filepath, options[mode])
-      fs.writeFileSync(filepathGen, data.code, {"mode" : fstools.defaultMask})
+      fs.writeFileSync(filepathGen, data.code, {'mode': fstools.defaultMask})
     }
   }
 }

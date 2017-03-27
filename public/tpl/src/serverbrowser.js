@@ -132,7 +132,6 @@
     const $selectedFiles = $server.find('tr.active')
     let files = []
     $selectedFiles.each(function () {
-      let file = $(this).data('file')
       files.push($(this).data('file'))
     })
     gl.socket.send('addToTransferQueue', {
@@ -148,5 +147,4 @@
 
   loadServerDirectory(tabParams.serverDirectory || '/')
   loadLocalDirectory(tabParams.localDirectory || '.')
-
 })()

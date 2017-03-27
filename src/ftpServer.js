@@ -13,7 +13,6 @@ const Server = require('./server')
  * @param {string} id
  */
 function FtpServer (id) {
-
   const self = this
   FtpServer.instances[id] = this
 
@@ -133,7 +132,6 @@ function FtpServer (id) {
 
     }
     if (this.sshClient) {
-
       self.sftp.stat(serverPath, function (err, stat) {
         if (err) {
           self.server.logError(err)
@@ -151,7 +149,6 @@ function FtpServer (id) {
 
         let chunkStart = 0
         let byteStart = 0
-        let bytesLoaded = 0
 
         // determine what we should do with existing files
         if (fs.existsSync(localPath)) {
@@ -236,7 +233,6 @@ function FtpServer (id) {
                 return
               }
               offset += chunk.length
-              bytesLoaded += chunk.length
               // limit step callback only call each x ms to prevent mass spam of this step to frontend
               if (!stepCallbackTimer) {
                 stepCallbackTimer = setTimeout(function () {
@@ -270,7 +266,6 @@ function FtpServer (id) {
           // initialize the whole process
           processNextChunk()
         })
-
       })
     }
   }

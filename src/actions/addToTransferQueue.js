@@ -3,7 +3,6 @@
 const transfers = require('./../transfers')
 const path = require('path')
 const FtpServer = require('./../ftpServer')
-const db = require('./../db')
 
 const action = {}
 

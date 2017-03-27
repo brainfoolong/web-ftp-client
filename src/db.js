@@ -51,7 +51,6 @@ db.get = function (file, folder) {
     inst.defaults(db._defaults[file]).value()
   }
   return inst
-  return Low(filepath)
 }
 
 module.exports = db

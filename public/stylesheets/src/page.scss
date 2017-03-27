@@ -335,13 +335,13 @@ textarea:invalid + span:after {
             background: #f5f5f5;
         }
     }
-    &.stick-right{
-        left:auto !important;
-        right:10px !important;
+    &.stick-right {
+        left: auto !important;
+        right: 10px !important;
     }
-    &.stick-bottom{
-        top:auto !important;
-        bottom:10px !important;
+    &.stick-bottom {
+        top: auto !important;
+        bottom: 10px !important;
     }
 }
 
@@ -384,9 +384,9 @@ textarea:invalid + span:after {
     overflow-y: auto;
 }
 
-.progress{
+.progress {
     margin: 0;
-    .progress-bar-info{
+    .progress-bar-info {
         transition: none;
     }
 }
