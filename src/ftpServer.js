@@ -155,6 +155,84 @@ function FtpServer (id) {
     }
   }
 
+  this.transfer = function (mode, serverPath, localPath, isDirectory, step, end, error, stop) {
+    self.server.log('log.ftpserver.' + mode, {'serverPath': serverPath, 'localPath': localPath})
+
+    const transferSettings = db.get('transfers').get('settings').value()
+    const _end = end
+    const _error = error
+    const _stop = stop
+    const stepInverval = setInterval(step, 150)
+
+    // override handlers to provide some more functionality
+    end = function () {
+      _end()
+      clearInterval(stepInverval)
+      self.server.log('log.ftpserver.download.complete', {'serverPath': serverPath, 'localPath': localPath})
+    }
+    error = function (err) {
+      self.server.logError(err)
+      _error(err)
+      clearInterval(stepInverval)
+    }
+    stop = function () {
+      _stop()
+      clearInterval(stepInverval)
+    }
+
+    let serverStat = null
+    let localStat = null
+    if (fs.existsSync(localPath)) {
+      localStat = fs.statSync(localPath)
+    }
+
+    const statsReceived = function () {
+      const useStat = mode === 'download' ? localStat : serverStat
+      const otherStat = mode !== 'download' ? localStat : serverStat
+      // determine what we should do with existing files
+      if (useStat && !isDirectory) {
+        let skip = true
+        let mode = transferSettings.mode
+        if (mode === 'replace-always') {
+          skip = false
+        } else if ((mode === 'replace-newer' || mode === 'replace-newer-or-sizediff') && self.getDateOfTime(useStat.mtime) < self.getDateOfTime(otherStat.mtime)) {
+          skip = false
+        } else if ((mode === 'replace-sizediff' || mode === 'replace-newer-or-sizediff') && useStat.size !== otherStat.size) {
+          skip = false
+        } else if (mode === 'rename') {
+          let renameCount = 0
+          let newPath = localPath
+          while (fs.existsSync(newPath)) {
+            newPath = path.join(path.dirname(localPath), renameCount + '_' + path.basename(localPath))
+            renameCount++
+          }
+          localPath = newPath
+        }
+        // skip if file not need to be transfered
+        if (skip) {
+          end()
+          return
+        }
+        fs.unlinkSync(localPath)
+      }
+    }
+
+    const fileExistenceChecked = function () {
+
+    }
+
+    if (this.ftpClient) {
+
+    }
+
+    if (this.sshClient) {
+      self.sftp.stat(serverPath, function (err, stat) {
+        serverStat = stat
+        statsReceived()
+      })
+    }
+  }
+
   /**
    * Download a file from the server
    * @param {string} serverPath

@@ -177,7 +177,7 @@ transfers.transferNext = function (downloadStarted, queueDone) {
             'localDirectory': path.dirname(nextEntry.localPath)
           })
           if (downloadStarted) downloadStarted()
-          ftpServer.download(nextEntry.serverPath, nextEntry.localPath, function () {
+          ftpServer.transfer(nextEntry.type, nextEntry.serverPath, nextEntry.localPath, nextEntry.directory, function () {
             progress()
           }, function () {
             setStatus('success')

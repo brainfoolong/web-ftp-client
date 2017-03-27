@@ -40,7 +40,7 @@ action.execute = function (user, message, callback) {
       let localPath = path.join(message.localPath, relativePath)
       entries.push({
         'id': db.getNextId(),
-        'type': message.type,
+        'mode': message.mode,
         'server': message.server,
         'localPath': fstools.slugifyPath(localPath),
         'serverPath': serverPath,

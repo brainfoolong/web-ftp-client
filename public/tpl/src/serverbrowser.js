@@ -135,7 +135,7 @@
     }
   })
 
-  $contextmenu.on('click', '.download, .queue', function (ev) {
+  $contextmenu.on('click', '.download, .download-queue, .upload, .upload-queue', function (ev) {
     const $selectedFiles = $server.find('tr.active')
     let files = []
     $selectedFiles.each(function () {
@@ -145,7 +145,7 @@
       'localPath': $localDirectoryInput.val(),
       'serverPath': $serverDirectoryInput.val(),
       'files': files,
-      'type': 'download',
+      'mode': $(this).attr("data-mode"),
       'server': tabParams.server,
       'recursive': true,
       'forceTransfer': $(this).hasClass('download')
