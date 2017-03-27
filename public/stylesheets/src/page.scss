@@ -243,7 +243,7 @@ textarea:invalid + span:after {
             padding: 2px;
             padding-top: 10px;
         }
-        th{
+        th, td {
             cursor: pointer;
         }
         .header th {
@@ -254,7 +254,6 @@ textarea:invalid + span:after {
         td {
             padding: 2px;
             vertical-align: middle;
-            cursor: pointer;
         }
         .entry {
             &:hover {
@@ -263,6 +262,9 @@ textarea:invalid + span:after {
             &.active {
                 background: #0095ff;
                 color: white;
+            }
+            &:nth-child(n+1000) {
+                display: none;
             }
         }
     }

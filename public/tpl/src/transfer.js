@@ -22,15 +22,15 @@
     $tr.find('.size').text(gl.humanFilesize(entry.size))
     if (updateTable) {
       $table.trigger('update')
+      updateEntryCounter()
     }
-    updateEntryCounter()
   }
 
   const updateEntryCounter = function () {
     $tpl.find('table').each(function () {
       let $tabContainer = $(this).closest('.tab-container')
       let $tab = $tpl.find('.tab').filter('[data-id=\'' + $tabContainer.attr('data-id') + '\']')
-      $tab.find('.counter').text('(' + ($(this).find('tbody tr').length - 1) + ')')
+      $tab.find('.counter').text('(' + ($(this).find('tbody')[0].children.length - 1) + ')')
     })
   }
 
@@ -39,9 +39,19 @@
       const $tableBoiler = $tpl.find('.boilerplate.table-files').clone()
       $tableBoiler.removeClass('boilerplate')
       $tpl.find('.tab-container.transfers').html($tableBoiler)
-      for (let i in entries) {
-        addEntry(entries[i])
+      let entryKeys = Object.keys(entries)
+      const createEntriesHtml = function () {
+        for (let i = 0; i < 30; i++) {
+          if (!entryKeys.length) break
+          let k = entryKeys.shift()
+          addEntry(entries[k])
+        }
+        if (entryKeys.length) {
+          setTimeout(createEntriesHtml, 50)
+        }
+        updateEntryCounter()
       }
+      createEntriesHtml()
       $tpl.find('.tab-container').find('table').tablesorter({
         'sortForce': [[5, 1]],
         textExtraction: function (node) {
@@ -71,22 +81,28 @@
   $contextmenu.on('click', '.remove', function () {
     const $selectedEntries = $tpl.find('tr.active')
     let entries = []
+    let progressEntries = []
     $selectedEntries.each(function () {
       $(this).remove()
+      if ($(this).find('.progress').attr('data-sortValue') !== '0') {
+        progressEntries.push($(this).attr('data-id'))
+      }
       entries.push($(this).attr('data-id'))
     })
     updateEntryCounter()
-    gl.socket.send('removeFromTransfer', {'entries': entries})
+    gl.socket.send('removeFromTransfer', {'entries': entries, 'progressEntries': progressEntries})
   })
 
   loadTransfers(function () {
     gl.socket.bind(function (message) {
-      if (message.action === 'transfer-add') {
-        addEntry(message.message, true)
-      }
       if (message.action === 'transfer-add-bulk') {
-        for (let i = 0; i < message.message.length; i++) {
-          addEntry(message.message[i], true)
+        if (message.message.messages) {
+          for (let i = 0; i < message.message.messages.length; i++) {
+            for (let j = 0; j < message.message.messages[i].length; j++) {
+              addEntry(message.message.messages[i][j])
+            }
+          }
+          updateEntryCounter()
         }
       }
       let $entry = null
@@ -94,8 +110,6 @@
       if (message.message && typeof message.message.id !== 'undefined') {
         $entry = $('#transfer-entry-' + message.message.id)
         $transfered = $entry.find('.transfered')
-        // re-add this entry to the begin of the tbody to always show processed entries ontop
-        $entry.closest('tbody').prepend($entry)
       }
       if ($entry && $entry.length) {
         const $browser = $('.template-serverbrowser')
@@ -105,9 +119,12 @@
           $browser.trigger('reloadLocalDirectory', [message.message])
         }
         if (message.action === 'transfer-start') {
+          // add this entry to the transfering table
+          $tpl.find('.tab-container.status-transfering').find('tbody').prepend($entry)
           $transfered.attr('data-sortValue', 0)
           $entry.closest('table').trigger('update', [true])
           $browser.trigger('reloadLocalDirectory', [message.message])
+          updateEntryCounter()
         }
         if (message.action === 'transfer-progress' || message.action === 'transfer-end' || message.action === 'transfer-stopped') {
           let percent = -1

@@ -66,7 +66,7 @@ transfers.addToQueueBulk = function (serverId, addEntries) {
     server.log('logs.transfer.queue.added.' + file.type, {'localPath': file.localPath, 'serverPath': file.serverPath})
   }
   transfers.saveEntries(entries)
-  transfers.sendToListeners('transfer-add-bulk', addEntries)
+  transfers.bulkSendToListeners('transfer-add-bulk', addEntries)
 }
 
 /**
@@ -192,6 +192,17 @@ transfers.transferNext = function (downloadStarted, queueDone) {
         }
       })
     }
+  }
+}
+
+/**
+ * Send a message to all listeners via bulk send
+ * @param {string} action
+ * @param {*} message
+ */
+transfers.bulkSendToListeners = function (action, message) {
+  for (let i = 0; i < transfers.listeners.length; i++) {
+    transfers.listeners[i].bulkSend(action, message)
   }
 }
 

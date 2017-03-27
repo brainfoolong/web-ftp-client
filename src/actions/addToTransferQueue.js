@@ -28,8 +28,13 @@ action.execute = function (user, message, callback) {
    */
   const addFiles = function (ftpServer, files) {
     let entries = []
-    for (let i = 0; i < files.length; i++) {
-      let file = files[i]
+    const nextFile = function () {
+      if (!files.length) {
+        // if all done, add to queue
+        transfers.addToQueueBulk(ftpServer.server.id, entries)
+        return
+      }
+      let file = files.shift()
       let serverPath = file.path
       let relativePath = serverPath.substr(message.serverPath.length)
       let localPath = path.join(message.localPath, relativePath)
@@ -45,16 +50,18 @@ action.execute = function (user, message, callback) {
         'priority': 0
       })
       if (file.directory && message.recursive) {
-        ftpServer.readdir(file.path, function (filesSub) {
-          // let em some time to breath
-          // this jobs are heavy for tons of files
-          setTimeout(function () {
+        // let em some time to breath for this heavy duty jobs
+        setTimeout(function () {
+          ftpServer.readdir(file.path, function (filesSub) {
+            nextFile()
             addFiles(ftpServer, filesSub)
-          }, 50);
-        })
+          })
+        }, 150)
+      } else {
+        nextFile()
       }
     }
-    transfers.addToQueueBulk(ftpServer.server.id, entries)
+    nextFile()
   }
   FtpServer.get(message.server, function (ftpServer) {
     if (ftpServer) {

@@ -229,7 +229,8 @@ function FtpServer (id) {
           let wstream = fs.createWriteStream(localPath, {'flags': 'w'})
           wstream.on('error', error)
 
-          stream.once('close', end)
+          stream.on('close', end)
+          stream.on('end', end)
           stream.on('error', error)
           stream.pipe(wstream)
         } catch (err) {

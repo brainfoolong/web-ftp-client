@@ -41,7 +41,7 @@ logs.log = function (server, message, params, type) {
   db.get('logs').set('messages', logsDb.messages).write()
   // send to all listeners
   for (let i = 0; i < logs.listeners.length; i++) {
-    logs.listeners[i].send('log', msg)
+    logs.listeners[i].bulkSend('log', msg)
   }
 }
 

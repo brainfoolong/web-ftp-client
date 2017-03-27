@@ -13,6 +13,10 @@ function WebSocketUser (socket) {
   this.id = null
   /** @type {WebSocket} */
   this.socket = socket
+  /** @type {object} */
+  this.bulkList = {}
+  /** @type {number} */
+  this.bulkTimeout = null
   /**
    * The current stored userdata
    * Updated with each websocket incoming message
@@ -41,7 +45,43 @@ function WebSocketUser (socket) {
       if (typeof callbackId === 'number') {
         data.callbackId = callbackId
       }
-      self.socket.send(JSON.stringify(data))
+      try {
+        self.socket.send(JSON.stringify(data))
+      } catch (err) {
+
+      }
+    }
+  }
+
+  /**
+   * Do a bulk send, collect all bulkSends and send them out only each 500ms
+   * This prevent mass spam of socket and frontend and give everything time to breath
+   * All bulk sends of last 500ms will simply be collected to an array
+   * @param {string} action
+   * @param {object=} message
+   */
+  this.bulkSend = function (action, message) {
+    if (typeof this.bulkList[action] === 'undefined') {
+      this.bulkList[action] = {'lastSent': 0, 'collection': []}
+    }
+    const bulkColl = this.bulkList[action]
+    bulkColl.collection.push(message)
+
+    const time = new Date().getTime()
+    const send = function () {
+      bulkColl.lastSent = time
+      const arr = bulkColl.collection
+      bulkColl.collection = []
+      self.send(action, {'bulk': true, 'messages': arr})
+    }
+    const wait = (bulkColl.lastSent + 500) - time
+    // if wait time is over, send bulk
+    if (wait <= 0) {
+      send()
+    } else {
+      // timeout for the next send
+      clearTimeout(this.bulkTimeout)
+      this.bulkTimeout = setTimeout(send, wait)
     }
   }
 
