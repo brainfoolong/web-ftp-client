@@ -158,6 +158,9 @@
     let filter = null
     if ($currentCm.find('.filter .checkbox').prop('checked')) {
       filter = $currentCm.find('.filter input.filtermask').val().trim()
+      if (!filter.length) {
+        filter = null
+      }
     }
 
     gl.socket.send('addToTransferQueue', {
