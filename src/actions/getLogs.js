@@ -1,6 +1,6 @@
 'use strict'
 
-const logs = require('./../logs')
+const logs = require(__dirname + '/../logs')
 
 const action = {}
 

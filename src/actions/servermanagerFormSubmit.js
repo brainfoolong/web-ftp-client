@@ -1,8 +1,8 @@
 'use strict'
 
-const db = require('./../db')
+const db = require(__dirname + '/../db')
 const extend = require('extend')
-const Server = require('./../server')
+const Server = require(__dirname + '/../server')
 
 const action = {}
 

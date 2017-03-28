@@ -1,7 +1,7 @@
 'use strict'
 
-const db = require('./db')
-const logs = require('./logs')
+const db = require(__dirname + '/db')
+const logs = require(__dirname + '/logs')
 
 /**
  * Server container

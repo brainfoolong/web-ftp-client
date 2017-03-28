@@ -22,7 +22,7 @@ hash.random = function (length) {
  * @returns {string}
  */
 hash.saltedMd5 = function (str) {
-  const db = require('./db')
+  const db = require(__dirname + '/db')
   return crypto.createHash('md5').update(str + '' + db.get('settings').get('salt').value()).digest('hex')
 }
 

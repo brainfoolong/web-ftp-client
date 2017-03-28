@@ -1,10 +1,10 @@
 'use strict'
 
 const path = require('path')
-const db = require('./db')
+const db = require(__dirname + '/db')
 const fs = require('fs')
-const Server = require('./Server')
-const FtpServer = require('./FtpServer')
+const Server = require(__dirname + '/Server')
+const FtpServer = require(__dirname + '/FtpServer')
 
 /**
  * Queue

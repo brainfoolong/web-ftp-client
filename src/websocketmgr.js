@@ -1,8 +1,8 @@
 'use strict'
 
-const WebSocketUser = require('./websocketuser')
+const WebSocketUser = require(__dirname + '/websocketuser')
 const WebSocketServer = require('ws').Server
-const config = require('./config')
+const config = require(__dirname + '/config')
 
 /**
  * Some tools for web socket server management

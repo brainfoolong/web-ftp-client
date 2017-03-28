@@ -1,7 +1,7 @@
 'use strict'
 
 const low = require('lowdb')
-const hash = require('./hash')
+const hash = require(__dirname + '/hash')
 const path = require('path')
 
 /**

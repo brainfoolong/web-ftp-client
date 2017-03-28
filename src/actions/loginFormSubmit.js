@@ -1,7 +1,7 @@
 'use strict'
 
-const db = require('./../db')
-const hash = require('./../hash')
+const db = require(__dirname + '/../db')
+const hash = require(__dirname + '/../hash')
 
 const action = {}
 

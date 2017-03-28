@@ -1,7 +1,7 @@
 'use strict'
 
-const queue = require('./../queue')
-const FtpServer = require('./../ftpServer')
+const queue = require(__dirname + '/../queue')
+const FtpServer = require(__dirname + '/../ftpServer')
 
 const action = {}
 

@@ -103,7 +103,7 @@ function WebSocketUser (socket) {
     const sendCallback = function (message) {
       self.send(frontendMessage.action, message, frontendMessage.callbackId)
     }
-    const actionPath = './actions/' + frontendMessage.action.replace(/[^a-z0-9_-]/ig, '') + '.js'
+    const actionPath = __dirname + 'actions/' + frontendMessage.action.replace(/[^a-z0-9_-]/ig, '') + '.js'
     if (fs.existsSync(actionPath)) {
       const action = require(actionPath)
       if (action.requireUser && !self.userData) {

@@ -1,6 +1,6 @@
 'use strict'
 
-const Server = require('./../server')
+const Server = require(__dirname + '/../server')
 const fs = require('fs')
 const path = require('path')
 

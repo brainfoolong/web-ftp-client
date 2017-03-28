@@ -1,6 +1,6 @@
 'use strict'
 
-const db = require('./db')
+const db = require(__dirname + '/db')
 
 const logs = {}
 
@@ -53,7 +53,7 @@ logs.log = function (server, message, params, type) {
 logs.logError = function (server, err) {
   const e = new Error(err.message)
   let msg = e.message
-  if (require('./config.js').debug) {
+  if (require(__dirname + '/config.js').debug) {
     msg += ' | STACK: ' + e.stack
   }
   logs.log(server, msg, null, 'error')

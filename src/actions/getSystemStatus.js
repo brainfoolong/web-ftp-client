@@ -1,6 +1,6 @@
 'use strict'
 
-const db = require('./../db')
+const db = require(__dirname + '/../db')
 
 const action = {}
 
@@ -19,7 +19,7 @@ action.requireUser = false
 action.execute = function (user, message, callback) {
   callback({
     'installed': db.get('users').size().value() > 0,
-    'version': require('./../core').latestVersion
+    'version': require(__dirname + '/../core').latestVersion
   })
 }
 
