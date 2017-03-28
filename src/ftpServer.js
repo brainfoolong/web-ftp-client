@@ -170,7 +170,7 @@ function FtpServer (id) {
       'localPath': queueEntry.localPath
     })
 
-    const transferSettings = db.get('settings').get('transfer').value()
+    const settings = db.get('settings').get('settings').value()
     const _end = end
     const _error = error
     const stepInverval = setInterval(step, 150)
@@ -208,7 +208,7 @@ function FtpServer (id) {
       // determine what we should do with existing files
       if (destStat) {
         let skip = true
-        let mode = transferSettings ? transferSettings.mode : null
+        let mode = settings ? settings.transfer_mode : null
         if (mode === 'replace-always') {
           skip = false
         } else if ((mode === 'replace-newer' || mode === 'replace-newer-or-sizediff') && self.getDateOfTime(destStat.mtime) < self.getDateOfTime(srcStat.mtime)) {

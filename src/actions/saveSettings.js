@@ -18,7 +18,7 @@ action.requireUser = true
  * @param {function} callback
  */
 action.execute = function (user, message, callback) {
-  db.get('settings').set('transfer', message).write()
+  db.get('settings').set('settings', message).write()
   callback()
 }
 

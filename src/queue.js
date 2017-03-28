@@ -121,6 +121,7 @@ queue.getEntries = function () {
  * @param {queue.QueueEntry[]} addEntries
  */
 queue.addToQueueBulk = function (serverId, addEntries) {
+  // not do that at top of file because of circular reference
   const Server = require(path.join(__dirname, 'server'))
   const server = Server.get(serverId)
   let entries = queue.getEntries()
@@ -137,17 +138,26 @@ queue.addToQueueBulk = function (serverId, addEntries) {
 }
 
 /**
- * Transfering next in the queue
+ * Transfering next entries in the queue up to max transfers
  * @param {function=} downloadStarted When the download has begun
  * @param {function=} queueDone When the complete queue has been transfered
  */
 queue.transferNext = function (downloadStarted, queueDone) {
   let entries = queue.getEntries()
   let entriesArr = []
+  let transfering = 0
+  let maxTransfering = db.get('settings').get('settings').get('transfer_max').value() || 3
   for (let i in entries) {
     let entry = entries[i]
     if (entry.status === 'queue') {
       entriesArr.push(entry)
+    }
+    if (entry.status === 'transfering') {
+      transfering++
+      // stop if we already have all slots filled up
+      if (transfering >= maxTransfering) {
+        return
+      }
     }
   }
   entriesArr.sort(function (a, b) {
@@ -191,20 +201,27 @@ queue.transferNext = function (downloadStarted, queueDone) {
         'status': status,
         'localDirectory': path.dirname(nextEntry.localPath)
       })
-      if (status === 'success') {
-        queue.transferNext(downloadStarted, queueDone)
-      }
     }
     setStatus('transfering')
     queue.saveEntry(nextEntry)
+
+    // not do that at top of file because of circular reference
     const FtpServer = require(path.join(__dirname, 'ftpServer'))
     FtpServer.get(nextEntry.serverId, function (ftpServer) {
       if (ftpServer) {
         if (downloadStarted) downloadStarted()
+        // time to breath for next transfer
+        setTimeout(function () {
+          queue.transferNext(downloadStarted, queueDone)
+        }, 50)
         ftpServer.transferQueueEntry(nextEntry, function () {
           progress()
         }, function () {
           setStatus('success')
+          // time to breath for next transfer
+          setTimeout(function () {
+            queue.transferNext(downloadStarted, queueDone)
+          }, 50)
         }, function () {
           setStatus('error')
         })

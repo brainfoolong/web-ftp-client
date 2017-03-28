@@ -1,9 +1,9 @@
 'use strict';
 (function () {
-  const $tpl = $('.template-transfersettings')
+  const $tpl = $('.template-settings')
 
   const form = {
-    'mode': {
+    'transfer_mode': {
       'type': 'select',
       'label': 'transfer.mode',
       'values': {
@@ -14,15 +14,21 @@
         'replace-newer-or-sizediff': 'transfer.mode.replace-newer-or-sizediff',
         'rename': 'transfer.mode.rename'
       }
+    },
+    'transfer_max': {
+      'type': 'number',
+      'label': 'transfer.max',
+      'description': 'transfer.max.description',
+      'defaultValue': 3
     }
   }
 
   const loadForm = function () {
-    gl.socket.send('getTransferSettings', null, function (settings) {
+    gl.socket.send('getSettings', null, function (settings) {
       const $form = $tpl.find('.form')
       $form.html('')
-      gl.form.create($form, 'transfersettings', form, function (formData) {
-        gl.socket.send('saveTransferSettings', formData, function () {
+      gl.form.create($form, 'settings', form, function (formData) {
+        gl.socket.send('saveSettings', formData, function () {
           gl.note(gl.t('saved'), 'success')
         })
       }, function () {

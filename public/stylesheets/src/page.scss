@@ -157,6 +157,10 @@ html {
     margin-bottom: 10px;
 }
 
+.form-label small{
+    padding-left: 10px;
+}
+
 .template-login {
     display: flex;
     width: 100%;
@@ -456,3 +460,4 @@ textarea:invalid + span:after {
         }
     }
 }
+
