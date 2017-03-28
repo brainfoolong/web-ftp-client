@@ -4,7 +4,7 @@ const path = require('path')
 const db = require(__dirname + '/db')
 const fs = require('fs')
 const Server = require(__dirname + '/server')
-const FtpServer = require(__dirname + '/ftpserver')
+const FtpServer = require(__dirname + '/ftpServer')
 
 /**
  * Queue

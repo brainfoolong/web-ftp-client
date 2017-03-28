@@ -3,7 +3,7 @@
 const fstools = require(__dirname + '/../fstools')
 const fs = require('fs')
 const Server = require(__dirname + '/../server')
-const FtpServer = require(__dirname + '/../ftpserver')
+const FtpServer = require(__dirname + '/../ftpServer')
 
 const action = {}
 

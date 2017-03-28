@@ -3,7 +3,7 @@
 const path = require('path')
 const fs = require('fs')
 const queue = require(__dirname + '/../queue')
-const FtpServer = require(__dirname + '/../ftpserver')
+const FtpServer = require(__dirname + '/../ftpServer')
 const db = require(__dirname + '/../db')
 const fstools = require(__dirname + '/../fstools')
 
