@@ -3,7 +3,7 @@
 const path = require('path')
 const db = require(__dirname + '/db')
 const fs = require('fs')
-const Server = require(__dirname + '/Server')
+const Server = require(__dirname + '/server')
 const FtpServer = require(__dirname + '/FtpServer')
 
 /**
