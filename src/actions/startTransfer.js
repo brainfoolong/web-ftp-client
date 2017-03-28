@@ -1,6 +1,6 @@
 'use strict'
 
-const transfers = require('./../transfers')
+const queue = require('./../queue')
 
 const action = {}
 
@@ -17,7 +17,7 @@ action.requireUser = true
  * @param {function} callback
  */
 action.execute = function (user, message, callback) {
-  transfers.transferNext()
+  queue.transferNext()
 }
 
 module.exports = action

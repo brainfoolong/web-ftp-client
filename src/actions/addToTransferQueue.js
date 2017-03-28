@@ -1,7 +1,8 @@
 'use strict'
 
-const transfers = require('./../transfers')
 const path = require('path')
+const fs = require('fs')
+const queue = require('./../queue')
 const FtpServer = require('./../ftpServer')
 const db = require('./../db')
 const fstools = require('./../fstools')
@@ -31,33 +32,64 @@ action.execute = function (user, message, callback) {
     const nextFile = function () {
       if (!files.length) {
         // if all done, add to queue
-        transfers.addToQueueBulk(ftpServer.server.id, entries)
+        queue.addToQueueBulk(ftpServer.server.id, entries)
         return
       }
       let file = files.shift()
-      let serverPath = file.path
-      let relativePath = serverPath.substr(message.serverPath.length)
-      let localPath = path.join(message.localPath, relativePath)
-      entries.push({
-        'id': db.getNextId(),
-        'mode': message.mode,
-        'server': message.server,
-        'localPath': fstools.slugifyPath(localPath),
-        'serverPath': serverPath,
-        'directory': file.directory,
-        'status': 'queue',
-        'size': file.attrs.size,
-        'priority': 0
-      })
-      if (file.directory && message.recursive) {
-        // let em some time to breath for this heavy duty jobs
-        setTimeout(function () {
-          ftpServer.readdir(file.path, function (filesSub) {
-            nextFile()
-            addFiles(ftpServer, filesSub)
-          })
-        }, 150)
+      let serverPath = null
+      let relativePath = null
+      let localPath = null
+
+      if (message.mode === 'download') {
+        serverPath = file.path
+        relativePath = serverPath.substr(message.serverDirectory.length)
+        localPath = fstools.slugifyPath(path.join(message.localDirectory, relativePath))
+      }
+      if (message.mode === 'upload') {
+        localPath = file.path
+        relativePath = localPath.substr(message.localDirectory.length)
+        serverPath = fstools.slugifyPath(message.serverDirectory + '/' + relativePath.replace(/[\\]/g, '/')).replace(/[\\]/g, '/')
+      }
+      if (file.isDirectory) {
+        if (message.recursive) {
+          // let em some time to breath for this heavy duty jobs
+          setTimeout(function () {
+            if (message.mode === 'download') {
+              ftpServer.readdir(file.path, function (filesSub) {
+                nextFile()
+                addFiles(ftpServer, filesSub)
+              })
+            }
+            if (message.mode === 'upload') {
+              let files = fs.readdirSync(file.path)
+              let fileObjects = []
+              for (let i = 0; i < files.length; i++) {
+                let filepath = path.join(file.path, files[i])
+                const stat = fs.statSync(filepath)
+                fileObjects.push({
+                  'filename': files[i],
+                  'path': filepath,
+                  'size': stat.size,
+                  'mtime': stat.mtime,
+                  'isDirectory': stat.isDirectory()
+                })
+              }
+              addFiles(ftpServer, fileObjects)
+            }
+          }, 150)
+        }
       } else {
+        entries.push(new queue.QueueEntry(
+          db.getNextId(),
+          message.mode,
+          message.server,
+          localPath,
+          serverPath,
+          file.isDirectory,
+          'queue',
+          file.size,
+          0
+        ))
         nextFile()
       }
     }

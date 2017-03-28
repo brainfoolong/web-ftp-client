@@ -55,8 +55,9 @@ action.execute = function (user, message, callback) {
     filesout.push({
       'filename': file,
       'path': path.join(message.directory, file),
-      'directory': stat.isDirectory(),
-      'attrs': stat
+      'isDirectory': stat.isDirectory(),
+      'size': stat.size,
+      'mtime': stat.mtime
     })
   }
   callback({

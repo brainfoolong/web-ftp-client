@@ -18,7 +18,6 @@
     $tr.find('.server').text(entry.server)
     $tr.find('.server-path').text(entry.serverPath)
     $tr.find('.local-path').text(entry.localPath)
-    $tr.find('.local-path').text(entry.localPath)
     $tr.find('.size').text(gl.humanFilesize(entry.size))
     if (updateTable) {
       $table.trigger('update')
@@ -113,20 +112,21 @@
       }
       if ($entry && $entry.length) {
         const $browser = $('.template-serverbrowser')
-        if (message.action === 'transfer-end') {
-          $tpl.find('.tab-container.status-' + message.message.to).find('tbody').append($entry).trigger('update', [true])
-          updateEntryCounter()
-          $browser.trigger('reloadLocalDirectory', [message.message])
-        }
         if (message.action === 'transfer-start') {
           // add this entry to the transfering table
           $tpl.find('.tab-container.status-transfering').find('tbody').prepend($entry)
           $transfered.attr('data-sortValue', 0)
           $entry.closest('table').trigger('update', [true])
-          $browser.trigger('reloadLocalDirectory', [message.message])
+          $browser.trigger('reloadLocalDirectory', [message.message.localDirectory])
+          $browser.trigger('reloadServerDirectory', [message.message.serverDirectory])
           updateEntryCounter()
         }
-        if (message.action === 'transfer-progress' || message.action === 'transfer-end' || message.action === 'transfer-stopped') {
+        if (message.action === 'transfer-status-update') {
+          $tpl.find('.tab-container.status-' + message.message.status).find('tbody').append($entry).trigger('update', [true])
+          updateEntryCounter()
+          $browser.trigger('reloadLocalDirectory', [message.message])
+        }
+        if (message.action === 'transfer-progress' || message.action === 'transfer-status-update') {
           let percent = -1
           if (message.action === 'transfer-progress') {
             percent = 100 / message.message.filesize * message.message.transfered

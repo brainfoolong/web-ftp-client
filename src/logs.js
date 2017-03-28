@@ -51,7 +51,11 @@ logs.log = function (server, message, params, type) {
  * @param {Error} err
  */
 logs.logError = function (server, err) {
-  logs.log(server, err.message, null, 'error')
+  let msg = err.message
+  if (require('./config.js').debug) {
+    msg += ' | STACK: ' + err.stack
+  }
+  logs.log(server, msg, null, 'error')
 }
 
 /**

@@ -8,7 +8,8 @@ const fs = require('fs')
  */
 let config = {
   'host': null,
-  'port': 4340
+  'port': 4340,
+  'debug': false
 }
 
 // load config.js if exist

@@ -18,7 +18,7 @@ function Server (id) {
    * @return object
    */
   this.getServerData = function () {
-    return db.get('servers').get(id).cloneDeep().value()
+    return db.get('servers').get(this.id).cloneDeep().value()
   }
 
   /**
@@ -26,7 +26,7 @@ function Server (id) {
    * @param {object} data
    */
   this.setServerData = function (data) {
-    db.get('servers').set(id, data).write()
+    db.get('servers').set(this.id, data).write()
   }
 
   /**

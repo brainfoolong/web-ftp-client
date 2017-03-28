@@ -22,14 +22,14 @@
     $table.removeClass('boilerplate')
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
-      const mtime = new Date(file.attrs.mtime)
+      const mtime = new Date(file.mtime)
       const $tr = $table.find('tbody .boilerplate').clone()
       $tr.removeClass('boilerplate')
-      let icon = (file.directory ? 'directory' : 'file')
-      $tr.find('.name').attr('data-sortValue', (file.directory ? 'a' : 'b') + file.filename)
+      let icon = (file.isDirectory ? 'directory' : 'file')
+      $tr.find('.name').attr('data-sortValue', (file.isDirectory ? 'a' : 'b') + file.filename)
       $tr.find('.name .icon').addClass('icon-' + icon)
       $tr.find('.name .text').text(file.filename)
-      $tr.find('.size').text(gl.humanFilesize(file.attrs.size))
+      $tr.find('.size').text(gl.humanFilesize(file.size))
       $tr.find('.mtime').text(mtime.toLocaleString()).attr('data-sortValue', mtime.getTime())
       $tbody.append($tr)
       $tr.data('file', file)
@@ -126,29 +126,32 @@
 
   // expose those function to be used from another tpl
   $tpl.on('reloadServerDirectory', function (ev, data) {
-    loadServerDirectory($serverDirectoryInput.val())
+    // only reload if current directory is the same as the passed one
+    if (data && data === $serverDirectoryInput.val()) {
+      loadServerDirectory($serverDirectoryInput.val())
+    }
   })
   $tpl.on('reloadLocalDirectory', function (ev, data) {
     // only reload if current directory is the same as the passed one
-    if (data && data.localDirectory === $localDirectoryInput.val()) {
+    if (data && data === $localDirectoryInput.val()) {
       loadLocalDirectory($localDirectoryInput.val())
     }
   })
 
   $contextmenu.on('click', '.download, .download-queue, .upload, .upload-queue', function (ev) {
-    const $selectedFiles = $server.find('tr.active')
+    const $selectedFiles = $tpl.find('.' + $(this).closest('.contextmenu').attr('data-id')).find('tr.active')
     let files = []
     $selectedFiles.each(function () {
       files.push($(this).data('file'))
     })
     gl.socket.send('addToTransferQueue', {
-      'localPath': $localDirectoryInput.val(),
-      'serverPath': $serverDirectoryInput.val(),
+      'localDirectory': $localDirectoryInput.val(),
+      'serverDirectory': $serverDirectoryInput.val(),
       'files': files,
-      'mode': $(this).attr("data-mode"),
+      'mode': $(this).attr('data-mode'),
       'server': tabParams.server,
       'recursive': true,
-      'forceTransfer': $(this).hasClass('download')
+      'forceTransfer': $(this).attr('data-forceTransfer') === '1'
     })
   })
 

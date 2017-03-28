@@ -114,6 +114,7 @@ html {
         }
         .message {
             display: inline-block;
+            white-space: pre-line;
         }
         .server {
             display: none;

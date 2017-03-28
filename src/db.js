@@ -21,7 +21,7 @@ db._defaults = {
   'users': {},
   'logs': {},
   'splitboxtabs': {},
-  'transfers': {'entries': {}, 'settings': {'mode': 'replace-always'}}
+  'queue': {'entries': {}, 'settings': {'mode': 'replace-always'}}
 }
 
 /**
@@ -29,7 +29,7 @@ db._defaults = {
  * @type {Array}
  * @private
  */
-db._inMemory = ['transfers', 'logs']
+db._inMemory = ['queue', 'logs']
 
 /**
  * The instances

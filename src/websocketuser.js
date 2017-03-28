@@ -15,8 +15,8 @@ function WebSocketUser (socket) {
   this.socket = socket
   /** @type {object} */
   this.bulkList = {}
-  /** @type {number} */
-  this.bulkTimeout = null
+  /** @type {object} */
+  this.bulkTimeouts = {}
   /**
    * The current stored userdata
    * Updated with each websocket incoming message
@@ -61,13 +61,13 @@ function WebSocketUser (socket) {
    * @param {object=} message
    */
   this.bulkSend = function (action, message) {
+    const time = new Date().getTime()
     if (typeof this.bulkList[action] === 'undefined') {
-      this.bulkList[action] = {'lastSent': 0, 'collection': []}
+      this.bulkList[action] = {'lastSent': time, 'collection': []}
     }
     const bulkColl = this.bulkList[action]
     bulkColl.collection.push(message)
 
-    const time = new Date().getTime()
     const send = function () {
       bulkColl.lastSent = time
       const arr = bulkColl.collection
@@ -80,8 +80,8 @@ function WebSocketUser (socket) {
       send()
     } else {
       // timeout for the next send
-      clearTimeout(this.bulkTimeout)
-      this.bulkTimeout = setTimeout(send, wait)
+      if (this.bulkTimeouts[action]) clearTimeout(this.bulkTimeouts[action])
+      this.bulkTimeouts[action] = setTimeout(send, wait)
     }
   }
 

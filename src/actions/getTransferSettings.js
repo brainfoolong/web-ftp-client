@@ -17,7 +17,7 @@ action.requireUser = true
  * @param {function} callback
  */
 action.execute = function (user, message, callback) {
-  callback(db.get('transfers').get('settings').value())
+  callback(db.get('queue').get('settings').value())
 }
 
 module.exports = action

@@ -1,6 +1,6 @@
 'use strict'
 
-const transfers = require('./../transfers')
+const queue = require('./../queue')
 
 const action = {}
 
@@ -17,10 +17,10 @@ action.requireUser = true
  * @param {function} callback
  */
 action.execute = function (user, message, callback) {
-  callback(transfers.getEntries())
+  callback(queue.getEntries())
   // add the user to the logs listeners
-  // will receive messages when something in the transfers changes
-  transfers.listeners.push(user)
+  // will receive messages when something in the queue changes
+  queue.listeners.push(user)
 }
 
 module.exports = action

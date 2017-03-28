@@ -32,6 +32,24 @@ fstools.slugifyPath = function (fullpath) {
 }
 
 /**
+ * Make directory recursive if parents not exist
+ * @param {string} directory
+ * @param {*} mode
+ * @param {function} callback
+ */
+fstools.mkdirRecursive = function (directory, mode, callback) {
+  const parent = path.dirname(directory)
+  if (parent === directory) {
+    return
+  }
+  if (!fs.existsSync(parent)) {
+    fstools.mkdirRecursive(parent, mode, callback)
+  } else {
+    fs.mkdir(directory, mode, callback)
+  }
+}
+
+/**
  * Delete directories and files recursive
  * Use with caution
  * @param {string} path

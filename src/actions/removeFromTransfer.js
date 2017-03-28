@@ -1,6 +1,6 @@
 'use strict'
 
-const transfers = require('./../transfers')
+const queue = require('./../queue')
 const FtpServer = require('./../ftpServer')
 
 const action = {}
@@ -18,8 +18,8 @@ action.requireUser = true
  * @param {function} callback
  */
 action.execute = function (user, message, callback) {
-  let entries = transfers.getEntries()
-  // stop transfers for each ftp server that currently processing this entries
+  let entries = queue.getEntries()
+  // stop queue for each ftp server that currently processing this entries
   if (message.progressEntries) {
     let servers = {}
     for (let i = 0; i < message.progressEntries.length; i++) {
@@ -35,9 +35,18 @@ action.execute = function (user, message, callback) {
     }
   }
   for (let i = 0; i < message.entries.length; i++) {
+    // is entry currently in transfering state, stop transfers from this server
+    let entry = entries[message.entries[i]]
+    if (entry.status === 'transfering') {
+      FtpServer.get(entry.serverId, function (ftpServer) {
+        if (ftpServer) {
+          ftpServer.stopTransfers()
+        }
+      })
+    }
     delete entries[message.entries[i]]
   }
-  transfers.saveEntries(entries)
+  queue.saveEntries(entries)
   callback()
 }
 

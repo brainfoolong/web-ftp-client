@@ -17,10 +17,10 @@ action.requireUser = true
  * @param {function} callback
  */
 action.execute = function (user, message, callback) {
-  // stop transfers for each server
+  // stop queue for each server
   for (let i in FtpServer.instances) {
     FtpServer.instances[i].stopTransfers()
-    FtpServer.instances[i].server.log('log.server.transfers.stopped')
+    FtpServer.instances[i].server.log('log.server.queue.stopped')
   }
 }
 
