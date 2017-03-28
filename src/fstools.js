@@ -41,7 +41,7 @@ fstools.deleteRecursive = function (directory, callbackFile) {
   if (fs.existsSync(directory)) {
     fs.readdirSync(directory).forEach(function (file) {
       const curPath = path.join(directory, file)
-      if (fs.lstatSync(curPath).isDirectory()) {
+      if (fs.statSync(curPath).isDirectory()) {
         fstools.deleteRecursive(curPath)
       } else {
         fs.unlinkSync(curPath)

@@ -54,8 +54,10 @@ gl.lang.replaceInHtml = function (el) {
   elements.removeAttr('data-translate')
   elements = el.find('[data-translate-property]')
   elements.each(function () {
-    const s = $(this).attr('data-translate-property').split(',')
-    $(this).attr(s[0], get(s[1]))
+    let s = $(this).attr('data-translate-property').split(',')
+    while (s.length >= 2) {
+      $(this).attr(s.shift(), get(s.shift()))
+    }
   })
   elements.removeAttr('data-translate-property')
 }

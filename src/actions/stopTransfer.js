@@ -20,8 +20,8 @@ action.requireUser = true
 action.execute = function (user, message, callback) {
   // stop queue for each server
   for (let i in FtpServer.instances) {
-    FtpServer.instances[i].stopTransfers()
     FtpServer.instances[i].server.log('log.server.queue.stopped')
+    FtpServer.instances[i].stopTransfers()
   }
 }
 

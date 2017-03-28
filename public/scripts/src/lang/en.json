@@ -10,8 +10,8 @@
   "log.ftpserver.readdir": "Read directory list of {directory}",
   "log.ftpserver.ready": "Server connection successfull",
   "log.ftpserver.sftpready": "SSH connection successfull",
-  "log.local.file.deleted" : "Local file deleted {file}",
-  "log.server.file.deleted" : "Server file deleted {file}",
+  "log.local.file.deleted": "Local file deleted {file}",
+  "log.server.file.deleted": "Server file deleted {file}",
   "log.server.transfers.stopped": "All transfers stopped",
   "login": "Login",
   "login.failed": "Login failed",
@@ -42,7 +42,8 @@
   "socket.disconnect": "Socket closed. Retry in 5 seconds...",
   "transfer.error": "Error",
   "transfer.mode": "Action when destination file exists",
-  "transfer.mode.rename": "Rename transfered file (Prepend a number to filename)",
+  "transfer.mode.rename": "Rename transfered file (Prepend a random string to filename)",
+  "transfer.mode.never": "Never replace",
   "transfer.mode.replace-always": "Replace always",
   "transfer.mode.replace-newer": "Replace when newer",
   "transfer.mode.replace-newer-or-sizediff": "Replace when newer or size is different",
@@ -57,5 +58,9 @@
   "modal.confirm.header": "Confirmation",
   "modal.confirm.accept": "Accept",
   "modal.confirm.cancel": "Cancel",
-  "confirm.delete.files": "Are you sure? This cannot be undone. It will delete all files recursively, so, be careful"
+  "confirm.delete.files": "Are you sure? This cannot be undone. It will delete all files recursively, so, be careful",
+  "log.server.queue.stopped": "Transfers stopped",
+  "log.transfer.file.exist": "Skip file because it already exist: {file}",
+  "filtermask" : "Filter",
+  "filtermask.tooltip" : "You can enter a filemask to download/upload only the given files. For example: *.zip -> will just filter only zip files, use spaces to use multiple filemasks"
 }

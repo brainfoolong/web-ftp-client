@@ -7,6 +7,7 @@
       'type': 'select',
       'label': 'transfer.mode',
       'values': {
+        'never': 'transfer.mode.never',
         'replace-always': 'transfer.mode.replace-always',
         'replace-newer': 'transfer.mode.replace-newer',
         'replace-sizediff': 'transfer.mode.replace-sizediff',

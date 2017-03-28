@@ -6,6 +6,7 @@ const path = require('path')
 const fs = require('fs')
 const mkdirRecursive = require('mkdir-recursive')
 const db = require(path.join(__dirname, 'db'))
+const hash = require(path.join(__dirname, 'hash'))
 const fstools = require(path.join(__dirname, 'fstools'))
 const queue = require(path.join(__dirname, 'queue'))
 const Server = require(path.join(__dirname, 'server'))
@@ -215,16 +216,17 @@ function FtpServer (id) {
         } else if ((mode === 'replace-sizediff' || mode === 'replace-newer-or-sizediff') && destStat.size !== srcStat.size) {
           skip = false
         } else if (mode === 'rename') {
-          let renameCount = 0
-          let newPath = queueEntry.localPath
-          while (fs.existsSync(newPath)) {
-            newPath = path.join(path.dirname(queueEntry.localPath), renameCount + '_' + path.basename(queueEntry.localPath))
-            renameCount++
+          if (queueEntry.mode === 'download') {
+            useLocalPath = path.join(path.dirname(queueEntry.localPath), hash.random(6) + '_' + path.basename(queueEntry.localPath))
           }
-          useLocalPath = newPath
+          if (queueEntry.mode === 'upload') {
+            useServerPath = path.join(path.dirname(queueEntry.serverPath), hash.random(6) + '_' + path.basename(queueEntry.serverPath))
+          }
+          skip = false
         }
         // skip if file not need to be transfered
         if (skip) {
+          self.server.log('log.transfer.file.exist', {'file': useLocalPath})
           end()
           return
         }
@@ -520,7 +522,7 @@ function FtpServer (id) {
     self.server.log('log.ftpserver.disconnect')
     delete FtpServer.instances[self.id]
     if (this.ftpClient) {
-      self.ftpClient.end()
+      self.ftpClient.destroy()
     }
     if (this.sshClient) {
       self.sshClient.end()

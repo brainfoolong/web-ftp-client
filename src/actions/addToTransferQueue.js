@@ -22,6 +22,11 @@ action.requireUser = true
  * @param {function} callback
  */
 action.execute = function (user, message, callback) {
+  let filterRegex = null
+  if (message.filter) {
+    filterRegex = new RegExp(message.filter.replace(/\*/g, '.*?').replace(/ /g, '|'), 'i')
+  }
+
   /**
    * Add files to queue
    * @param {FtpServer} ftpServer
@@ -80,17 +85,20 @@ action.execute = function (user, message, callback) {
           }, 150)
         }
       } else {
-        entries.push(new queue.QueueEntry(
-          db.getNextId(),
-          message.mode,
-          message.server,
-          localPath,
-          serverPath,
-          file.isDirectory,
-          'queue',
-          file.size,
-          0
-        ))
+        // if filter and match path
+        if (!filterRegex || file.path.match(filterRegex)) {
+          entries.push(new queue.QueueEntry(
+            db.getNextId(),
+            message.mode,
+            message.server,
+            localPath,
+            serverPath,
+            file.isDirectory,
+            'queue',
+            file.size,
+            0
+          ))
+        }
         nextFile()
       }
     }

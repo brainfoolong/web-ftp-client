@@ -149,11 +149,17 @@
   })
 
   $contextmenu.on('click', '.download, .download-queue, .upload, .upload-queue', function (ev) {
-    const $selectedFiles = $tpl.find('.' + $(this).closest('.contextmenu').attr('data-id')).find('tr.active')
+    const $currentCm = $(this).closest('.contextmenu')
+    const $selectedFiles = $tpl.find('.' + $currentCm.attr('data-id')).find('tr.active')
     let files = []
     $selectedFiles.each(function () {
       files.push($(this).data('file'))
     })
+    let filter = null
+    if ($currentCm.find('.filter .checkbox').prop('checked')) {
+      filter = $currentCm.find('.filter input.filtermask').val().trim()
+    }
+
     gl.socket.send('addToTransferQueue', {
       'localDirectory': $localDirectoryInput.val(),
       'serverDirectory': $serverDirectoryInput.val(),
@@ -161,7 +167,8 @@
       'mode': $(this).attr('data-mode'),
       'server': tabParams.server,
       'recursive': true,
-      'forceTransfer': $(this).attr('data-forceTransfer') === '1'
+      'forceTransfer': $(this).attr('data-forceTransfer') === '1',
+      'filter': filter
     })
   }).on('click', '.remove', function (ev) {
     ev.stopPropagation()
@@ -187,6 +194,8 @@
         })
       }
     })
+  }).on('click', '.filter', function (ev) {
+    ev.stopPropagation()
   })
 
   loadServerDirectory(tabParams.serverDirectory || '/')

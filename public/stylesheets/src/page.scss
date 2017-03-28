@@ -333,8 +333,8 @@ textarea:invalid + span:after {
     background: white;
     display: none;
     min-width: 250px;
+    transition: 0.1s;
     > div {
-        border-bottom: 1px solid #e5e5e5;
         padding: 3px;
         cursor: pointer;
         &:hover {
@@ -353,6 +353,7 @@ textarea:invalid + span:after {
 
 .contextmenu.show {
     display: block;
+
 }
 
 .tabs {
