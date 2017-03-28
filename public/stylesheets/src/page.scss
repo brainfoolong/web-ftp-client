@@ -157,7 +157,7 @@ html {
     margin-bottom: 10px;
 }
 
-.form-label small{
+.form-label small {
     padding-left: 10px;
 }
 
@@ -389,12 +389,6 @@ textarea:invalid + span:after {
     }
 }
 
-.transfer {
-    font-size: 90%;
-    height: 300px;
-    overflow-y: auto;
-}
-
 .progress {
     margin: 0;
     .progress-bar-info {
@@ -461,3 +455,23 @@ textarea:invalid + span:after {
     }
 }
 
+.transfer {
+    height: 200px;
+    font-size: 90%;
+    .template-transfer {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        > .header {
+
+        }
+        > .main {
+            height: 100%;
+            overflow-y: auto;
+        }
+        > .footer {
+            background: #f5f5f5;
+            padding: 3px;
+        }
+    }
+}
