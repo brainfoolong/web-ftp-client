@@ -10,6 +10,8 @@
   "log.ftpserver.readdir": "Read directory list of {directory}",
   "log.ftpserver.ready": "Server connection successfull",
   "log.ftpserver.sftpready": "SSH connection successfull",
+  "log.local.file.deleted" : "Local file deleted {file}",
+  "log.server.file.deleted" : "Server file deleted {file}",
   "log.server.transfers.stopped": "All transfers stopped",
   "login": "Login",
   "login.failed": "Login failed",
@@ -51,5 +53,9 @@
   "transfer.transfering": "Transfering now",
   "usermanager": "Usermanager",
   "username": "Username",
-  "yes": "Yes"
+  "yes": "Yes",
+  "modal.confirm.header": "Confirmation",
+  "modal.confirm.accept": "Accept",
+  "modal.confirm.cancel": "Cancel",
+  "confirm.delete.files": "Are you sure? This cannot be undone. It will delete all files recursively, so, be careful"
 }

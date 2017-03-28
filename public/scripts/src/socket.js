@@ -112,7 +112,7 @@ gl.socket.send = function (action, message, callback) {
       if (receivedMessage.error.stack) {
         message = '<strong>Server Error</strong>\n' + receivedMessage.error.stack
       }
-      gl.note(message, 'danger', 20000)
+      gl.note(message, 'danger', -1)
       gl.socket.callbacks = []
       return
     }

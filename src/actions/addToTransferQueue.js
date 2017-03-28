@@ -74,6 +74,7 @@ action.execute = function (user, message, callback) {
                   'isDirectory': stat.isDirectory()
                 })
               }
+              nextFile()
               addFiles(ftpServer, fileObjects)
             }
           }, 150)

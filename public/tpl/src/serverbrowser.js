@@ -124,17 +124,27 @@
     }
   })
 
-  // expose those function to be used from another tpl
-  $tpl.on('reloadServerDirectory', function (ev, data) {
-    // only reload if current directory is the same as the passed one
-    if (data && data === $serverDirectoryInput.val()) {
-      loadServerDirectory($serverDirectoryInput.val())
+  // bind to listen for some events
+  gl.socket.bind(function (message) {
+    let func = null
+    let currentDir = null
+    let update = false
+    if (message.action === 'server-directory-update') {
+      func = loadServerDirectory
+      currentDir = $serverDirectoryInput.val()
     }
-  })
-  $tpl.on('reloadLocalDirectory', function (ev, data) {
-    // only reload if current directory is the same as the passed one
-    if (data && data === $localDirectoryInput.val()) {
-      loadLocalDirectory($localDirectoryInput.val())
+    if (message.action === 'local-directory-update') {
+      func = loadLocalDirectory
+      currentDir = $localDirectoryInput.val()
+    }
+    if (func) {
+      for (let i = 0; i < message.message.messages.length; i++) {
+        if (message.message.messages[i].directory === currentDir) {
+          update = true
+          break
+        }
+      }
+      if (update) func(currentDir)
     }
   })
 
@@ -152,6 +162,30 @@
       'server': tabParams.server,
       'recursive': true,
       'forceTransfer': $(this).attr('data-forceTransfer') === '1'
+    })
+  }).on('click', '.remove', function (ev) {
+    ev.stopPropagation()
+    const $selectedFiles = $tpl.find('.' + $(this).closest('.contextmenu').attr('data-id')).find('tr.active')
+    let files = []
+    $selectedFiles.each(function () {
+      files.push($(this).data('file'))
+    })
+    const sendObj = {
+      'mode': $(this).closest('.contextmenu').attr('data-id'),
+      'files': files,
+      'server': tabParams.server
+    }
+    gl.modalConfirm(gl.t('confirm.delete.files'), function (result) {
+      if (result === true) {
+        gl.socket.send('removeFiles', sendObj, function () {
+          if (sendObj.mode === 'local') {
+            loadLocalDirectory($localDirectoryInput.val())
+          }
+          if (sendObj.mode === 'server') {
+            loadServerDirectory($serverDirectoryInput.val())
+          }
+        })
+      }
     })
   })
 

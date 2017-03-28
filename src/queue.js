@@ -112,7 +112,7 @@ queue.getEntry = function (id) {
 
 /**
  * Get all queue
- * @returns {object}
+ * @returns {object<string, queue.QueueEntry>}
  */
 queue.getEntries = function () {
   let entries = db.get('queue').get('entries').cloneDeep().value()
@@ -207,16 +207,6 @@ queue.transferNext = function (downloadStarted, queueDone) {
     queue.saveEntry(nextEntry)
     FtpServer.get(nextEntry.serverId, function (ftpServer) {
       if (ftpServer) {
-        // create directory of not yet exist
-        let directory = path.dirname(nextEntry.localPath)
-        if (!fs.existsSync(directory)) {
-          fs.mkdirSync(directory, {'mode': fsttools.defaultMask})
-        }
-        queue.sendToListeners('transfer-start', {
-          'id': nextEntry.id,
-          'localDirectory': path.dirname(nextEntry.localPath),
-          'serverDirectory': path.dirname(nextEntry.serverPath)
-        })
         if (downloadStarted) downloadStarted()
         ftpServer.transferQueueEntry(nextEntry, function () {
           progress()

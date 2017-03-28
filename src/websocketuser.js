@@ -74,7 +74,7 @@ function WebSocketUser (socket) {
       bulkColl.collection = []
       self.send(action, {'bulk': true, 'messages': arr})
     }
-    const wait = (bulkColl.lastSent + 500) - time
+    const wait = (bulkColl.lastSent + 1000) - time
     // if wait time is over, send bulk
     if (wait <= 0) {
       send()
@@ -144,8 +144,30 @@ function WebSocketUser (socket) {
 
 /**
  * All user instances
- * @type []
+ * @type WebSocketUser[]
  */
 WebSocketUser.instances = []
+
+/**
+ * Bulk send a message to all users
+ * @param {string} action
+ * @param {*} message
+ */
+WebSocketUser.bulkSendToAll = function (action, message) {
+  for (let i = 0; i < WebSocketUser.instances.length; i++) {
+    WebSocketUser.instances[i].bulkSend(action, message)
+  }
+}
+
+/**
+ * Send a message to all users
+ * @param {string} action
+ * @param {*} message
+ */
+WebSocketUser.sendToAll = function (action, message) {
+  for (let i = 0; i < WebSocketUser.instances.length; i++) {
+    WebSocketUser.instances[i].send(action, message)
+  }
+}
 
 module.exports = WebSocketUser

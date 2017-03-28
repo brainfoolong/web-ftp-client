@@ -8,7 +8,6 @@ const logs = require('./logs')
  * @param {string} id
  */
 function Server (id) {
-  Server.instances[id] = this
 
   /** @type {string} */
   this.id = id
@@ -45,6 +44,7 @@ function Server (id) {
   this.logError = function (err) {
     logs.logError(this.id, err)
   }
+
 }
 
 /**
@@ -56,7 +56,9 @@ Server.get = function (id) {
   if (typeof Server.instances[id] !== 'undefined') {
     return Server.instances[id]
   }
-  return new Server(id)
+  const server = new Server(id)
+  Server.instances[id] = server
+  return server
 }
 
 /** @type {object<string, Server>} */

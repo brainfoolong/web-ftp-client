@@ -35,6 +35,73 @@ gl.note = function (message, type, delay) {
 }
 
 /**
+ * Show modal window
+ * @param {string|jQuery|null} header
+ * @param {string|jQuery|null} body
+ * @param {string|jQuery|null} footer
+ * @param {function} closeCallback
+ */
+gl.modal = function (header, body, footer, closeCallback) {
+  gl.modalClose()
+  gl.tpl.load('modal', function ($tpl) {
+    const $header = $tpl.find('.modal-own-header')
+    const $body = $tpl.find('.modal-own-body')
+    const $footer = $tpl.find('.modal-own-footer')
+    if (header === null) {
+      $header.remove()
+    } else {
+      $header.html(header)
+    }
+    if (body === null) {
+      $body.remove()
+    } else {
+      $body.html(body)
+    }
+    if (footer === null) {
+      $footer.remove()
+    } else {
+      $footer.html(footer)
+    }
+    $('body').append($tpl)
+    $tpl.on('close', function () {
+      if (closeCallback) closeCallback()
+      $(this).remove()
+    })
+  })
+}
+
+/**
+ * Display a modal that the user can confirm or decline
+ * @param {string|jQuery} body
+ * @param {function} callback
+ */
+gl.modalConfirm = function (body, callback) {
+  const $footer = $('<div>')
+  $footer
+    .append('<span class="btn btn-info accept" data-translate="modal.confirm.accept"></span>')
+    .append('<span class="btn btn-primary cancel" data-translate="modal.confirm.cancel"></span>')
+  gl.lang.replaceInHtml($footer)
+  $footer.find('.accept').on('click', function () {
+    gl.modalClose()
+    callback(true)
+  })
+  $footer.find('.cancel').on('click', function () {
+    gl.modalClose()
+    callback(false)
+  })
+  gl.modal(gl.t('modal.confirm.header'), body, $footer, function () {
+    callback(false)
+  })
+}
+
+/**
+ * Close all modal windows
+ */
+gl.modalClose = function () {
+  $('.modal-own-close').trigger('click')
+}
+
+/**
  * Get depth object value, write like foo[bar][etc]
  * @param {object} object
  * @param {string} key
@@ -165,8 +232,9 @@ $(function () {
 
   // close contextmenu after click somewhere in the page
   // if you want to prevent this, use preventPropagation and to upper event
-  $(document).on('click', function (ev) {
+  $(document).on('click', function () {
     gl.hideContextmenu()
+    gl.modalClose()
     $('tr.active').removeClass('active')
   })
 
@@ -186,8 +254,7 @@ $(function () {
     }
     // esc key - close and deselect everything
     if (ev.keyCode === 27) {
-      gl.hideContextmenu()
-      $('tr.active').removeClass('active')
+      $(document).trigger('click')
     }
   })
 

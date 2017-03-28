@@ -8,6 +8,8 @@ const fs = require('fs')
 const fstools = require('./fstools')
 const queue = require('./queue')
 const Server = require('./server')
+const mkdirRecursive = require('mkdir-recursive')
+const WebSocketUser = require('./websocketuser')
 
 /**
  * FTP handler for a server
@@ -15,7 +17,6 @@ const Server = require('./server')
  */
 function FtpServer (id) {
   const self = this
-  FtpServer.instances[id] = this
 
   /** @type {string} */
   this.id = id
@@ -202,58 +203,32 @@ function FtpServer (id) {
       const destStat = queueEntry.mode === 'download' ? localStat : serverStat
       const srcStat = queueEntry.mode !== 'download' ? localStat : serverStat
 
-      if (queueEntry.isDirectory) {
-        // if directory not exist create it
-        if (!destStat) {
-          if (queueEntry.mode === 'download') {
-            fstools.mkdirRecursive(useLocalPath, fstools.defaultMask, function (err) {
-              if (err) {
-                error(err)
-                return
-              }
-              end()
-            })
+      // determine what we should do with existing files
+      if (destStat) {
+        let skip = true
+        let mode = transferSettings.mode
+        if (mode === 'replace-always') {
+          skip = false
+        } else if ((mode === 'replace-newer' || mode === 'replace-newer-or-sizediff') && self.getDateOfTime(destStat.mtime) < self.getDateOfTime(srcStat.mtime)) {
+          skip = false
+        } else if ((mode === 'replace-sizediff' || mode === 'replace-newer-or-sizediff') && destStat.size !== srcStat.size) {
+          skip = false
+        } else if (mode === 'rename') {
+          let renameCount = 0
+          let newPath = queueEntry.localPath
+          while (fs.existsSync(newPath)) {
+            newPath = path.join(path.dirname(queueEntry.localPath), renameCount + '_' + path.basename(queueEntry.localPath))
+            renameCount++
           }
-          if (queueEntry.mode === 'upload') {
-            self.mkdirRecursive(useServerPath, function (err) {
-              if (err) {
-                error(err)
-                return
-              }
-              end()
-            })
-          }
-        } else {
+          useLocalPath = newPath
+        }
+        // skip if file not need to be transfered
+        if (skip) {
           end()
+          return
         }
-      } else {
-        // determine what we should do with existing files
-        if (destStat) {
-          let skip = true
-          let mode = transferSettings.mode
-          if (mode === 'replace-always') {
-            skip = false
-          } else if ((mode === 'replace-newer' || mode === 'replace-newer-or-sizediff') && self.getDateOfTime(destStat.mtime) < self.getDateOfTime(srcStat.mtime)) {
-            skip = false
-          } else if ((mode === 'replace-sizediff' || mode === 'replace-newer-or-sizediff') && destStat.size !== srcStat.size) {
-            skip = false
-          } else if (mode === 'rename') {
-            let renameCount = 0
-            let newPath = queueEntry.localPath
-            while (fs.existsSync(newPath)) {
-              newPath = path.join(path.dirname(queueEntry.localPath), renameCount + '_' + path.basename(queueEntry.localPath))
-              renameCount++
-            }
-            useLocalPath = newPath
-          }
-          // skip if file not need to be transfered
-          if (skip) {
-            end()
-            return
-          }
-        }
-        startTransfer()
       }
+      startTransfer()
     }
 
     const startTransfer = function () {
@@ -268,36 +243,38 @@ function FtpServer (id) {
 
     const directoriesCreated = function () {
       self.stat(useServerPath, function (err, stat) {
-        if (err) {
-          error(err)
-          return
+        if (stat) {
+          serverStat = stat
         }
-        serverStat = stat
         statsReceived()
       })
     }
 
     // check if directories exists in destination
+    // create if not yet exist
     if (queueEntry.mode === 'download') {
       if (!fs.existsSync(localDirectory)) {
-        fstools.mkdirRecursive(localDirectory, fstools.defaultMask, function (err) {
+        mkdirRecursive.mkdir(localDirectory, fstools.defaultMask, function (err) {
           if (err) {
             error(err)
             return
           }
+          WebSocketUser.bulkSendToAll('local-directory-update', {'directory': path.dirname(localDirectory)})
           directoriesCreated()
         })
+      } else {
+        directoriesCreated()
       }
     }
     if (queueEntry.mode === 'upload') {
-      this.stat(serverDirectory, function (err) {
+      this.stat(serverDirectory, function (err, stat) {
         if (err) {
-          console.log('mkdir', err, serverDirectory)
           self.mkdirRecursive(serverDirectory, function (err) {
             if (err) {
               error(err)
               return
             }
+            WebSocketUser.bulkSendToAll('server-directory-update', {'directory': path.dirname(serverDirectory)})
             directoriesCreated()
           })
         } else {
@@ -336,7 +313,7 @@ function FtpServer (id) {
     if (this.sshClient) {
       self.sftp.stat(filePath, function (err, stat) {
         if (err) {
-          callback()
+          callback(err)
           return
         }
         callback(null, {
@@ -366,7 +343,9 @@ function FtpServer (id) {
       }
       this.stat(parent, function (err) {
         if (err) {
-          self.mkdirRecursive(parent, callback)
+          self.mkdirRecursive(parent, function () {
+            self.mkdirRecursive(directory, callback)
+          })
           return
         }
         self.mkdir(directory, callback)
@@ -380,11 +359,71 @@ function FtpServer (id) {
    * @param {function} callback
    */
   this.mkdir = function (directory, callback) {
+    // wrapper to hook some events in before firing
+    const _callback = callback
+    callback = function (err) {
+      _callback(err)
+      WebSocketUser.bulkSendToAll('server-directory-update', {'directory': path.dirname(directory)})
+    }
     if (this.ftpClient) {
       this.ftpClient.mkdir(directory, callback)
     }
     if (this.sshClient) {
       this.sftp.mkdir(directory, callback)
+    }
+  }
+
+  /**
+   * Delete a directory
+   * @param {string} directory
+   * @param {boolean} recursive
+   * @param {function} callback
+   */
+  this.rmdir = function (directory, recursive, callback) {
+    if (this.ftpClient) {
+      this.ftpClient.rmdir(directory, recursive, callback)
+    }
+    if (this.sshClient) {
+      if (recursive) {
+        self.readdir(directory, function (files) {
+          // no files in directory, delete directly
+          if (!files.length) {
+            self.sftp.rmdir(directory, callback)
+            return
+          }
+          let filesDeleted = 0
+          let doneCallback = function () {
+            filesDeleted++
+            if (filesDeleted === files.length) {
+              self.sftp.rmdir(directory, callback)
+            }
+          }
+          for (let i = 0; i < files.length; i++) {
+            let file = files[i]
+            if (file.isDirectory) {
+              self.rmdir(file.path, recursive, doneCallback)
+            } else {
+              self.deleteFile(file.path, doneCallback)
+            }
+          }
+        })
+      } else {
+        self.sftp.rmdir(directory, callback)
+      }
+    }
+  }
+
+  /**
+   * Remove a file from the server
+   * @param {string} filepath
+   * @param {function} callback
+   */
+  this.deleteFile = function (filepath, callback) {
+    if (this.ftpClient) {
+      this.ftpClient.delete(filepath, callback)
+    }
+    if (this.sshClient) {
+      this.sftp.unlink(filepath, callback)
     }
   }
 
@@ -395,6 +434,18 @@ function FtpServer (id) {
    * @param {function} callback
    */
   this.download = function (localPath, serverPath, callback) {
+    // wrapper to hook some events in before firing
+    const _callback = callback
+    callback = function (err) {
+      _callback(err)
+      WebSocketUser.bulkSendToAll('local-directory-update', {'directory': path.dirname(localPath)})
+    }
+    // on the begin of the progress also send a update message with some delay
+    // help to frontend to update when the file has been created but not yet finished
+    setTimeout(function () {
+      WebSocketUser.bulkSendToAll('local-directory-update', {'directory': path.dirname(localPath)})
+    }, 1000)
+
     if (this.ftpClient) {
       this.ftpClient.get(serverPath, function (err, rstream) {
         let wstream = fs.createWriteStream(localPath)
@@ -425,6 +476,17 @@ function FtpServer (id) {
    * @param {function} callback
    */
   this.upload = function (localPath, serverPath, callback) {
+    // wrapper to hook some events in before firing
+    const _callback = callback
+    callback = function (err) {
+      _callback(err)
+      WebSocketUser.bulkSendToAll('server-directory-update', {'directory': path.dirname(serverPath)})
+    }
+    // on the begin of the progress also send a update message with some delay
+    // help to frontend to update when the file has been created but not yet finished
+    setTimeout(function () {
+      WebSocketUser.bulkSendToAll('server-directory-update', {'directory': path.dirname(serverPath)})
+    }, 1000)
     if (this.ftpClient) {
       this.ftpClient.put(localPath, serverPath, callback)
     }
@@ -483,11 +545,15 @@ function FtpServer (id) {
  * @param {function} callback
  */
 FtpServer.get = function (id, callback) {
+  if (!id) {
+    throw new Error('Missing id for FtpServer.get')
+  }
   if (typeof FtpServer.instances[id] !== 'undefined') {
     callback(FtpServer.instances[id])
     return
   }
   const server = new FtpServer(id)
+  FtpServer.instances[id] = server
   server.connect(function (status) {
     if (status) {
       callback(server)

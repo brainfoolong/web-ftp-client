@@ -111,20 +111,9 @@
         $transfered = $entry.find('.transfered')
       }
       if ($entry && $entry.length) {
-        const $browser = $('.template-serverbrowser')
-        if (message.action === 'transfer-start') {
-          // add this entry to the transfering table
-          $tpl.find('.tab-container.status-transfering').find('tbody').prepend($entry)
-          $transfered.attr('data-sortValue', 0)
-          $entry.closest('table').trigger('update', [true])
-          $browser.trigger('reloadLocalDirectory', [message.message.localDirectory])
-          $browser.trigger('reloadServerDirectory', [message.message.serverDirectory])
-          updateEntryCounter()
-        }
         if (message.action === 'transfer-status-update') {
           $tpl.find('.tab-container.status-' + message.message.status).find('tbody').append($entry).trigger('update', [true])
           updateEntryCounter()
-          $browser.trigger('reloadLocalDirectory', [message.message])
         }
         if (message.action === 'transfer-progress' || message.action === 'transfer-status-update') {
           let percent = -1
