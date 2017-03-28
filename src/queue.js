@@ -3,8 +3,6 @@
 const path = require('path')
 const db = require(__dirname + '/db')
 const fs = require('fs')
-const Server = require(__dirname + '/server')
-const FtpServer = require(__dirname + '/ftpServer')
 
 /**
  * Queue
@@ -75,12 +73,6 @@ queue.createQueueEntryFromObject = function (o) {
 }
 
 /**
- * Which files are currently transfering
- * @type {object<string, boolean>}
- */
-queue.transfering = {}
-
-/**
  * Save give entry
  * @param {queue.QueueEntry|object} entry
  */
@@ -129,6 +121,7 @@ queue.getEntries = function () {
  * @param {queue.QueueEntry[]} addEntries
  */
 queue.addToQueueBulk = function (serverId, addEntries) {
+  const Server = require(__dirname + '/server')
   const server = Server.get(serverId)
   let entries = queue.getEntries()
   for (let i = 0; i < addEntries.length; i++) {
@@ -204,6 +197,7 @@ queue.transferNext = function (downloadStarted, queueDone) {
     }
     setStatus('transfering')
     queue.saveEntry(nextEntry)
+    const FtpServer = require(__dirname + '/ftpServer')
     FtpServer.get(nextEntry.serverId, function (ftpServer) {
       if (ftpServer) {
         if (downloadStarted) downloadStarted()

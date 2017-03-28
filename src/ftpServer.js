@@ -79,6 +79,7 @@ function FtpServer (id) {
           }
           self.server.log('log.ftpserver.sftpready')
           self.sftp = sftp
+          self.sftp.highWaterMark = 5 * 1024 * 1024
           callback(true)
         })
       }).on('error', function (err) {
@@ -517,7 +518,6 @@ function FtpServer (id) {
    */
   this.disconnect = function () {
     self.server.log('log.ftpserver.disconnect')
-    this.resetQueues()
     delete FtpServer.instances[self.id]
     if (this.ftpClient) {
       self.ftpClient.end()
@@ -525,13 +525,14 @@ function FtpServer (id) {
     if (this.sshClient) {
       self.sshClient.end()
     }
+    this.resetQueues()
   }
 
   /**
    * Reset all transfering queues for this server to queue
    */
   this.resetQueues = function () {
-    let entries = db.get('queue').get('entries').find({'serverId': self.id}).value()
+    let entries = db.get('queue').get('entries').value()
     if (entries) {
       for (let i in entries) {
         entries[i].status = 'queue'
