@@ -23,7 +23,7 @@
     }
     gl.socket.bind(function (message) {
       if (message.action === 'log') {
-        if(message.message.messages){
+        if (message.message.messages) {
           for (let i = 0; i < message.message.messages.length; i++) {
             addMessage(message.message.messages[i])
           }

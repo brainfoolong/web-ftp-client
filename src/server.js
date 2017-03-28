@@ -8,7 +8,6 @@ const logs = require('./logs')
  * @param {string} id
  */
 function Server (id) {
-
   /** @type {string} */
   this.id = id
 
@@ -44,7 +43,6 @@ function Server (id) {
   this.logError = function (err) {
     logs.logError(this.id, err)
   }
-
 }
 
 /**

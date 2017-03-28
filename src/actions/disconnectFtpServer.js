@@ -1,6 +1,5 @@
 'use strict'
 
-const db = require('./../db')
 const FtpServer = require('./../ftpServer')
 
 const action = {}

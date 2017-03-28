@@ -3,7 +3,6 @@
 const path = require('path')
 const db = require('./db')
 const fs = require('fs')
-const fsttools = require('./fstools')
 const Server = require('./Server')
 const FtpServer = require('./FtpServer')
 
@@ -118,7 +117,7 @@ queue.getEntries = function () {
   let entries = db.get('queue').get('entries').cloneDeep().value()
   if (entries) {
     for (let i in entries) {
-      entries[i] = new queue.createQueueEntryFromObject(entries[i])
+      entries[i] = queue.createQueueEntryFromObject(entries[i])
     }
   }
   return entries

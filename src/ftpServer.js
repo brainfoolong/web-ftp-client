@@ -243,7 +243,7 @@ function FtpServer (id) {
 
     const directoriesCreated = function () {
       self.stat(useServerPath, function (err, stat) {
-        if (stat) {
+        if (!err && stat) {
           serverStat = stat
         }
         statsReceived()
@@ -448,6 +448,10 @@ function FtpServer (id) {
 
     if (this.ftpClient) {
       this.ftpClient.get(serverPath, function (err, rstream) {
+        if (err) {
+          callback(err)
+          return
+        }
         let wstream = fs.createWriteStream(localPath)
         wstream.on('end', function () {
           if (callback) callback()

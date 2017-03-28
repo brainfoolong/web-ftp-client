@@ -23,7 +23,6 @@ gl.splitbox.tabAdd = function (tpl, params, label) {
   // check if we already have opened such a tab
   let found = false
   $('.splitbox-tabs.tabs .tab').each(function () {
-
     if ($(this).attr('data-template') === tpl) {
       if (tpl === 'serverbrowser') {
         if ($(this).data('params').server === params.server) {
