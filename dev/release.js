@@ -13,6 +13,7 @@ const pkg = require('./../package')
 const zipFile = path.join(__dirname, 'release-' + pkg.version + '.zip')
 const ignoreFiles = [
   'db/',
+  'docs',
   'public/scripts/src',
   'public/scripts/dist/.gitignore',
   'public/stylesheets/src',
