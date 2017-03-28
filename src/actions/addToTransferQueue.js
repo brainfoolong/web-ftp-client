@@ -2,10 +2,10 @@
 
 const path = require('path')
 const fs = require('fs')
-const queue = require(__dirname + '/../queue')
-const FtpServer = require(__dirname + '/../ftpServer')
-const db = require(__dirname + '/../db')
-const fstools = require(__dirname + '/../fstools')
+const queue = require(path.join(__dirname, '../queue'))
+const FtpServer = require(path.join(__dirname, '../ftpServer'))
+const db = require(path.join(__dirname, '../db'))
+const fstools = require(path.join(__dirname, '../fstools'))
 
 const action = {}
 
@@ -102,7 +102,7 @@ action.execute = function (user, message, callback) {
       // start transfer if requested
       if (message.forceTransfer) {
         setTimeout(function () {
-          require(__dirname + '/startTransfer').execute(user, message, callback)
+          require(path.join(__dirname, 'startTransfer')).execute(user, message, callback)
         }, 3000)
       }
     }

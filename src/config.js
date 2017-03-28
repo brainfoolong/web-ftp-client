@@ -1,5 +1,6 @@
 'use strict'
 
+const path = require('path')
 const fs = require('fs')
 
 /**
@@ -13,8 +14,8 @@ let config = {
 }
 
 // load config.js if exist
-if (fs.existsSync(__dirname + '/../config.js')) {
-  config = require(__dirname + '/../config.js')
+if (fs.existsSync(path.join(__dirname, '../config.js'))) {
+  config = require(path.join(__dirname, '../config.js'))
 }
 
 module.exports = config

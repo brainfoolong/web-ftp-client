@@ -2,28 +2,31 @@
 /**
  * Main script
  */
+
+const path = require('path')
+const mode = process.argv[2]
+
 Error.stackTraceLimit = Infinity
 
-let mode = process.argv[2]
 if (!mode) {
   process.stdout.write('Usage: node main.js start|update-core')
   process.exit(0)
 }
 
 if (mode === 'start') {
-  require(__dirname + '/routes')
-  require(__dirname + '/websocketmgr')
-  require(__dirname + '/config')
-  require(__dirname + '/core')
+  require(path.join(__dirname, 'routes'))
+  require(path.join(__dirname, 'websocketmgr'))
+  require(path.join(__dirname, 'config'))
+  require(path.join(__dirname, 'core'))
 }
 
 // update core
 if (mode === 'update-core') {
   const request = require('request')
   const fs = require('fs')
-  const fstools = require(__dirname + '/fstools')
+  const fstools = require(path.join(__dirname, 'fstools'))
   const unzip = require('unzip')
-  const dir = __dirname + '..'
+  const dir = path.resolve(__dirname, '..')
   request('https://codeload.github.com/brainfoolong/web-ftp-client/zip/master', function () {
     fs.createReadStream(dir + '/master.zip').pipe(unzip.Parse()).on('entry', function (entry) {
       const fileName = entry.path.split('/').slice(1).join('/')

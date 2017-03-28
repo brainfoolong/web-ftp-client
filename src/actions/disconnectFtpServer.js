@@ -1,6 +1,7 @@
 'use strict'
 
-const FtpServer = require(__dirname + '/../ftpServer')
+const path = require('path')
+const FtpServer = require(path.join(__dirname, '../ftpServer'))
 
 const action = {}
 

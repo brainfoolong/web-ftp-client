@@ -3,13 +3,13 @@
 const FtpClient = require('ftp')
 const SshClient = require('ssh2').Client
 const path = require('path')
-const db = require(__dirname + '/db')
 const fs = require('fs')
-const fstools = require(__dirname + '/fstools')
-const queue = require(__dirname + '/queue')
-const Server = require(__dirname + '/server')
 const mkdirRecursive = require('mkdir-recursive')
-const WebSocketUser = require(__dirname + '/websocketuser')
+const db = require(path.join(__dirname, 'db'))
+const fstools = require(path.join(__dirname, 'fstools'))
+const queue = require(path.join(__dirname, 'queue'))
+const Server = require(path.join(__dirname, 'server'))
+const WebSocketUser = require(path.join(__dirname, 'websocketuser'))
 
 /**
  * FTP handler for a server

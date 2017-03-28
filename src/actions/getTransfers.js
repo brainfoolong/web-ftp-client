@@ -1,6 +1,7 @@
 'use strict'
 
-const queue = require(__dirname + '/../queue')
+const path = require('path')
+const queue = require(path.join(__dirname, '../queue'))
 
 const action = {}
 

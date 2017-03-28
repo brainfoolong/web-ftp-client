@@ -1,8 +1,8 @@
 'use strict'
 
-const Server = require(__dirname + '/../server')
-const fs = require('fs')
 const path = require('path')
+const fs = require('fs')
+const Server = require(path.join(__dirname, '../server'))
 
 const action = {}
 

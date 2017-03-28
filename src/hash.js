@@ -1,6 +1,7 @@
 'use strict'
 
 const crypto = require('crypto')
+const path = require('path')
 
 /**
  * Hash generator
@@ -22,7 +23,7 @@ hash.random = function (length) {
  * @returns {string}
  */
 hash.saltedMd5 = function (str) {
-  const db = require(__dirname + '/db')
+  const db = require(path.join(__dirname, 'db'))
   return crypto.createHash('md5').update(str + '' + db.get('settings').get('salt').value()).digest('hex')
 }
 

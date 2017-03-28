@@ -1,10 +1,9 @@
 'use strict'
-/**
- * Express routes, url handling
- */
+
+const path = require('path')
 const express = require('express')
 const app = express()
-const config = require(__dirname + '/config')
+const config = require(path.join(__dirname, 'config'))
 
 const routes = {
   'file': null
@@ -16,7 +15,7 @@ app.get('/wsport', function (req, res) {
 })
 
 // whole public folder
-app.use(express.static(__dirname + '/../public'))
+app.use(express.static(path.join(__dirname, '../public')))
 
 // create the server
 app.listen(config.port, config.host, function () {

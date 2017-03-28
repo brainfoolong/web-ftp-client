@@ -1,9 +1,10 @@
 'use strict'
 
-const fstools = require(__dirname + '/../fstools')
+const path = require('path')
 const fs = require('fs')
-const Server = require(__dirname + '/../server')
-const FtpServer = require(__dirname + '/../ftpServer')
+const fstools = require(path.join(__dirname, '../fstools'))
+const Server = require(path.join(__dirname, '../server'))
+const FtpServer = require(path.join(__dirname, '../ftpServer'))
 
 const action = {}
 

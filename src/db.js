@@ -1,8 +1,8 @@
 'use strict'
 
-const low = require('lowdb')
-const hash = require(__dirname + '/hash')
 const path = require('path')
+const low = require('lowdb')
+const hash = require(path.join(__dirname, 'hash'))
 
 /**
  * LowDB helper
