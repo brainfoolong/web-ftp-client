@@ -203,7 +203,8 @@ textarea:invalid + span:after {
     /*asdfd*/
 }
 
-.template-servermanager .left {
+.template-servermanager .left,
+.template-usermanager .left {
     flex-direction: column;
     display: flex;
     height: 100%;

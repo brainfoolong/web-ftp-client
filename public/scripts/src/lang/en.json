@@ -85,5 +85,12 @@
   "upload.queue": "Add to upload queue",
   "usermanager": "Usermanager",
   "username": "Username",
-  "yes": "Yes"
+  "yes": "Yes",
+  "user.add": "Add new user",
+  "administrator": "Administrator",
+  "administrator.description": "Only admin can create/edit servers and users",
+  "password.description": "Leave empty if you don't want to change it",
+  "loginhash": "Logintoken",
+  "loginhash.description": "The random token for the login cookie",
+  "administrator.missing" : "There must be at least one administrator"
 }
