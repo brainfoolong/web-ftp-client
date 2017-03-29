@@ -49,11 +49,17 @@ action.execute = function (user, message, callback) {
         serverPath = file.path
         relativePath = serverPath.substr(message.serverDirectory.length)
         localPath = fstools.slugifyPath(path.join(message.localDirectory, relativePath))
+        if (filterRegex && message.flat) {
+          localPath = fstools.slugifyPath(path.join(message.localDirectory, path.basename(serverPath)))
+        }
       }
       if (message.mode === 'upload') {
         localPath = file.path
         relativePath = localPath.substr(message.localDirectory.length)
         serverPath = fstools.slugifyPath(message.serverDirectory + '/' + relativePath.replace(/[\\]/g, '/')).replace(/[\\]/g, '/')
+        if (filterRegex && message.flat) {
+          serverPath = fstools.slugifyPath(path.join(message.serverDirectory, path.basename(localPath)))
+        }
       }
       if (file.isDirectory) {
         if (message.recursive) {

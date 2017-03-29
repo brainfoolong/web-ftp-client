@@ -10,9 +10,17 @@
       'name': {'type': 'text', 'label': 'server.name', 'required': true},
       'host': {'type': 'text', 'label': 'server.host', 'required': true},
       'port': {'type': 'number', 'label': 'server.port', 'default': 21, 'required': true},
+      'protocol': {
+        'type': 'select',
+        'label': 'server.protocol',
+        'values': {'sftp': 'SFTP - SSH File Transfer Protocol', 'ftp': 'FTP - File Transfer Protocol'}
+      },
       'encryption': {
         'type': 'select',
         'label': 'server.encryption',
+        'showIf': function (fields) {
+          return fields.protocol.val() === 'ftp'
+        },
         'values': {
           'none': 'server.encryption.none',
           'both': 'server.encryption.both',
@@ -20,18 +28,25 @@
           'implicit': 'server.encryption.implicit'
         }
       },
-      'protocol': {
-        'type': 'select',
-        'label': 'server.protocol',
-        'values': {'ftp': 'FTP - File Transfer Protocol', 'sftp': 'SFTP - SSH File Transfer Protocol'}
-      },
       'auth': {
         'type': 'select',
         'label': 'server.auth',
         'values': {'normal': 'server.auth.normal', 'keyfile': 'server.auth.keyfile'}
       },
-      'username': {'type': 'text', 'label': 'username'},
-      'password': {'type': 'password', 'label': 'password'}
+      'username': {
+        'type': 'text',
+        'label': 'username',
+        'showIf': function (fields) {
+          return fields.auth.val() === 'normal'
+        }
+      },
+      'password': {
+        'type': 'password',
+        'label': 'password',
+        'showIf': function (fields) {
+          return fields.auth.val() === 'normal'
+        }
+      }
     }
   }
   const loadForm = function (values) {
@@ -80,6 +95,22 @@
     $(this).addClass('active')
     editId = $(this).attr('data-id')
     loadForm(servers[$(this).attr('data-id')])
+  }).on('click', '.tree .glyphicon-remove', function (ev) {
+    ev.stopPropagation()
+    const $e = $(this).closest('.entry')
+    const serverId = $e.attr('data-id')
+    gl.modalConfirm(gl.t('sure'), function (result) {
+      if (result === true) {
+        gl.socket.send('removeServer', {'serverId': serverId}, function () {
+          $e.remove()
+          $('.splitbox-tabs .tab').filter('[data-template=\'serverbrowser\']').each(function () {
+            if ($(this).data('params').server === serverId) {
+              gl.splitbox.tabDelete($(this))
+            }
+          })
+        })
+      }
+    })
   })
   loadForm()
   loadServers()

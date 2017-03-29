@@ -1,8 +1,9 @@
 'use strict'
 
 const path = require('path')
-const db = require(path.join(__dirname, 'db'))
 const fs = require('fs')
+const db = require(path.join(__dirname, 'db'))
+const Server = require(path.join(__dirname, 'server'))
 
 /**
  * Queue
@@ -43,7 +44,8 @@ queue.QueueEntry = function (id, mode, serverId, localPath, serverPath, isDirect
   this.size = size
   /** @type {number} */
   this.priority = priority
-
+  /** @type {string} */
+  this.serverName = Server.get(serverId).getServerData().name
   /**
    * Convert to json
    * @returns {object}
@@ -58,7 +60,8 @@ queue.QueueEntry = function (id, mode, serverId, localPath, serverPath, isDirect
       'isDirectory': this.isDirectory,
       'status': this.status,
       'size': this.size,
-      'priority': this.priority
+      'priority': this.priority,
+      'serverName': this.serverName
     }
   }
 }
@@ -186,7 +189,7 @@ queue.transferNext = function (downloadStarted, queueDone) {
     const progress = function () {
       if (fs.existsSync(nextEntry.localPath)) {
         let stat = fs.statSync(nextEntry.localPath)
-        queue.sendToListeners('transfer-progress', {
+        queue.bulkSendToListeners('transfer-progress', {
           'id': nextEntry.id,
           'filesize': nextEntry.size,
           'transfered': stat.size

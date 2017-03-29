@@ -523,9 +523,11 @@ function FtpServer (id) {
     delete FtpServer.instances[self.id]
     if (this.ftpClient) {
       self.ftpClient.destroy()
+      self.ftpClient = null
     }
     if (this.sshClient) {
       self.sshClient.end()
+      self.sshClient = null
     }
     this.resetQueues()
   }
@@ -537,10 +539,32 @@ function FtpServer (id) {
     let entries = db.get('queue').get('entries').value()
     if (entries) {
       for (let i in entries) {
-        entries[i].status = 'queue'
-        queue.saveEntry(entries[i])
-        queue.sendToListeners('transfer-status-update', {'id': i, 'status': 'queue'})
+        if (entries[i].status === 'transfering' && entries[i].serverId === this.id) {
+          entries[i].status = 'queue'
+          queue.saveEntry(entries[i])
+          queue.sendToListeners('transfer-status-update', {'id': i, 'status': 'queue'})
+        }
       }
+    }
+  }
+
+  /**
+   * Delete all queues from this server
+   */
+  this.deleteQueues = function () {
+    let entries = db.get('queue').get('entries').value()
+    if (entries) {
+      let ids = []
+      for (let i in entries) {
+        if (entries[i].serverId === this.id) {
+          ids.push(entries[i].id)
+          delete entries[i]
+        }
+      }
+      if (ids) {
+        queue.bulkSendToListeners('transfer-removed', ids)
+      }
+      queue.saveEntries(entries)
     }
   }
 }

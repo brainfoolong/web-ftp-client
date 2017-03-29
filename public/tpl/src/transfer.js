@@ -1,6 +1,7 @@
 'use strict';
 (function () {
-  const $tpl = $('.template-transfer').parent()
+  const $tpl = $('.template-transfer')
+  const $footer = $tpl.find('.footer')
   const $contextmenu = $tpl.find('.contextmenu')
 
   const addEntry = function (entry, updateTable) {
@@ -13,9 +14,11 @@
       $tr.removeClass('boilerplate')
       $tbody.append($tr)
     }
+    $tr.data('entry', entry)
     $tr.attr('data-id', entry.id)
     $tr.find('.id').text(entry.id)
-    $tr.find('.server').text(entry.server)
+    $tr.find('.server').text(entry.serverName)
+    $tr.find('.mode').text(gl.t('mode.' + entry.mode))
     $tr.find('.server-path').text(entry.serverPath)
     $tr.find('.local-path').text(entry.localPath)
     $tr.find('.size').text(gl.humanFilesize(entry.size))
@@ -29,7 +32,15 @@
     $tpl.find('table').each(function () {
       let $tabContainer = $(this).closest('.tab-container')
       let $tab = $tpl.find('.tab').filter('[data-id=\'' + $tabContainer.attr('data-id') + '\']')
-      $tab.find('.counter').text('(' + ($(this).find('tbody')[0].children.length - 1) + ')')
+      const $trs = $(this).find('tbody').children().not('.boilerplate')
+      $tab.find('.counter').text('(' + $trs.length + ')')
+      if ($(this).closest('.tab-container').attr('data-id') === 'transfer.queue') {
+        let size = 0
+        $tpl.find('.tab-container').filter('.status-queue, .status-transfering').find('tbody tr').not('.boilerplate').each(function () {
+          size += $(this).data('entry').size
+        })
+        $footer.find('.total-size .number').text(gl.humanFilesize(size))
+      }
     })
   }
 
@@ -82,7 +93,6 @@
     let entries = []
     let progressEntries = []
     $selectedEntries.each(function () {
-      $(this).remove()
       if ($(this).find('.progress').attr('data-sortValue') !== '0') {
         progressEntries.push($(this).attr('data-id'))
       }
@@ -104,27 +114,32 @@
           updateEntryCounter()
         }
       }
-      let $entry = null
-      let $transfered = null
-      if (message.message && typeof message.message.id !== 'undefined') {
-        $entry = $('#transfer-entry-' + message.message.id)
-        $transfered = $entry.find('.transfered')
+      if (message.action === 'transfer-status-update') {
+        const $entry = $('#transfer-entry-' + message.message.id)
+        $tpl.find('.tab-container.status-' + message.message.status).find('tbody').append($entry).trigger('update', [true])
+        updateEntryCounter()
       }
-      if ($entry && $entry.length) {
-        if (message.action === 'transfer-status-update') {
-          $tpl.find('.tab-container.status-' + message.message.status).find('tbody').append($entry).trigger('update', [true])
-          updateEntryCounter()
-        }
-        if (message.action === 'transfer-progress' || message.action === 'transfer-status-update') {
-          let percent = -1
-          if (message.action === 'transfer-progress') {
-            percent = 100 / message.message.filesize * message.message.transfered
+      if (message.action === 'transfer-removed') {
+        const entries = message.message.messages
+        if (entries) {
+          for (let i = 0; i < entries.length; i++) {
+            for (let j = 0; j < entries[i].length; j++) {
+              $('#transfer-entry-' + entries[i][j]).remove()
+            }
           }
-          $transfered.attr('data-sortValue', percent)
-          $transfered.find('.text').text(percent >= 0 ? parseInt(percent) + '%' : '')
-          $transfered.find('.progress-bar-info').css('width', percent >= 0 ? percent + '%' : 0)
-          if (message.action !== 'transfer-progress') {
-            $entry.closest('table').trigger('update', [true])
+        }
+        updateEntryCounter()
+      }
+      if (message.action === 'transfer-progress') {
+        const files = message.message.messages
+        if (files) {
+          for (let i = 0; i < files.length; i++) {
+            const file = files[i]
+            const $transfered = $('#transfer-entry-' + file.id)
+            const percent = 100 / file.filesize * file.transfered
+            $transfered.attr('data-sortValue', percent)
+            $transfered.find('.text').text(parseInt(percent) + '%')
+            $transfered.find('.progress-bar-info').css('width', percent + '%')
           }
         }
       }

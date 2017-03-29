@@ -19,6 +19,7 @@ gl.form = {}
 gl.form.create = function (container, formName, fields, onSubmit, onCancel, values) {
   if (!values) values = {}
   container.html('')
+  let fieldInputs = {}
   const $form = $('<form>').attr('name', formName).attr('onsubmit', 'return false').attr('id', 'form-' + formName)
   for (let fieldName in fields) {
     const field = fields[fieldName]
@@ -76,7 +77,7 @@ gl.form.create = function (container, formName, fields, onSubmit, onCancel, valu
       case 'switch':
         $input = $('<select class="form-control" name="' + fieldName + ':boolean">')
         const fieldValues = ['true', 'false']
-        for (var i = 0; i < fieldValues.length; i++) {
+        for (let i = 0; i < fieldValues.length; i++) {
           const valueKey1 = fieldValues[i]
           $input.append($('<option>').attr('value', valueKey1).text(gl.t(valueKey1 === 'true' ? 'yes' : 'no')))
         }
@@ -97,10 +98,14 @@ gl.form.create = function (container, formName, fields, onSubmit, onCancel, valu
       }
       if (field.attributes) {
         for (let i2 in field.attributes) {
-          $input.attr('data-' + i2, field.attributes[i])
+          $input.attr('data-' + i2, field.attributes[i2])
         }
       }
+      fieldInputs[fieldName] = $input
       $el.find('.form-input').append($input)
+    }
+    if (field.showIf) {
+      $el.addClass('showif').data('showif', field.showIf)
     }
     $form.append($el)
     // if grouped
@@ -136,5 +141,12 @@ gl.form.create = function (container, formName, fields, onSubmit, onCancel, valu
       $(this).next().trigger('click').remove()
     }
   })
+  $form.on('change input', function () {
+    $form.find('.showif').addClass('hidden').each(function () {
+      if ($(this).data('showif')(fieldInputs) === true) {
+        $(this).removeClass('hidden')
+      }
+    })
+  }).trigger('change')
   return $form
 }

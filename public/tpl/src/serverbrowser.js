@@ -162,7 +162,6 @@
         filter = null
       }
     }
-
     gl.socket.send('addToTransferQueue', {
       'localDirectory': $localDirectoryInput.val(),
       'serverDirectory': $serverDirectoryInput.val(),
@@ -171,7 +170,8 @@
       'server': tabParams.server,
       'recursive': true,
       'forceTransfer': $(this).attr('data-forceTransfer') === '1',
-      'filter': filter
+      'filter': filter,
+      'flat': $currentCm.find('.flat .checkbox').prop('checked') ? '1' : null
     })
   }).on('click', '.remove', function (ev) {
     ev.stopPropagation()
@@ -197,7 +197,7 @@
         })
       }
     })
-  }).on('click', '.filter', function (ev) {
+  }).on('click', '.filter, .flat', function (ev) {
     ev.stopPropagation()
   })
 

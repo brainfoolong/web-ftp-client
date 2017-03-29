@@ -20,9 +20,11 @@ action.requireUser = true
  */
 action.execute = function (user, message, callback) {
   let entries = queue.getEntries()
+  let ids = []
   for (let i = 0; i < message.entries.length; i++) {
     // is entry currently in transfering state, stop transfers from this server
     let entry = entries[message.entries[i]]
+    if (!entry) continue
     if (entry.status === 'transfering') {
       FtpServer.get(entry.serverId, function (ftpServer) {
         if (ftpServer) {
@@ -30,10 +32,11 @@ action.execute = function (user, message, callback) {
         }
       })
     }
+    ids.push(entry.id)
     delete entries[message.entries[i]]
   }
   queue.saveEntries(entries)
-  callback()
+  queue.bulkSendToListeners('transfer-removed', ids)
 }
 
 module.exports = action
