@@ -29,7 +29,7 @@ action.execute = function (user, message, callback) {
     if (userData) {
       // set the socket userdata if valid login
       user.userData = userData
-      callback({'id': userData.id, 'loginHash': userData.loginHash})
+      callback(userData)
       return
     }
     // create user as admin if not yet exist
@@ -44,7 +44,7 @@ action.execute = function (user, message, callback) {
       // set the socket userdata with newly created credentials
       user.userData = userData
       db.get('users').set(userData.id, userData).write()
-      callback({'id': userData.id, 'loginHash': userData.loginHash})
+      callback(userData)
     }
   }
   callback(false)

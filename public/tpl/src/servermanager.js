@@ -88,8 +88,10 @@
     editId = null
     loadForm()
   }).on('click', '.server-connect', function () {
-    gl.splitbox.tabLoad(gl.splitbox.tabAdd('serverbrowser', {'server': editId}, servers[editId].name))
-    gl.splitbox.tabSave()
+    if (editId) {
+      gl.splitbox.tabLoad(gl.splitbox.tabAdd('serverbrowser', {'server': editId}, servers[editId].name))
+      gl.splitbox.tabSave()
+    }
   }).on('click', '.tree .entry', function () {
     $tree.find('.entry').removeClass('active')
     $(this).addClass('active')

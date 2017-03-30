@@ -20,7 +20,7 @@ db._defaults = {
   'settings': {'salt': hash.random(64)},
   'users': {},
   'logs': {},
-  'splitboxtabs': {},
+  'splitboxtabs': {'tabs': {}},
   'queue': {'entries': {}, 'settings': {'mode': 'replace-always'}}
 }
 

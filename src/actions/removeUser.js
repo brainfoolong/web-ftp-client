@@ -7,10 +7,10 @@ const WebSocketUser = require(path.join(__dirname, '../websocketuser'))
 const action = {}
 
 /**
- * Require user
+ * Require admin
  * @type {boolean}
  */
-action.requireUser = true
+action.requireAdmin = true
 
 /**
  * Execute the action

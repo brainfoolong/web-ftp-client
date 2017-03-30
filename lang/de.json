@@ -88,6 +88,7 @@
   "transfer.mode.replace-newer": null,
   "transfer.mode.replace-newer-or-sizediff": null,
   "transfer.mode.replace-sizediff": null,
+  "transfer.move": null,
   "transfer.queue": null,
   "transfer.remove": null,
   "transfer.speed": null,

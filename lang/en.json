@@ -88,6 +88,7 @@
   "transfer.mode.replace-newer": "Replace when newer",
   "transfer.mode.replace-newer-or-sizediff": "Replace when newer or size is different",
   "transfer.mode.replace-sizediff": "Replace when size is different",
+  "transfer.move": "Move back to queue",
   "transfer.queue": "Queue",
   "transfer.remove": "Remove from transfers",
   "transfer.speed": "Current transfer speed",
@@ -101,6 +102,5 @@
   "user.add": "Add new user",
   "usermanager": "Usermanager",
   "username": "Username",
-  "yes": "Yes",
-  "transfer.move": "Move back to queue"
+  "yes": "Yes"
 }

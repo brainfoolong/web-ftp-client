@@ -24,16 +24,9 @@ action.execute = function (user, message, callback) {
   const formData = message.formData
   if (formData.username) {
     const users = db.get('users').cloneDeep().value()
-    let hasAdmin = false
-    for (let i in users) {
-      if (users[i].admin) {
-        hasAdmin = true
-        break
-      }
-    }
     let storedData = {}
     if (message.id) {
-      storedData = db.get('users').get(message.id).cloneDeep().value()
+      storedData = users[message.id]
     } else {
       storedData = {
         'id': db.getNextId()
@@ -41,16 +34,23 @@ action.execute = function (user, message, callback) {
       storedData.loingHash = hash.random(32)
     }
     storedData.passwordHash = hash.saltedMd5(formData.password)
+    delete storedData.password
 
-    if (formData.admin) {
-      hasAdmin = true
+    extend(true, storedData, formData)
+
+    let hasAdmin = false
+    for (let i in users) {
+      if (users[i].admin) {
+        hasAdmin = true
+        break
+      }
     }
+
     if (!hasAdmin) {
       callback(false)
     } else {
       // simply merging
       // data from form into data object
-      extend(true, storedData, formData)
       db.get('users').set(storedData.id, storedData).write()
       // disconnect the users that have been edited
       for (let i = 0; i < WebSocketUser.instances.length; i++) {

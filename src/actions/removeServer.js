@@ -7,10 +7,10 @@ const FtpServer = require(path.join(__dirname, '../ftpServer'))
 const action = {}
 
 /**
- * Require user
+ * Require admin
  * @type {boolean}
  */
-action.requireUser = true
+action.requireAdmin = true
 
 /**
  * Execute the action
@@ -24,14 +24,12 @@ action.execute = function (user, message, callback) {
       ftpServer.stopTransfers()
       ftpServer.deleteQueues()
       ftpServer.disconnect()
-      let servers = db.get('servers').value()
-      delete servers[message.serverId]
-      db.get('servers').setState(servers)
-      callback()
-    } else {
-      callback()
     }
-  })
+    let servers = db.get('servers').value()
+    delete servers[message.serverId]
+    db.get('servers').setState(servers)
+    callback()
+  }, true)
 }
 
 module.exports = action

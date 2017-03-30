@@ -6,10 +6,10 @@ const db = require(path.join(__dirname, '../db'))
 const action = {}
 
 /**
- * Require user
+ * Require admin
  * @type {boolean}
  */
-action.requireUser = true
+action.requireAdmin = true
 
 /**
  * Execute the action

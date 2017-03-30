@@ -29,10 +29,9 @@ action.execute = function (user, message, callback) {
         if (ftpServer) {
           ftpServer.stopTransfers()
         }
-      })
+      }, true)
     }
     entry.status = 'queue'
-    console.log(entry)
     queue.bulkSendToListeners('transfer-status-update', {'id': entry.id, 'status': entry.status})
   }
   queue.saveEntries(entries)

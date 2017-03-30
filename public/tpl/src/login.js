@@ -15,6 +15,7 @@
       if (!userData) {
         gl.note('login.failed', 'danger')
       } else {
+        gl.userData = userData
         gl.storage.set('login.id', userData.id, !formData.remember)
         gl.storage.set('login.hash', userData.loginHash, !formData.remember)
         gl.note('login.success', 'success')

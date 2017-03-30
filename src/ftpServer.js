@@ -615,13 +615,18 @@ function FtpServer (id) {
  * If not yet connected, try to connect and than get the instance
  * @param {string} id
  * @param {function} callback
+ * @param {boolean=} skipConnect
  */
-FtpServer.get = function (id, callback) {
+FtpServer.get = function (id, callback, skipConnect) {
   if (!id) {
     throw new Error('Missing id for FtpServer.get')
   }
   if (typeof FtpServer.instances[id] !== 'undefined') {
     callback(FtpServer.instances[id])
+    return
+  }
+  if (skipConnect) {
+    callback()
     return
   }
   const server = new FtpServer(id)

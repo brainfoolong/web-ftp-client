@@ -107,10 +107,18 @@ function WebSocketUser (socket) {
     const actionPath = path.join(__dirname, 'actions/' + frontendMessage.action.replace(/[^a-z0-9_-]/ig, '') + '.js')
     if (fs.existsSync(actionPath)) {
       const action = require(actionPath)
+      if (action.requireAdmin && (!self.userData || !self.userData.admin)) {
+        sendCallback({
+          'error': {
+            'message': 'Require an administrator for: ' + frontendMessage.action
+          }
+        })
+        return
+      }
       if (action.requireUser && !self.userData) {
         sendCallback({
           'error': {
-            'message': 'Require a valid user for this action ' + frontendMessage.action
+            'message': 'Require a valid user for: ' + frontendMessage.action
           }
         })
         return

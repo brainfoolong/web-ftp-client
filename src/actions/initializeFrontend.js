@@ -25,7 +25,7 @@ action.execute = function (user, message, callback) {
     // set the socket userdata if valid login
     user.userData = userData
   }
-  callback(valid)
+  callback(user.userData)
 }
 
 module.exports = action

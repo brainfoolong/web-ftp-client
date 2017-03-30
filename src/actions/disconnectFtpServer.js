@@ -22,7 +22,7 @@ action.execute = function (user, message, callback) {
     if (ftpServer) {
       ftpServer.disconnect()
     }
-  })
+  }, true)
   callback()
 }
 

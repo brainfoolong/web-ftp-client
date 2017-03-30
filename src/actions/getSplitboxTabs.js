@@ -18,7 +18,7 @@ action.requireUser = true
  * @param {function} callback
  */
 action.execute = function (user, message, callback) {
-  callback(db.get('splitboxtabs').get('tabs').value())
+  callback(db.get('splitboxtabs').get('tabs').get(user.userData.id).value())
 }
 
 module.exports = action

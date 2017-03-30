@@ -30,7 +30,7 @@ action.execute = function (user, message, callback) {
         if (ftpServer) {
           ftpServer.stopTransfers()
         }
-      })
+      }, true)
     }
     ids.push(entry.id)
     delete entries[message.entries[i]]

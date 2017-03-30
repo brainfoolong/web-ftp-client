@@ -9,10 +9,10 @@ const FtpServer = require(path.join(__dirname, '../ftpServer'))
 const action = {}
 
 /**
- * Require user
+ * Require admin
  * @type {boolean}
  */
-action.requireUser = true
+action.requireAdmin = true
 
 /**
  * Execute the action

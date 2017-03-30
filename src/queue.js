@@ -223,7 +223,7 @@ queue.transferNext = function (downloadStarted, queueDone) {
     setStatus('transfering')
     queue.saveEntry(nextEntry)
 
-    // not do that at top of file because of circular reference
+    // not require that at top of file because of circular reference
     const FtpServer = require(path.join(__dirname, 'ftpServer'))
     FtpServer.get(nextEntry.serverId, function (ftpServer) {
       if (ftpServer) {

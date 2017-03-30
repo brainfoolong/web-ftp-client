@@ -7,6 +7,12 @@
 const gl = {}
 
 /**
+ * The userdata of the current session
+ * @type {object|null}
+ */
+gl.userData = null
+
+/**
  * Show/Hide loading indicator
  * @param {boolean} flag
  */
@@ -303,6 +309,7 @@ $(function () {
           gl.loading(false)
         })
       } else {
+        gl.userData = data
         gl.tpl.loadInto('main', '#wrapper', function () {
           gl.loading(false)
         })

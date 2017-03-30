@@ -35,6 +35,9 @@ gl.tpl.reloadContainer = function (container, callback) {
  */
 gl.tpl.loadInto = function (name, container, callback) {
   gl.tpl.load(name, function ($tpl) {
+    if (!gl.userData || !gl.userData.admin) {
+      $tpl.find('.require-admin').remove()
+    }
     $(container).html($tpl)
     if (callback) callback($tpl)
   })
