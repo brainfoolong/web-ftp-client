@@ -1,7 +1,5 @@
 'use strict'
 
-// does convert every required js file in the project
-
 const path = require('path')
 const fs = require('fs')
 const fstools = require('./../src/fstools')

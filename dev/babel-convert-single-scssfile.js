@@ -1,7 +1,5 @@
 'use strict'
 
-// does convert a single scss file to css
-
 const path = require('path')
 const fs = require('fs')
 const fstools = require('./../src/fstools')

@@ -1,7 +1,5 @@
 'use strict'
 
-// resort language file keys
-
 const path = require('path')
 const fs = require('fs')
 const fstools = require('./../src/fstools')

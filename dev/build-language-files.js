@@ -1,7 +1,5 @@
 'use strict'
 
-// build the language files and resort all translation json files
-
 const path = require('path')
 const fs = require('fs')
 const fstools = require('./../src/fstools')

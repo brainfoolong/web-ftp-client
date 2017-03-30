@@ -1,6 +1,5 @@
 'use strict'
 
-// build all required files
 require('./build')
 
 const path = require('path')

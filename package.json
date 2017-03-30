@@ -32,8 +32,8 @@
   "scripts": {
     "start": "node src/main.js start",
     "test": "standard",
-    "build": "node dev/build.js dev",
-    "release": "node dev/release.js prod"
+    "build": "node dev/build.js",
+    "release": "node dev/release.js"
   },
   "pre-commit": [
     "test", "build"
