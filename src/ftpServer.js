@@ -116,6 +116,7 @@ function FtpServer (id) {
         const files = []
         for (let i = 0; i < list.length; i++) {
           let file = list[i]
+          if (file.name === '.' || file.name === '..') continue
           let path = directory
           if (path.substr(-1) !== '/') {
             path += '/'
@@ -126,7 +127,8 @@ function FtpServer (id) {
             'mtime': self.getDateOfTime(file.date),
             'filename': file.name,
             'isDirectory': file.type === 'd',
-            'path': path
+            'path': path,
+            'permissions': self.convertPermissionCharsToInt(file.rights.user).toString() + self.convertPermissionCharsToInt(file.rights.group).toString() + self.convertPermissionCharsToInt(file.rights.other).toString()
           })
         }
         callback(files)
@@ -149,6 +151,7 @@ function FtpServer (id) {
           if (file.path.substr(-1) !== '/') {
             file.path += '/'
           }
+          file.permissions = stat.attrs.permissions.toString(8).substr(-3)
           file.path += file.filename
           list[i] = file
         }
@@ -173,11 +176,11 @@ function FtpServer (id) {
     const settings = db.get('settings').get('settings').value()
     const _end = end
     const _error = error
-    const stepInverval = setInterval(step, 150)
+    let stepTimeout = null
 
     // override the given handlers to cleanup before firing these callbacks
     end = function () {
-      clearInterval(stepInverval)
+      clearTimeout(stepTimeout)
       self.server.log('log.ftpserver.' + queueEntry.mode + '.complete', {
         'serverPath': queueEntry.serverPath,
         'localPath': queueEntry.localPath
@@ -186,7 +189,7 @@ function FtpServer (id) {
     }
     error = function (err) {
       self.server.logError(err)
-      clearInterval(stepInverval)
+      clearTimeout(stepTimeout)
       _error(err)
     }
 
@@ -194,12 +197,30 @@ function FtpServer (id) {
     let localStat = null
     let useLocalPath = queueEntry.localPath
     let useServerPath = queueEntry.serverPath
-    let localDirectory = path.dirname(queueEntry.localPath)
-    let serverDirectory = path.dirname(queueEntry.serverPath)
+    let localDirectory = queueEntry.isDirectory ? queueEntry.localPath : path.dirname(queueEntry.localPath)
+    let serverDirectory = queueEntry.isDirectory ? queueEntry.serverPath : path.dirname(queueEntry.serverPath)
 
     if (fs.existsSync(useLocalPath)) {
       localStat = fs.statSync(useLocalPath)
     }
+
+    const stepRecursive = function () {
+      stepTimeout = setTimeout(function () {
+        if (queueEntry.mode === 'download') {
+          if (fs.existsSync(useLocalPath)) {
+            step(fs.statSync(useLocalPath).size)
+          }
+          stepRecursive()
+        }
+        if (queueEntry.mode === 'upload') {
+          self.stat(useServerPath, function (err, stat) {
+            step(err ? 0 : stat.size)
+            stepRecursive()
+          })
+        }
+      }, 500)
+    }
+    stepRecursive()
 
     const statsReceived = function () {
       const destStat = queueEntry.mode === 'download' ? localStat : serverStat
@@ -245,12 +266,16 @@ function FtpServer (id) {
     }
 
     const directoriesCreated = function () {
-      self.stat(useServerPath, function (err, stat) {
-        if (!err && stat) {
-          serverStat = stat
-        }
-        statsReceived()
-      })
+      if (queueEntry.isDirectory) {
+        end()
+      } else {
+        self.stat(useServerPath, function (err, stat) {
+          if (!err && stat) {
+            serverStat = stat
+          }
+          statsReceived()
+        })
+      }
     }
 
     // check if directories exists in destination
@@ -452,7 +477,7 @@ function FtpServer (id) {
     if (this.ftpClient) {
       this.ftpClient.get(serverPath, function (err, rstream) {
         if (err) {
-          callback(err)
+          if (callback) callback(err)
           return
         }
         let wstream = fs.createWriteStream(localPath)
@@ -566,6 +591,19 @@ function FtpServer (id) {
       }
       queue.saveEntries(entries)
     }
+  }
+
+  /**
+   * Convert permission chars
+   * @param {string} s
+   * @returns {number}
+   */
+  this.convertPermissionCharsToInt = function (s) {
+    let i = 0
+    if (s.match(/r/)) i += 4
+    if (s.match(/w/)) i += 2
+    if (s.match(/x/)) i += 1
+    return i
   }
 }
 

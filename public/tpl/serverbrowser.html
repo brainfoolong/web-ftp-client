@@ -19,11 +19,13 @@
             <th class="name" data-translate="filename"></th>
             <th class="size" data-translate="filesize"></th>
             <th class="mtime" data-translate="mtime"></th>
+            <th class="permissions" data-translate="permissions"></th>
         </tr>
         <tr class="directory-parent entry">
             <th class="name sorter-false"><span class="icon icon-directory"></span><span class="text">..</span></th>
             <th class="size sorter-false"></th>
             <th class="mtime sorter-false"></th>
+            <th class="permissions sorter-false"></th>
         </tr>
         </thead>
         <tbody>
@@ -31,49 +33,37 @@
             <td class="name"><span class="icon"></span><span class="text"></span></td>
             <td class="size"></td>
             <td class="mtime"></td>
+            <td class="permissions"></td>
         </tr>
         </tbody>
     </table>
 </div>
 
-<div class="contextmenu" data-id="local">
-    <div class="upload" data-mode="upload" data-forceTransfer="1" data-translate="upload"></div>
-    <div class="upload-queue" data-mode="upload" data-translate="upload.queue"></div>
-    <div class="remove" data-translate="delete"></div>
-    <div class="filter">
-        <div class="input-group form-inline">
-            <div class="form-group input-group input-group-sm btn-group">
-                <span class="input-group-addon"><input type="checkbox" class="checkbox"></span>
-                <input type="text" class="form-control"
-                       data-translate-property="data-tooltip,filtermask.tooltip,placeholder,filtermask">
-            </div>
-        </div>
+<div class="contextmenu">
+    <div class="entry upload" data-mode="upload" data-forceTransfer="1">
+        <span class="glyphicon glyphicon-upload"></span> <span data-translate="upload"></span>
     </div>
-    <div class="flat">
+    <div class="entry upload-queue" data-mode="upload">
+        <span class="glyphicon glyphicon-upload"></span> <span data-translate="upload.queue"></span>
+    </div>
+    <div class="entry download" data-mode="download" data-forceTransfer="1">
+        <span class="glyphicon glyphicon-download"></span> <span data-translate="download"></span>
+    </div>
+    <div class="entry download-queue" data-mode="download">
+        <span class="glyphicon glyphicon-download"></span> <span data-translate="download.queue"></span>
+    </div>
+    <div class="entry remove">
+        <span class="glyphicon glyphicon-remove"></span> <span data-translate="delete"></span>
+    </div>
+    <div class="entry filter">
         <div class="input-group form-inline">
             <div class="form-group input-group input-group-sm btn-group">
-                <span class="input-group-addon"><input type="checkbox" class="checkbox"></span>
-                <span class="input-group-addon" data-translate="flat.transfer"></span>
+                <input type="text" class="form-control" data-translate-property="placeholder,filtermask">
                 <span class="input-group-addon" data-translate-property="data-tooltip,flat.transfer.tooltip">i</span>
             </div>
         </div>
     </div>
-</div>
-
-<div class="contextmenu" data-id="server">
-    <div class="download" data-mode="download" data-forceTransfer="1" data-translate="download"></div>
-    <div class="download-queue" data-mode="download" data-translate="download.queue"></div>
-    <div class="remove" data-translate="delete"></div>
-    <div class="filter">
-        <div class="input-group form-inline">
-            <div class="form-group input-group input-group-sm">
-                <span class="input-group-addon"><input type="checkbox" class="checkbox"></span>
-                <input type="text" class="form-control filtermask" data-translate-property="placeholder,filtermask">
-                <span class="input-group-addon" data-translate-property="data-tooltip,filtermask.tooltip">i</span>
-            </div>
-        </div>
-    </div>
-    <div class="flat">
+    <div class="entry flat">
         <div class="input-group form-inline">
             <div class="form-group input-group input-group-sm btn-group">
                 <span class="input-group-addon"><input type="checkbox" class="checkbox"></span>

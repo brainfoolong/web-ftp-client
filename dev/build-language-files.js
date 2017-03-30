@@ -6,7 +6,7 @@ const path = require('path')
 const fs = require('fs')
 const fstools = require('./../src/fstools')
 
-const directories = ['public/scripts/src/lang']
+const directories = ['lang']
 const distFile = path.join(__dirname, '..', 'public/scripts/dist/lang.values.js')
 
 let distFileData = '\'use strict\'\n'

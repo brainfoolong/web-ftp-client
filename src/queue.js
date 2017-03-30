@@ -183,18 +183,19 @@ queue.transferNext = function (downloadStarted, queueDone) {
   })
   /** @type {queue.QueueEntry} */
   let nextEntry = entriesArr.shift()
+  let lastTransfered = 0
+  let lastProgressTime = new Date().getTime()
   if (!nextEntry) {
     if (queueDone) queueDone()
   } else {
-    const progress = function () {
-      if (fs.existsSync(nextEntry.localPath)) {
-        let stat = fs.statSync(nextEntry.localPath)
-        queue.bulkSendToListeners('transfer-progress', {
-          'id': nextEntry.id,
-          'filesize': nextEntry.size,
-          'transfered': stat.size
-        })
-      }
+    const step = function (transfered) {
+      queue.bulkSendToListeners('transfer-progress', {
+        'id': nextEntry.id,
+        'filesize': nextEntry.size,
+        'transfered': transfered,
+        'speed': ((transfered - lastTransfered) * 8) / ((new Date().getTime() - lastProgressTime) / 1000)
+      })
+      lastTransfered = transfered
     }
     const setStatus = function (status) {
       nextEntry.status = status
@@ -217,9 +218,7 @@ queue.transferNext = function (downloadStarted, queueDone) {
         setTimeout(function () {
           queue.transferNext(downloadStarted, queueDone)
         }, 50)
-        ftpServer.transferQueueEntry(nextEntry, function () {
-          progress()
-        }, function () {
+        ftpServer.transferQueueEntry(nextEntry, step, function () {
           setStatus('success')
           // time to breath for next transfer
           setTimeout(function () {

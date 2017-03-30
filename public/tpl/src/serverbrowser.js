@@ -2,11 +2,19 @@
 (function () {
   const $tpl = $('.template-serverbrowser')
   const tabParams = gl.splitbox.tabActive.data('params')
-  const $contextmenu = $tpl.find('.contextmenu')
+  const $contextmenuLocal = $tpl.find('.contextmenu')
+  const $contextmenuServer = $contextmenuLocal.clone()
   const $local = $tpl.children('.local')
   const $localDirectoryInput = $local.find('.input-directory input')
   const $server = $tpl.children('.server')
   const $serverDirectoryInput = $server.find('.input-directory input')
+
+  // contextmenu build
+  $tpl.append($contextmenuServer)
+  $contextmenuLocal.attr('data-id', 'local').find('.download, .download-queue').remove()
+  $contextmenuServer.attr('data-id', 'server').find('.upload, .upload-queue').remove()
+
+  const $contextmenu = $([$contextmenuLocal[0], $contextmenuServer[0]])
 
   /**
    * Build the files into the given container
@@ -26,11 +34,12 @@
       const $tr = $table.find('tbody .boilerplate').clone()
       $tr.removeClass('boilerplate')
       let icon = (file.isDirectory ? 'directory' : 'file')
-      $tr.find('.name').attr('data-sortValue', (file.isDirectory ? 'a' : 'b') + file.filename)
+      $tr.find('.name').attr('data-sortvalue', (file.isDirectory ? 'a' : 'b') + file.filename)
       $tr.find('.name .icon').addClass('icon-' + icon)
       $tr.find('.name .text').text(file.filename)
-      $tr.find('.size').text(gl.humanFilesize(file.size))
-      $tr.find('.mtime').text(mtime.toLocaleString()).attr('data-sortValue', mtime.getTime())
+      $tr.find('.size').text(gl.humanFilesize(file.size)).attr('data-sortvalue', file.size)
+      $tr.find('.permissions').text(file.permissions)
+      $tr.find('.mtime').text(mtime.toLocaleString()).attr('data-sortvalue', mtime.getTime())
       $tbody.append($tr)
       $tr.data('file', file)
     }
@@ -38,7 +47,7 @@
     $table.find('table').tablesorter({
       textExtraction: function (node) {
         let n = $(node)
-        return (n.attr('data-sortValue') || n.text()).toLowerCase()
+        return (n.attr('data-sortvalue') || n.text()).toLowerCase()
       },
       'sortList': [[0, 0]]
     })
@@ -155,12 +164,9 @@
     $selectedFiles.each(function () {
       files.push($(this).data('file'))
     })
-    let filter = null
-    if ($currentCm.find('.filter .checkbox').prop('checked')) {
-      filter = $currentCm.find('.filter input.filtermask').val().trim()
-      if (!filter.length) {
-        filter = null
-      }
+    let filter = $currentCm.find('.filter input').val().trim()
+    if (!filter.length) {
+      filter = null
     }
     gl.socket.send('addToTransferQueue', {
       'localDirectory': $localDirectoryInput.val(),

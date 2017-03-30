@@ -3,6 +3,7 @@
   const $tpl = $('.template-transfer')
   const $footer = $tpl.find('.footer')
   const $contextmenu = $tpl.find('.contextmenu')
+  let transferSpeedCache = {}
 
   const addEntry = function (entry, updateTable) {
     const $table = $tpl.find('.tab-container.status-' + entry.status).find('table')
@@ -42,6 +43,7 @@
         $footer.find('.total-size .number').text(gl.humanFilesize(size))
       }
     })
+    updateTransferSpeed()
   }
 
   const loadTransfers = function (callback) {
@@ -63,10 +65,9 @@
       }
       createEntriesHtml()
       $tpl.find('.tab-container').find('table').tablesorter({
-        'sortForce': [[5, 1]],
         textExtraction: function (node) {
           let n = $(node)
-          return (n.attr('data-sortValue') || n.text()).toLowerCase()
+          return (n.attr('data-sortvalue') || n.text()).toLowerCase()
         }
       }).on('sortEnd', function () {
         let $table = $(this).closest('table')
@@ -93,7 +94,7 @@
     let entries = []
     let progressEntries = []
     $selectedEntries.each(function () {
-      if ($(this).find('.progress').attr('data-sortValue') !== '0') {
+      if ($(this).find('.progress').attr('data-sortvalue') !== '0') {
         progressEntries.push($(this).attr('data-id'))
       }
       entries.push($(this).attr('data-id'))
@@ -101,6 +102,15 @@
     updateEntryCounter()
     gl.socket.send('removeFromTransfer', {'entries': entries, 'progressEntries': progressEntries})
   })
+
+  const updateTransferSpeed = function () {
+    const $trs = $tpl.find('.tab-container.status-transfering').find('tbody tr').not('.boilerplate')
+    let currentTransferSpeed = 0
+    $trs.each(function () {
+      currentTransferSpeed += $(this).data('speed') || 0
+    })
+    $tpl.find('.transfer-speed .number').text(gl.humanFilesize(currentTransferSpeed) + '/s')
+  }
 
   loadTransfers(function () {
     gl.socket.bind(function (message) {
@@ -135,14 +145,18 @@
         if (files) {
           for (let i = 0; i < files.length; i++) {
             const file = files[i]
-            const $transfered = $('#transfer-entry-' + file.id)
+            const entry = $('#transfer-entry-' + file.id)
             const percent = 100 / file.filesize * file.transfered
-            $transfered.attr('data-sortValue', percent)
-            $transfered.find('.text').text(parseInt(percent) + '%')
-            $transfered.find('.progress-bar-info').css('width', percent + '%')
+            entry.data('speed', file.speed)
+            entry.data('transfered', file.transfered)
+            entry.attr('data-sortvalue', percent)
+            entry.find('.text').text(parseInt(percent) + '%')
+            entry.find('.progress-bar-info').css('width', percent + '%')
           }
         }
+        updateTransferSpeed()
       }
     })
   })
+  updateTransferSpeed()
 })()

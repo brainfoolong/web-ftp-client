@@ -4,6 +4,7 @@ const extend = require('extend')
 const path = require('path')
 const db = require(path.join(__dirname, '../db'))
 const Server = require(path.join(__dirname, '../server'))
+const FtpServer = require(path.join(__dirname, '../ftpServer'))
 
 const action = {}
 
@@ -33,6 +34,9 @@ action.execute = function (user, message, callback) {
     // simply merging data from form into data object
     extend(true, storedData, formData)
     Server.get(storedData.id).setServerData(storedData)
+    if (typeof FtpServer.instances[storedData.id] !== 'undefined') {
+      FtpServer.instances[storedData.id].disconnect()
+    }
   }
   callback()
 }

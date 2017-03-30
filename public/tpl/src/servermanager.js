@@ -9,7 +9,7 @@
     'general': {
       'name': {'type': 'text', 'label': 'server.name', 'required': true},
       'host': {'type': 'text', 'label': 'server.host', 'required': true},
-      'port': {'type': 'number', 'label': 'server.port', 'default': 21, 'required': true},
+      'port': {'type': 'number', 'label': 'server.port', 'defaultValue': 21, 'required': true},
       'protocol': {
         'type': 'select',
         'label': 'server.protocol',

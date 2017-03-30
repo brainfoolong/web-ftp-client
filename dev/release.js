@@ -14,6 +14,7 @@ const zipFile = path.join(__dirname, 'release-' + pkg.version + '.zip')
 const ignoreFiles = [
   'db/',
   'docs',
+  'lang',
   'public/scripts/src',
   'public/scripts/dist/.gitignore',
   'public/stylesheets/src',

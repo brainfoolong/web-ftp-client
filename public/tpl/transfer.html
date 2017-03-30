@@ -1,12 +1,24 @@
 <div class="header tabs">
-    <div class="tab active" data-id="transfer.queue"><span data-translate="transfer.queue"></span> <span
-            class="counter"></span></div>
-    <div class="tab" data-id="transfer.error"><span data-translate="transfer.error"></span> <span
-            class="counter"></span></div>
-    <div class="tab" data-id="transfer.success"><span data-translate="transfer.success"></span> <span
-            class="counter"></span></div>
-    <div class="tab" data-id="transfer.transfering"><span data-translate="transfer.transfering"></span> <span
-            class="counter"></span></div>
+    <div class="tab active" data-id="transfer.queue">
+        <span class="glyphicon glyphicon-indent-left"></span>
+        <span data-translate="transfer.queue"></span>
+        <span class="counter"></span>
+    </div>
+    <div class="tab" data-id="transfer.error">
+        <span class="glyphicon glyphicon-warning-sign"></span>
+        <span data-translate="transfer.error"></span>
+        <span class="counter"></span>
+    </div>
+    <div class="tab" data-id="transfer.success">
+        <span class="glyphicon glyphicon-ok"></span>
+        <span data-translate="transfer.success"></span>
+        <span class="counter"></span>
+    </div>
+    <div class="tab" data-id="transfer.transfering">
+        <span class="glyphicon glyphicon-transfer"></span>
+        <span data-translate="transfer.transfering"></span>
+        <span class="counter"></span>
+    </div>
 </div>
 
 <div class="main">
@@ -19,6 +31,11 @@
 <div class="footer">
     <span class="total-size">
         <span data-translate="transfer.total.size"></span>:
+        <span class="number"></span>
+    </span>
+    |
+    <span class="transfer-speed">
+        <span data-translate="transfer.speed"></span>:
         <span class="number"></span>
     </span>
 </div>
@@ -55,7 +72,13 @@
 </div>
 
 <div class="contextmenu" data-id="transfer">
-    <div class="start">Start transfer</div>
-    <div class="stop">Stop transfer</div>
-    <div class="remove">Remove from transfers</div>
+    <div class="entry start">
+        <span class="glyphicon glyphicon-download"></span> <span data-translate="transfer.start"></span>
+    </div>
+    <div class="entry stop">
+        <span class="glyphicon glyphicon-stop"></span> <span data-translate="transfer.stop"></span>
+    </div>
+    <div class="entry remove">
+        <span class="glyphicon glyphicon-remove"></span> <span data-translate="transfer.remove"></span>
+    </div>
 </div>

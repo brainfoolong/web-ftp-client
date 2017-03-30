@@ -26,14 +26,24 @@ action.execute = function (user, message, callback) {
   if (message.filter) {
     filterRegex = new RegExp(message.filter.replace(/\*/g, '.*?').replace(/ /g, '|'), 'i')
   }
+  const flat = filterRegex && message.flat
 
   /**
    * Add files to queue
    * @param {FtpServer} ftpServer
    * @param {[]} files
+   * @param {function} callback
    */
-  const addFiles = function (ftpServer, files) {
+  const addFiles = function (ftpServer, files, callback) {
     let entries = []
+    let filesDone = 0
+    let filesCount = files.length
+    const fileProcessCallback = function () {
+      filesDone++
+      if (filesDone >= filesCount) {
+        callback()
+      }
+    }
     const nextFile = function () {
       if (!files.length) {
         // if all done, add to queue
@@ -49,7 +59,7 @@ action.execute = function (user, message, callback) {
         serverPath = file.path
         relativePath = serverPath.substr(message.serverDirectory.length)
         localPath = fstools.slugifyPath(path.join(message.localDirectory, relativePath))
-        if (filterRegex && message.flat) {
+        if (flat) {
           localPath = fstools.slugifyPath(path.join(message.localDirectory, path.basename(serverPath)))
         }
       }
@@ -57,21 +67,35 @@ action.execute = function (user, message, callback) {
         localPath = file.path
         relativePath = localPath.substr(message.localDirectory.length)
         serverPath = fstools.slugifyPath(message.serverDirectory + '/' + relativePath.replace(/[\\]/g, '/')).replace(/[\\]/g, '/')
-        if (filterRegex && message.flat) {
+        if (flat) {
           serverPath = fstools.slugifyPath(path.join(message.serverDirectory, path.basename(localPath)))
         }
       }
+
+      const queueEntry = new queue.QueueEntry(
+        db.getNextId(),
+        message.mode,
+        message.server,
+        localPath,
+        serverPath,
+        file.isDirectory,
+        'queue',
+        file.size,
+        0
+      )
       if (file.isDirectory) {
         if (message.recursive) {
           // let em some time to breath for this heavy duty jobs
           setTimeout(function () {
             if (message.mode === 'download') {
               ftpServer.readdir(file.path, function (filesSub) {
+                if (!flat) entries.push(queueEntry)
                 nextFile()
-                addFiles(ftpServer, filesSub)
+                addFiles(ftpServer, filesSub, fileProcessCallback)
               })
             }
             if (message.mode === 'upload') {
+              if (!flat) entries.push(queueEntry)
               let files = fs.readdirSync(file.path)
               let fileObjects = []
               for (let i = 0; i < files.length; i++) {
@@ -86,39 +110,34 @@ action.execute = function (user, message, callback) {
                 })
               }
               nextFile()
-              addFiles(ftpServer, fileObjects)
+              addFiles(ftpServer, fileObjects, fileProcessCallback)
             }
           }, 150)
         }
       } else {
-        // if filter and match path
         if (!filterRegex || file.path.match(filterRegex)) {
-          entries.push(new queue.QueueEntry(
-            db.getNextId(),
-            message.mode,
-            message.server,
-            localPath,
-            serverPath,
-            file.isDirectory,
-            'queue',
-            file.size,
-            0
-          ))
+          entries.push(queueEntry)
         }
         nextFile()
+        fileProcessCallback()
       }
     }
-    nextFile()
+    if (!files.length) {
+      fileProcessCallback()
+    } else {
+      nextFile()
+    }
   }
   FtpServer.get(message.server, function (ftpServer) {
     if (ftpServer) {
-      addFiles(ftpServer, message.files)
-      // start transfer if requested
-      if (message.forceTransfer) {
-        setTimeout(function () {
-          require(path.join(__dirname, 'startTransfer')).execute(user, message, callback)
-        }, 3000)
-      }
+      addFiles(ftpServer, message.files, function () {
+        // start transfer if requested
+        if (message.forceTransfer) {
+          setTimeout(function () {
+            require(path.join(__dirname, 'startTransfer')).execute(user, message, callback)
+          }, 3000)
+        }
+      })
     }
   })
 }

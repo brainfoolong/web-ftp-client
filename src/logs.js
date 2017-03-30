@@ -30,9 +30,10 @@ logs.log = function (server, message, params, type) {
     logsDb.messages = []
   }
 
-  logsDb.messages = logsDb.messages.slice(-100)
+  logsDb.messages = logsDb.messages.slice(-50)
   const msg = {
     'server': server,
+    'serverName': server ? require(path.join(__dirname, 'server')).get(server).getServerData().name : null,
     'time': new Date(),
     'message': message,
     'params': params,
