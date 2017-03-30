@@ -16,20 +16,31 @@ No release yet. Watch/star if you like it.
   * SFTP Browser/Download/Upload/Delete
   * Queue manager
   * Log manager
+  * User manager
   * Multilanguage
-* Whats missing for the first alpha
-  * Interface for usermanagement, implement also admin role only can add and edit servers and users
-  * 100% use of translation files, something hardcoded yet
-  * Some other small fixes, repairs, red-bulls, days, etc...
+* What's missing for the first alpha
+  * Well, i don't know, wanna try it?!?
 
 # Code languages and standards we use
 * JS: https://standardjs.com
 * ES6 (with Babel converter for frontend): https://babeljs.io/docs/plugins/preset-env/
 * SCSS (with converter for frontend): http://sass-lang.com/
+
+# Install linux
+* Download a realase zip and unpack to a directory
+* Run `npm install --production`
+* Start server with `./wfc start`
+* Stop server with `./wfc stop`
+* Open http://IPTOSERVER:4340 in your browser
+
+# Install synology
+* Install package node 4
+* Via SSH terminal do the same as install linux
+* Notice: Some disktations have very low ram and cpu to run this application at full speed
  
 # Development setup
 * Git clone master to a directory of your choice
-* `npm install --only=dev`
+* `npm install`
 * `npm run build` (and also everytime you change some frontend code)
 * Start server with `./wfc start` (Stop with `./wfc stop`)
 * Open http://localhost:4340 in your browser
