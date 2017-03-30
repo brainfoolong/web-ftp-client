@@ -163,7 +163,7 @@ gl.humanFilesize = function (bytes) {
   if (i === 0) {
     return bytes + map[i]
   }
-  return numeral(bytes).format('0,0.00') + map[i]
+  return bytes.toFixed(2) + map[i]
 }
 
 // on document ready

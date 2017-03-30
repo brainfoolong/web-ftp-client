@@ -1,7 +1,6 @@
 'use strict'
 
 const path = require('path')
-const fs = require('fs')
 const db = require(path.join(__dirname, 'db'))
 const Server = require(path.join(__dirname, 'server'))
 

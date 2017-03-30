@@ -3,7 +3,6 @@
   const $tpl = $('.template-transfer')
   const $footer = $tpl.find('.footer')
   const $contextmenu = $tpl.find('.contextmenu')
-  let transferSpeedCache = {}
 
   const addEntry = function (entry, updateTable) {
     const $table = $tpl.find('.tab-container.status-' + entry.status).find('table')
