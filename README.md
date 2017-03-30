@@ -29,7 +29,7 @@ No release yet. Watch/star if you like it.
  
 # Development setup
 * Git clone master to a directory of your choice
-* `npm install --dev`
+* `npm install --only=dev`
 * `npm run build` (and also everytime you change some frontend code)
 * Start server with `./wfc start` (Stop with `./wfc stop`)
 * Open http://localhost:4340 in your browser

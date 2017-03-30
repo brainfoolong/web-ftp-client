@@ -180,6 +180,7 @@ function FtpServer (id) {
 
     // override the given handlers to cleanup before firing these callbacks
     end = function () {
+      step(queueEntry.size)
       clearTimeout(stepTimeout)
       self.server.log('log.ftpserver.' + queueEntry.mode + '.complete', {
         'serverPath': queueEntry.serverPath,
@@ -209,6 +210,8 @@ function FtpServer (id) {
         if (queueEntry.mode === 'download') {
           if (fs.existsSync(useLocalPath)) {
             step(fs.statSync(useLocalPath).size)
+          } else {
+            step(0)
           }
           stepRecursive()
         }
@@ -566,10 +569,10 @@ function FtpServer (id) {
       for (let i in entries) {
         if (entries[i].status === 'transfering' && entries[i].serverId === this.id) {
           entries[i].status = 'queue'
-          queue.saveEntry(entries[i])
-          queue.sendToListeners('transfer-status-update', {'id': i, 'status': 'queue'})
+          queue.bulkSendToListeners('transfer-status-update', {'id': i, 'status': 'queue'})
         }
       }
+      queue.saveEntries(entries)
     }
   }
 

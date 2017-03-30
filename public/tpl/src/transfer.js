@@ -88,18 +88,14 @@
     })
   })
 
-  $contextmenu.on('click', '.remove', function () {
+  $contextmenu.on('click', '.remove, .move', function () {
     const $selectedEntries = $tpl.find('tr.active')
     let entries = []
-    let progressEntries = []
     $selectedEntries.each(function () {
-      if ($(this).find('.progress').attr('data-sortvalue') !== '0') {
-        progressEntries.push($(this).attr('data-id'))
-      }
       entries.push($(this).attr('data-id'))
     })
     updateEntryCounter()
-    gl.socket.send('removeFromTransfer', {'entries': entries, 'progressEntries': progressEntries})
+    gl.socket.send($(this).attr('data-action'), {'entries': entries})
   })
 
   const updateTransferSpeed = function () {
@@ -124,8 +120,11 @@
         }
       }
       if (message.action === 'transfer-status-update') {
-        const $entry = $('#transfer-entry-' + message.message.id)
-        $tpl.find('.tab-container.status-' + message.message.status).find('tbody').append($entry).trigger('update', [true])
+        for (let i = 0; i < message.message.messages.length; i++) {
+          const $entry = $('#transfer-entry-' + message.message.messages[i].id)
+          $tpl.find('.tab-container.status-' + message.message.messages[i].status).find('tbody').append($entry)
+        }
+        $('.table-files').trigger('update', [true])
         updateEntryCounter()
       }
       if (message.action === 'transfer-removed') {
@@ -146,7 +145,7 @@
             const file = files[i]
             const entry = $('#transfer-entry-' + file.id)
             const percent = 100 / file.filesize * file.transfered
-            entry.data('speed', file.speed)
+            entry.data('speed', file.speedAverage)
             entry.data('transfered', file.transfered)
             entry.attr('data-sortvalue', percent)
             entry.find('.text').text(parseInt(percent) + '%')

@@ -4,6 +4,8 @@
   "administrator.missing": null,
   "cancel.edit": null,
   "confirm.delete.files": null,
+  "create.directory": null,
+  "create.directory.placeholder": null,
   "delete": null,
   "donate": null,
   "donate.tooltip": null,

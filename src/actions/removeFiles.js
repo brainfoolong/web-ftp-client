@@ -43,7 +43,7 @@ action.execute = function (user, message, callback) {
     }
   }
   if (message.mode === 'server') {
-    FtpServer.get(message.server, function (ftpServer) {
+    FtpServer.get(message.serverId, function (ftpServer) {
       if (ftpServer) {
         let filesDeleted = 0
         for (let i = 0; i < message.files.length; i++) {
@@ -61,7 +61,7 @@ action.execute = function (user, message, callback) {
                 return
               }
               doneCallback()
-              server.log('log.server.file.deleted', {'file': file.path})
+              ftpServer.server.log('log.server.file.deleted', {'file': file.path})
             })
           } else {
             ftpServer.deleteFile(file.path, function (err) {
@@ -70,7 +70,7 @@ action.execute = function (user, message, callback) {
                 return
               }
               doneCallback()
-              server.log('log.server.file.deleted', {'file': file.path})
+              ftpServer.server.log('log.server.file.deleted', {'file': file.path})
             })
           }
         }

@@ -62,6 +62,7 @@ gl.modal = function (header, body, footer, closeCallback) {
     } else {
       $footer.html(footer)
     }
+    gl.lang.replaceInHtml($tpl)
     $('body').append($tpl)
     $tpl.on('close', function () {
       if (closeCallback) closeCallback()
@@ -80,14 +81,13 @@ gl.modalConfirm = function (body, callback) {
   $footer
     .append('<span class="btn btn-info accept" data-translate="modal.confirm.accept"></span>')
     .append('<span class="btn btn-primary cancel" data-translate="modal.confirm.cancel"></span>')
-  gl.lang.replaceInHtml($footer)
   $footer.find('.accept').on('click', function () {
-    gl.modalClose()
     callback(true)
+    gl.modalClose()
   })
   $footer.find('.cancel').on('click', function () {
-    gl.modalClose()
     callback(false)
+    gl.modalClose()
   })
   gl.modal(gl.t('modal.confirm.header'), body, $footer, function () {
     callback(false)
@@ -281,6 +281,7 @@ $(function () {
 
   // table of files contextmenu
   $(document).on('contextmenu', '.table-files tbody tr', function (ev) {
+    ev.stopPropagation()
     if (!$(this).hasClass('active')) {
       $(this).parent().children('.active').removeClass('active')
     }

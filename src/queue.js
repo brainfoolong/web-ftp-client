@@ -183,26 +183,41 @@ queue.transferNext = function (downloadStarted, queueDone) {
   /** @type {queue.QueueEntry} */
   let nextEntry = entriesArr.shift()
   let lastTransfered = 0
-  let lastProgressTime = new Date().getTime()
+  let lastProgressTime = 0
+  let speedAverageArr = []
   if (!nextEntry) {
     if (queueDone) queueDone()
   } else {
     const step = function (transfered) {
-      queue.bulkSendToListeners('transfer-progress', {
-        'id': nextEntry.id,
-        'filesize': nextEntry.size,
-        'transfered': transfered,
-        'speed': ((transfered - lastTransfered) * 8) / ((new Date().getTime() - lastProgressTime) / 1000)
-      })
+      // skip first iteration to prevent spikes in average speed
+      if (lastProgressTime > 0) {
+        const speed = ((transfered - lastTransfered)) / ((new Date().getTime() - lastProgressTime) / 1000)
+        speedAverageArr.push(speed < 0 ? 0 : speed)
+        speedAverageArr = speedAverageArr.slice(-5)
+        let speedAverage = 0
+        for (let i = 0; i < speedAverageArr.length; i++) {
+          speedAverage += speedAverageArr[i]
+        }
+        if (speedAverage > 0) {
+          speedAverage /= Math.round(speedAverageArr.length)
+        }
+        queue.bulkSendToListeners('transfer-progress', {
+          'id': nextEntry.id,
+          'filesize': nextEntry.size,
+          'transfered': transfered,
+          'speed': speed,
+          'speedAverage': speedAverage
+        })
+      }
+      lastProgressTime = new Date().getTime()
       lastTransfered = transfered
     }
     const setStatus = function (status) {
       nextEntry.status = status
       queue.saveEntry(nextEntry)
-      queue.sendToListeners('transfer-status-update', {
+      queue.bulkSendToListeners('transfer-status-update', {
         'id': nextEntry.id,
-        'status': status,
-        'localDirectory': path.dirname(nextEntry.localPath)
+        'status': status
       })
     }
     setStatus('transfering')

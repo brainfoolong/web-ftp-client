@@ -4,17 +4,19 @@
   const tabParams = gl.splitbox.tabActive.data('params')
   const $contextmenuLocal = $tpl.find('.contextmenu')
   const $contextmenuServer = $contextmenuLocal.clone()
+  const $contextmenuBoth = $contextmenuLocal.clone()
   const $local = $tpl.children('.local')
   const $localDirectoryInput = $local.find('.input-directory input')
   const $server = $tpl.children('.server')
   const $serverDirectoryInput = $server.find('.input-directory input')
 
   // contextmenu build
-  $tpl.append($contextmenuServer)
+  $tpl.append($contextmenuServer).append($contextmenuBoth)
   $contextmenuLocal.attr('data-id', 'local').find('.download, .download-queue').remove()
   $contextmenuServer.attr('data-id', 'server').find('.upload, .upload-queue').remove()
+  $contextmenuBoth.attr('data-id', 'both').find('.entry').not('.create-directory').remove()
 
-  const $contextmenu = $([$contextmenuLocal[0], $contextmenuServer[0]])
+  const $contextmenu = $([$contextmenuLocal[0], $contextmenuServer[0], $contextmenuBoth[0]])
 
   /**
    * Build the files into the given container
@@ -186,18 +188,18 @@
     $selectedFiles.each(function () {
       files.push($(this).data('file'))
     })
-    const sendObj = {
+    const params = {
       'mode': $(this).closest('.contextmenu').attr('data-id'),
       'files': files,
-      'server': tabParams.server
+      'serverId': tabParams.server
     }
     gl.modalConfirm(gl.t('confirm.delete.files'), function (result) {
       if (result === true) {
-        gl.socket.send('removeFiles', sendObj, function () {
-          if (sendObj.mode === 'local') {
+        gl.socket.send('removeFiles', params, function () {
+          if (params.mode === 'local') {
             loadLocalDirectory($localDirectoryInput.val())
           }
-          if (sendObj.mode === 'server') {
+          if (params.mode === 'server') {
             loadServerDirectory($serverDirectoryInput.val())
           }
         })
@@ -205,6 +207,38 @@
     })
   }).on('click', '.filter, .flat', function (ev) {
     ev.stopPropagation()
+  }).on('click', '.create-directory', function (ev) {
+    ev.stopPropagation()
+    const contextmenuId = $(this).closest('.contextmenu').attr('data-id')
+    const $body = $('<div>')
+    const directory = $tpl.find('.' + contextmenuId).find('.input-directory input').val()
+    $body.append('<input type="text" class="form-control" data-translate-property="placeholder,create.directory.placeholder">')
+    gl.modalConfirm($body, function (result) {
+      if (result === true) {
+        const v = $body.find('input').val()
+        const params = {
+          'directoryName': v,
+          'type': contextmenuId,
+          'directory': directory,
+          'serverId': tabParams.server
+        }
+        gl.socket.send('createDirectory', params, function () {
+          if (params.type === 'local') {
+            loadLocalDirectory(params.directory)
+          }
+          if (params.type === 'server') {
+            loadServerDirectory(params.directory)
+          }
+        })
+      }
+    })
+  })
+
+  $(document).on('contextmenu', '.server, .local', function (ev) {
+    ev.stopPropagation()
+    ev.preventDefault()
+    $contextmenuBoth.attr('data-id', $(this).attr('data-id'))
+    gl.showContextmenu($contextmenuBoth, ev)
   })
 
   loadServerDirectory(tabParams.serverDirectory || '/')

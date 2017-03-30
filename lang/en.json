@@ -4,6 +4,8 @@
   "administrator.missing": "There must be at least one administrator",
   "cancel.edit": "Cancel",
   "confirm.delete.files": "Are you sure? This cannot be undone. It will delete all files recursively, so, be careful",
+  "create.directory": "Create directory",
+  "create.directory.placeholder": "Directory name",
   "delete": "Delete",
   "donate": "Donate",
   "donate.tooltip": "If you want donate something for this project and provide me some Red Bull and coffee, you can do that here",
@@ -99,5 +101,6 @@
   "user.add": "Add new user",
   "usermanager": "Usermanager",
   "username": "Username",
-  "yes": "Yes"
+  "yes": "Yes",
+  "transfer.move": "Move back to queue"
 }

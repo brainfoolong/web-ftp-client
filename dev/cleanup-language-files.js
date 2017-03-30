@@ -33,7 +33,7 @@ for (let i = 0; i < directories.length; i++) {
           }
         }
       }
-      sortObject(json)
+      json = sortObject(json)
       updateJsonFile(json, filepath)
     }
   }
