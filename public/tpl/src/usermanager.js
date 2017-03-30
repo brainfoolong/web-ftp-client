@@ -16,7 +16,10 @@
         },
         'admin': {'type': 'switch', 'label': 'administrator', 'description': 'administrator.description'},
         'loginHash': {
-          'type': 'text', 'label': 'loginhash', 'description': 'loginhash.description', 'showIf': function () {
+          'type': 'text',
+          'label': 'loginhash',
+          'description': 'loginhash.description',
+          'showIf': function () {
             return !!editId
           }
         }

@@ -1,8 +1,8 @@
 #!/bin/sh
 
 LABEL="Web FTP Client"
-PIDFILE=bgsm.pid
-SCRIPT=bgsm
+PIDFILE=wfc.pid
+SCRIPT=./wfc
 BASEDIR=$(dirname "$0")
 cd "${BASEDIR}"
 
@@ -67,7 +67,7 @@ case "$1" in
 		fi
 	;;
 	restart)
-		sh $SCRIPT stop && sh $SCRIPT start || exit 1
+		$SCRIPT stop && $SCRIPT start || exit 1
 	;;
 	status)
 		if [ -e $PIDFILE ]; then
