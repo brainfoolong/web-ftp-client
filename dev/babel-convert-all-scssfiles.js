@@ -6,14 +6,8 @@ const path = require('path')
 const fs = require('fs')
 const fstools = require('./../src/fstools')
 const sass = require('node-sass')
-const mode = process.argv[2] || 'dev'
-const singleFile = process.argv[3]
 
 const directories = ['public/stylesheets/src']
-const options = {
-  'dev': {},
-  'prod': {'outputStyle': 'compressed'}
-}
 
 for (let i = 0; i < directories.length; i++) {
   let directory = directories[i]
@@ -23,13 +17,8 @@ for (let i = 0; i < directories.length; i++) {
     const file = files[j]
     if (file.match(/\.scss$/)) {
       const filepath = path.join(directory, file)
-      if (singleFile && singleFile !== filepath) {
-        continue
-      }
       let filepathGen = path.join(path.dirname(directory), 'dist', path.basename(file, '.scss') + '.css')
-      const opt = options[mode]
-      opt.file = filepath
-      let data = sass.renderSync(opt)
+      let data = sass.renderSync({'outputStyle': 'compressed', 'file': filepath})
       fs.writeFileSync(filepathGen, data.css, {'mode': fstools.defaultMask})
     }
   }
