@@ -33,3 +33,8 @@ No release yet. Watch/star if you like it.
 * `npm run build` (and also everytime you change some frontend code)
 * Start server with `./wfc start` (Stop with `./wfc stop`)
 * Open http://localhost:4340 in your browser
+* Changes in frontend require `npm run build` to be executed afterwards
+* Changes in backend `/src` folder require `./wfc restart` to be executed afterwards
+
+# Development procedure
+First, always talk with me/us. If you have an idea don't go ahead and investigate much time for development. Maybe there is already something similar in development. Use GitHub issues to discuss about requests and bugs. Fork it, pull changes. There some pre-commit hooks that don't let you commit your code that isn't passing our tests.

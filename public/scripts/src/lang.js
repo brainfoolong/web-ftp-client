@@ -7,6 +7,18 @@
 gl.lang = {}
 
 /**
+ * The translation values
+ * @type {object.<string, object<string, string>>}
+ */
+gl.lang.values = {}
+
+/**
+ * The current language, default to en
+ * @type {string}
+ */
+gl.lang.language = 'en'
+
+/**
  * Alias for gl.lang.get
  * @param {string} key
  * @param {object=} params
@@ -26,7 +38,7 @@ gl.t = function (key, params, wrapParamsWithSpans) {
  */
 gl.lang.get = function (key, params, wrapParamsWithSpans) {
   let v = key
-  if (typeof gl.lang.values[gl.lang.language] !== 'undefined' && typeof gl.lang.values[gl.lang.language][key] !== 'undefined') {
+  if (typeof gl.lang.values[gl.lang.language] !== 'undefined' && typeof gl.lang.values[gl.lang.language][key] !== 'undefined' && gl.lang.values[gl.lang.language][key] !== null) {
     v = gl.lang.values[gl.lang.language][key]
   } else if (typeof gl.lang.values['en'] !== 'undefined' && typeof gl.lang.values['en'][key] !== 'undefined') {
     v = gl.lang.values['en'][key]
@@ -63,26 +75,18 @@ gl.lang.replaceInHtml = function (el) {
 }
 
 /**
- * The translation values
- * @type {object.<string, object<string, string>>}
+ * Set language by navigation language, also return the most appropriate language
+ * @returns {string|null}
  */
-gl.lang.values = {}
-
-/**
- * The current language, default to en
- * @type {string}
- */
-gl.lang.language = 'en'
-
-// check for a other supported language depending on the users defined languages
-if (navigator.languages) {
-  (function () {
+gl.lang.setLanguageByNavigator = function () {
+  if (navigator.languages) {
     for (let i = 0; i < navigator.languages.length; i++) {
       const l = navigator.languages[i]
       if (typeof gl.lang.values[l] !== 'undefined') {
         gl.lang.language = l
-        break
+        return l
       }
     }
-  })()
+  }
+  return null
 }

@@ -19,20 +19,10 @@ for (let i = 0; i < directories.length; i++) {
     if (file.match(/\.json$/)) {
       const filepath = path.join(directory, file)
       let data = fs.readFileSync(filepath)
-      let json = sortObject(JSON.parse(data))
+      let json = JSON.parse(data)
       distFileData += 'gl.lang.values[\'' + path.basename(file, '.json') + '\'] = ' + JSON.stringify(json) + '\n'
     }
   }
 }
 
 fs.writeFileSync(distFile, distFileData, {'mode': fstools.defaultMask})
-
-function sortObject (o) {
-  let newO = {}
-  let keys = Object.keys(o)
-  keys.sort()
-  for (let i = 0; i < keys.length; i++) {
-    newO[keys[i]] = o[keys[i]]
-  }
-  return newO
-}

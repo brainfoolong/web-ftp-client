@@ -26,6 +26,7 @@
     "node-minify": "^2.0.3",
     "node-sass": "^4.5.1",
     "node-zip": "^1.1.1",
+    "pre-commit": "^1.2.2",
     "standard": "^9.0.2"
   },
   "scripts": {
@@ -34,6 +35,9 @@
     "build": "node dev/build.js dev",
     "release": "node dev/release.js prod"
   },
+  "pre-commit": [
+    "test", "build"
+  ],
   "standard": {
     "globals": [
       "$",

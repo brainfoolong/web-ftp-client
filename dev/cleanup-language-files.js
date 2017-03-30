@@ -7,6 +7,7 @@ const fs = require('fs')
 const fstools = require('./../src/fstools')
 
 const directories = ['lang']
+const baseLangData = sortObject(JSON.parse(fs.readFileSync(path.join(__dirname, '../lang/en.json'))))
 
 for (let i = 0; i < directories.length; i++) {
   let directory = directories[i]
@@ -16,11 +17,26 @@ for (let i = 0; i < directories.length; i++) {
     const file = files[j]
     if (file.match(/\.json$/)) {
       const filepath = path.join(directory, file)
+      const lang = path.basename(file, '.json')
       let data = fs.readFileSync(filepath)
-      let json = sortObject(JSON.parse(data))
-      if (process.argv[4] !== 'skip-resort') {
-        updateJsonFile(json, filepath)
+      // resort keys
+      let json = JSON.parse(data)
+      if (lang !== 'en') {
+        // delete keys that are not existing in dest anymore
+        for (let i in json) {
+          if (typeof baseLangData[i] === 'undefined') {
+            delete json[i]
+          }
+        }
+        // add keys that are in the source but not in dest
+        for (let i in baseLangData) {
+          if (typeof json[i] === 'undefined') {
+            json[i] = null
+          }
+        }
       }
+      sortObject(json)
+      updateJsonFile(json, filepath)
     }
   }
 }
