@@ -32,21 +32,33 @@ if (mode === 'update-core') {
 
   core.fetchLatestVersion(function () {
     request(core.latestVersionZip, function () {
-      const AdmZip = require('adm-zip')
-      const zipArchive = new AdmZip(localZipFile)
-      const zipEntries = zipArchive.getEntries()
-      zipEntries.forEach(function (zipEntry) {
-        const filepath = path.join(dir, zipEntry.entryName.toString()).replace(/\\/g, path.sep)
-        process.stdout.write('File ' + filepath + '\n')
-        if (zipEntry.isDirectory) {
-          if (!fs.existsSync(filepath)) fs.mkdirSync(filepath, fstools.defaultMask)
-        } else {
-          fs.writeFileSync(filepath, zipEntry.getData())
+      const jsZip = require('jszip')
+      jsZip.loadAsync(fs.readFileSync(localZipFile)).then(function (zip) {
+        let countDone = 0
+        let countFiles = Object.keys(zip.files).length
+        const fileDoneCb = function () {
+          countDone++
+          if (countDone >= countFiles) {
+            process.stdout.write('Application successfully updated\n')
+            process.exit(0)
+          }
+        }
+        for (let i in zip.files) {
+          let zipFile = zip.files[i]
+          const filepath = path.join(dir, zipFile.name.replace(/\\/g, path.sep))
+          if (zipFile.dir === true) {
+            if (!fs.existsSync(filepath)) fs.mkdirSync(filepath, {'mode': fstools.defaultMask})
+            process.stdout.write('Directory ' + filepath + '\n')
+            fileDoneCb()
+          } else {
+            zipFile.async('nodebuffer').then(function (fileData) {
+              process.stdout.write('File ' + filepath + '\n')
+              fs.writeFileSync(filepath, fileData, {'mode': fstools.defaultMask})
+              fileDoneCb()
+            })
+          }
         }
       })
-      process.stdout.write('Application successfully updated\n')
-      fs.unlinkSync(localZipFile)
-      process.exit(0)
     }).pipe(fs.createWriteStream(localZipFile))
   })
 }
