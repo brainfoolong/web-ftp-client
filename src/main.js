@@ -39,6 +39,7 @@ if (mode === 'update-core') {
         const fileDoneCb = function () {
           countDone++
           if (countDone >= countFiles) {
+            fs.unlinkSync(localZipFile)
             process.stdout.write('Application successfully updated\n')
             process.exit(0)
           }
