@@ -44,8 +44,7 @@ if (mode === 'update-core') {
             process.exit(0)
           }
         }
-        for (let i in zip.files) {
-          let zipFile = zip.files[i]
+        zip.files.forEach(function (index, zipFile) {
           const filepath = path.join(dir, zipFile.name.replace(/\\/g, path.sep))
           if (zipFile.dir === true) {
             if (!fs.existsSync(filepath)) fs.mkdirSync(filepath, {'mode': fstools.defaultMask})
@@ -58,7 +57,7 @@ if (mode === 'update-core') {
               fileDoneCb()
             })
           }
-        }
+        })
       })
     }).pipe(fs.createWriteStream(localZipFile))
   })
