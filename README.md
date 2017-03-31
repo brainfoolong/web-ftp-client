@@ -1,13 +1,13 @@
 # Brains Web FTP Client
 [![Build Status](https://travis-ci.org/brainfoolong/web-ftp-client.svg?branch=master)](https://travis-ci.org/brainfoolong/web-ftp-client)
 
-A web based FTP client. Like really simple, kind of, filezilla, but for your browser. The main goal of this tool is: Install on a server/NAS/synology/raspberry/desktop and use it like a desktop tool. It can be installed on almost every device, including your server for example. Everything that can run `nodejs` can also run this client. I've mainly built this to run on my NAS because i just want to download huge data from a FTP to my NAS directly, without struggling with the command line.
+A web based FTP client. Like really simple, kind of, filezilla, but for your browser. The main goal of this tool is: Install on a server/NAS/synology/raspberry/desktop and use it like a desktop tool. It can be installed on almost every device, including your server for example. Everything that can run `nodejs` can also run this client. I've mainly built this to run on my NAS because i just wanted to download huge data from a FTP to my NAS directly, without struggling with the command line.
 
 ![Screenshot](https://brainfoolong.github.io/web-ftp-client/images/screenshot.jpg)
 
 
 # Alpha release
-Give this thing a try a help improving it https://github.com/brainfoolong/web-ftp-client/releases/latest
+Give this thing a try and help improving it -> https://github.com/brainfoolong/web-ftp-client/releases/latest
 
 # Code languages and standards we use
 * JS: https://standardjs.com
@@ -38,4 +38,4 @@ Give this thing a try a help improving it https://github.com/brainfoolong/web-ft
 * Changes in backend `/src` folder require `./wfc restart` to be executed afterwards
 
 # Development procedure
-First, always talk with me/us. If you have an idea don't go ahead and investigate much time for development. Maybe there is already something similar in development. Use GitHub issues to discuss about requests and bugs. Fork it, pull changes. There some pre-commit hooks that don't let you commit your code that isn't passing our tests.
+First, always talk with me/us. If you have an idea, don't go ahead and investigate much time for development. Maybe there is already something similar in development. Use GitHub issues to discuss about requests and bugs. Fork it, pull changes. There are some pre-commit hooks that don't let you commit your code that isn't passing our tests.
