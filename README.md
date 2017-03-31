@@ -3,23 +3,11 @@
 
 A web based FTP client. Like really simple, kind of, filezilla, but for your browser. The main goal of this tool is: Install on a server/NAS/synology/raspberry/desktop and use it like a desktop tool. It can be installed on almost every device, including your server for example. Everything that can run `nodejs` can also run this client. I've mainly built this to run on my NAS because i just want to download huge data from a FTP to my NAS directly, without struggling with the command line.
 
-![Preview](https://brainfoolong.github.io/web-ftp-client/images/preview.png "Preview")
+![Screenshot](https://brainfoolong.github.io/web-ftp-client/images/screenshot.jpg)
 
 
-# Work in progress
-No release yet. Watch/star if you like it.
-* Already working features
-  * Local file browser
-  * Server file browser
-  * FTP Browser/Download/Upload/Delete
-  * FTP with TLS Browser/Download/Upload/Delete
-  * SFTP Browser/Download/Upload/Delete
-  * Queue manager
-  * Log manager
-  * User manager
-  * Multilanguage
-* What's missing for the first alpha
-  * Nothing, first alpha release is out already
+# Alpha release
+Give this thing a try a help improving it https://github.com/brainfoolong/web-ftp-client/releases/latest
 
 # Code languages and standards we use
 * JS: https://standardjs.com
