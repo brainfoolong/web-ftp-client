@@ -10,7 +10,7 @@ case "$1" in
     update)
         $SCRIPT stop
         echo "Update started"
-        node ${BASEDIR}/src/main.js update-core
+        node ${BASEDIR}/src/main.js update-core > ${BASEDIR}/logs/update-output.log 2> ${BASEDIR}/logs/update-error.log
     ;;
     start)
         if [ -e $PIDFILE ]; then
