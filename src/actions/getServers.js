@@ -18,7 +18,15 @@ action.requireUser = true
  * @param {function} callback
  */
 action.execute = function (user, message, callback) {
-  callback(db.get('servers').cloneDeep().value())
+  const servers = db.get('servers').cloneDeep().value()
+  // strip out sensible data
+  if (servers) {
+    for (let i in servers) {
+      delete servers[i].keyfile_passphrase
+      delete servers[i].password
+    }
+  }
+  callback(servers)
 }
 
 module.exports = action

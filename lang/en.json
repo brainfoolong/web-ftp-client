@@ -53,7 +53,7 @@
   "mtime": "Last modified",
   "no": "No",
   "password": "Password",
-  "password.description": "Leave empty if you don't want to change it",
+  "password.description": "Leave empty if you don't want to change it. Notice: The password will be stored as cleartext in db. However, somebody must have access to the server disk to read this.",
   "permissions": "Permissions",
   "progress": "Progress",
   "save.edited": "Save edited",
@@ -61,7 +61,7 @@
   "server": "Server",
   "server.add": "Add new server",
   "server.auth": "Authentication",
-  "server.auth.keyfile": "PPK Keyfile (Not yet implemented)",
+  "server.auth.keyfile": "PPK Keyfile",
   "server.auth.normal": "Username + Password",
   "server.connect": "Connect",
   "server.encryption": "Encryption",
@@ -102,5 +102,11 @@
   "user.add": "Add new user",
   "usermanager": "Usermanager",
   "username": "Username",
-  "yes": "Yes"
+  "yes": "Yes",
+  "server.auth.keyfile.passphrase": "Keyfile password",
+  "server.auth.keyfile.description": "Paste the contents of the file in here",
+  "update.available" : "Update available",
+  "update.available.modal" : "There is a new release for this application. You have {currentVersion} and the newest release is {latestVersion}. Make sure to always have a backup before applying any update. With the click on the accept button the application will shut down, downloading the update, apply the update and restart the application automatically. However, if something goes wrong you should have access to the command line to fix the issues per hand.",
+  "coreupdate.started" : "Update started, application will restart automatically when all is done",
+  "coreupdate.error" : "Cannot execute automatic update. OS doesn't support this method or development mode is enabled"
 }

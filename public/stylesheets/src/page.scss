@@ -16,7 +16,7 @@ html {
     margin: 0;
 }
 
-form .submit-form {
+.btn-accept {
     &:before {
         @include glyphicon;
         content: "\e013";

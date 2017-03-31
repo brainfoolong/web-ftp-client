@@ -21,7 +21,7 @@ let config = {
   /**
    * Set to true to get more information for errors and stuff like that
    */
-  'debug': false
+  'development': false
 }
 
 module.exports = config

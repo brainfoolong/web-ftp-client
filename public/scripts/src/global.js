@@ -85,7 +85,7 @@ gl.modal = function (header, body, footer, closeCallback) {
 gl.modalConfirm = function (body, callback) {
   const $footer = $('<div>')
   $footer
-    .append('<span class="btn btn-info accept" data-translate="modal.confirm.accept"></span>')
+    .append('<span class="btn btn-info accept btn-accept" data-translate="modal.confirm.accept"></span>')
     .append('<span class="btn btn-primary cancel" data-translate="modal.confirm.cancel"></span>')
   $footer.find('.accept').on('click', function () {
     callback(true)
@@ -170,6 +170,19 @@ gl.humanFilesize = function (bytes) {
     return bytes + map[i]
   }
   return bytes.toFixed(2) + map[i]
+}
+
+/**
+ * Initialize all textarea autoheights
+ * @param {JQuery} container
+ */
+gl.textareaAutoheight = function (container) {
+  container.find('textarea.autoheight').each(function () {
+    this.setAttribute('style', 'height:' + (Math.max(20, this.scrollHeight)) + 'px;overflow-y:hidden;')
+  }).addClass('autoheight-activated').off('input.ah focus.ah').on('input.ah focus.ah', function () {
+    this.style.height = 'auto'
+    this.style.height = (Math.max(20, this.scrollHeight)) + 'px'
+  }).triggerHandler('input')
 }
 
 // on document ready

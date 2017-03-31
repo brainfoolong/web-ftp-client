@@ -10,7 +10,7 @@ const fs = require('fs')
 let config = {
   'host': null,
   'port': 4340,
-  'debug': false
+  'development': false
 }
 
 // load config.js if exist

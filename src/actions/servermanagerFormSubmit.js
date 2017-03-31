@@ -31,6 +31,12 @@ action.execute = function (user, message, callback) {
         'id': db.getNextId()
       }
     }
+    if (formData.password.length <= 0) {
+      delete formData.password
+    }
+    if (formData.keyfile_passphrase.length <= 0) {
+      delete formData.keyfile_passphrase
+    }
     // simply merging data from form into data object
     extend(true, storedData, formData)
     Server.get(storedData.id).setServerData(storedData)

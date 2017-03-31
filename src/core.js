@@ -1,6 +1,7 @@
 'use strict'
 
 const request = require('request')
+const path = require('path')
 
 /**
  * Core
@@ -8,20 +9,36 @@ const request = require('request')
  */
 const core = {}
 
-/** @type {string} */
-core.latestVersion = ''
+/** @type {string|null} */
+core.latestVersion = null
+
+/** @type {string|null} */
+core.latestVersionZip = null
 
 /**
  * Fetch latest version for the core
+ * @param {function=} callback
  */
-core.fetchLatestVersion = function () {
-  request('https://raw.githubusercontent.com/brainfoolong/web-ftp-client/master/package.json', function (error, response, body) {
+core.fetchLatestVersion = function (callback) {
+  const pkg = require(path.join(__dirname, '../package'))
+  request({
+    url: 'https://api.github.com/repos/brainfoolong/' + pkg.rame + '/releases',
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
+    }
+  }, function (error, response, body) {
     if (!error) {
-      const manifest = JSON.parse(body)
-      if (manifest && manifest.version) {
-        core.latestVersion = manifest.version
+      const releases = JSON.parse(body)
+      if (releases) {
+        releases.sort(function (a, b) {
+          return a.id < b.id
+        })
+        const release = releases.shift()
+        core.latestVersion = release.tag_name
+        core.latestVersionZip = release.zipball_url
       }
     }
+    callback()
   })
 }
 

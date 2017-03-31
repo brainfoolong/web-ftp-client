@@ -68,6 +68,22 @@ function FtpServer (id) {
       })
     }
     if (serverData.protocol === 'sftp') {
+      const connectData = {
+        host: serverData.host,
+        port: serverData.port
+      }
+      if (typeof serverData.username !== 'undefined' && serverData.username.length > 0) {
+        connectData.username = serverData.username
+      }
+      if (typeof serverData.password !== 'undefined' && serverData.password.length > 0) {
+        connectData.password = serverData.password
+      }
+      if (typeof serverData.keyfile !== 'undefined' && serverData.keyfile.trim().length > 0) {
+        connectData.privateKey = serverData.keyfile.trim()
+      }
+      if (typeof serverData.keyfile_passphrase !== 'undefined' && serverData.keyfile_passphrase.length > 0) {
+        connectData.passphrase = serverData.keyfile_passphrase
+      }
       self.sshClient = new SshClient()
       self.sshClient.on('ready', function () {
         self.server.log('log.ftpserver.ready')
@@ -88,12 +104,7 @@ function FtpServer (id) {
         self.server.logError(err)
       }).on('end', function () {
         self.disconnect()
-      }).connect({
-        host: serverData.host,
-        port: serverData.port,
-        username: serverData.username,
-        password: serverData.password
-      })
+      }).connect(connectData)
     }
   }
   /**

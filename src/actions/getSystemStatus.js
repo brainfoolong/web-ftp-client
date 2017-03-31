@@ -20,7 +20,9 @@ action.requireUser = false
 action.execute = function (user, message, callback) {
   callback({
     'installed': db.get('users').size().value() > 0,
-    'version': require(path.join(__dirname, '../core')).latestVersion
+    'latestVersion': require(path.join(__dirname, '../core')).latestVersion,
+    'currentVersion': require(path.join(__dirname, '../../package')).version,
+    'development': require(path.join(__dirname, '../config')).development
   })
 }
 

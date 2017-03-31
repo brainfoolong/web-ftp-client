@@ -36,15 +36,29 @@
       'username': {
         'type': 'text',
         'label': 'username',
-        'showIf': function (fields) {
-          return fields.auth.val() === 'normal'
-        }
+        'required': true
       },
       'password': {
         'type': 'password',
         'label': 'password',
         'showIf': function (fields) {
           return fields.auth.val() === 'normal'
+        }
+      },
+      'keyfile': {
+        'type': 'textarea',
+        'label': 'server.auth.keyfile',
+        'description': 'server.auth.keyfile.description',
+        'showIf': function (fields) {
+          return fields.auth.val() === 'keyfile'
+        }
+      },
+      'keyfile_passphrase': {
+        'type': 'password',
+        'label': 'server.auth.keyfile.passphrase',
+        'description': 'password.description',
+        'showIf': function (fields) {
+          return fields.auth.val() === 'keyfile'
         }
       }
     }

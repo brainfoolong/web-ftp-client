@@ -24,24 +24,31 @@ if (mode === 'start') {
 if (mode === 'update-core') {
   const request = require('request')
   const fs = require('fs')
-  const fstools = require(path.join(__dirname, 'fstools'))
+  const fstools = require(path.join(__dirname, 'src/fstools'))
   const unzip = require('unzip')
   const dir = path.resolve(__dirname, '..')
-  request('https://codeload.github.com/brainfoolong/web-ftp-client/zip/master', function () {
-    fs.createReadStream(dir + '/master.zip').pipe(unzip.Parse()).on('entry', function (entry) {
-      const fileName = entry.path.split('/').slice(1).join('/')
-      if (!fileName.length) return
-      const path = dir + '/' + fileName
-      if (entry.type === 'Directory') {
-        if (!fs.existsSync(path)) fs.mkdirSync(path, fstools.defaultMask)
-        entry.autodrain()
-      } else {
-        entry.pipe(fs.createWriteStream(path, {'mode': fstools.defaultMask}))
-      }
-    }).on('close', function () {
-      process.stdout.write('Application successfully updated\n')
-      fs.unlinkSync(dir + '/master.zip')
-      process.exit(0)
-    })
-  }).pipe(fs.createWriteStream(dir + '/master.zip'))
+  const localZipFile = path.join(dir, path.dirname(dir) + '.zip')
+  const core = require(path.join(__dirname, 'src/core'))
+
+  core.fetchLatestVersion(function () {
+    request(core.latestVersionZip, function () {
+      fs.createReadStream(localZipFile).pipe(unzip.Parse()).on('entry', function (entry) {
+        const fileName = entry.path
+        if (!fileName.length) return
+        const filepath = path.join(dir, fileName)
+        if (filepath === '') {
+          if (entry.type === 'Directory') {
+            if (!fs.existsSync(filepath)) fs.mkdirSync(filepath, fstools.defaultMask)
+            entry.autodrain()
+          } else {
+            entry.pipe(fs.createWriteStream(filepath, {'mode': fstools.defaultMask}))
+          }
+        }
+      }).on('close', function () {
+        process.stdout.write('Application successfully updated\n')
+        fs.unlinkSync(dir + '/master.zip')
+        process.exit(0)
+      })
+    }).pipe(fs.createWriteStream(localZipFile))
+  })
 }

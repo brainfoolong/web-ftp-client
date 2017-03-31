@@ -62,6 +62,9 @@ gl.form.create = function (container, formName, fields, onSubmit, onCancel, valu
           $input.val(currentValue)
         }
         break
+      case 'file':
+        $input = $('<input type="file" class="form-control" name="' + fieldName + '">')
+        break
       case 'select':
         let name = fieldName
         if (field.multiple) name += '[]'
@@ -119,7 +122,7 @@ gl.form.create = function (container, formName, fields, onSubmit, onCancel, valu
       }
     }
   }
-  const $btn = $('<div><span data-name="save" data-translate="save" class="btn btn-info submit-form"></span></div>')
+  const $btn = $('<div><span data-name="save" data-translate="save" class="btn btn-info submit-form btn-accept"></span></div>')
   if (Object.keys(values).length) {
     $btn.children().attr('data-translate', 'save.edited')
     $btn.append('&nbsp;<span data-translate="cancel.edit" class="btn btn-default cancel"></span>')
@@ -148,5 +151,6 @@ gl.form.create = function (container, formName, fields, onSubmit, onCancel, valu
       }
     })
   }).trigger('change')
+  gl.textareaAutoheight($form)
   return $form
 }
