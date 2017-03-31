@@ -85,6 +85,14 @@ html {
 .menu-top {
     width: 100%;
     padding: 10px;
+    .version {
+        position: absolute;
+        right: 10px;
+        font-size: 80%;
+        background: #f5f5f5;
+        border-radius: 3px;
+        padding: 10px;
+    }
 }
 
 .menu-icons {

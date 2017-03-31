@@ -8,6 +8,7 @@
     gl.socket.send('getSystemStatus', null, function (data) {
       if (data.latestVersion) {
         systemStatus = data
+        $tpl.find('.version').text('v' + data.currentVersion)
         if (data.latestVersion !== data.currentVersion) {
           $tpl.find('.update-available').removeClass('hidden')
         }
