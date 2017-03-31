@@ -24,7 +24,8 @@ const ignoreFiles = [
   'logs/',
   'node_modules/',
   '{.}',
-  'npm-debug.log'
+  'npm-debug.log',
+  'config.js'
 ]
 const rootDir = path.join(__dirname, '..')
 

@@ -7,6 +7,11 @@ SCRIPT=${BASEDIR}/wfc
 PIDFILE=${BASEDIR}/wfc.pid
 
 case "$1" in
+    update)
+        $SCRIPT stop
+        echo "Update started"
+        node ${BASEDIR}/src/main.js update-core
+    ;;
     start)
         if [ -e $PIDFILE ]; then
             if ( kill -0 $(cat $PIDFILE) 2> /dev/null ); then

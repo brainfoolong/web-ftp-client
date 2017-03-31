@@ -25,7 +25,7 @@ action.execute = function (user, message, callback) {
     return
   }
   const dir = path.join(__dirname, '../..')
-  exec('cd ' + dir + ' && ./wfc stop && node src/main.js update-core && ./wfc start', null, function () {
+  exec('cd ' + dir + ' && ./wfc stop && node src/main.js update-core > logs/update-output.log 2> logs/update-error.log && ./wfc start', null, function () {
     callback(true)
   })
 }
