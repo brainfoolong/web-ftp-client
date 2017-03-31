@@ -30,35 +30,41 @@ if (mode === 'update-core') {
   const dir = path.resolve(__dirname, '..')
   const localZipFile = path.join(path.dirname(dir), path.basename(dir) + '.zip')
 
-  core.fetchLatestVersion(function () {
-    request(core.latestVersionZip, function () {
-      const jsZip = require('jszip')
-      jsZip.loadAsync(fs.readFileSync(localZipFile)).then(function (zip) {
-        let countDone = 0
-        let countFiles = Object.keys(zip.files).length
-        const fileDoneCb = function () {
-          countDone++
-          if (countDone >= countFiles) {
-            fs.unlinkSync(localZipFile)
-            process.stdout.write('Application successfully updated\n')
-            process.exit(0)
+  core.fetchLatestVersion(function (body) {
+    if (!core.latestVersionZip) {
+      process.stderr.write(body)
+      process.exit(0)
+    } else {
+      request(core.latestVersionZip, function () {
+        const jsZip = require('jszip')
+        jsZip.loadAsync(fs.readFileSync(localZipFile)).then(function (zip) {
+          let countDone = 0
+          let countFiles = Object.keys(zip.files).length
+          const fileDoneCb = function () {
+            countDone++
+            if (countDone >= countFiles) {
+              fs.unlinkSync(localZipFile)
+              process.stdout.write('Application successfully updated\n')
+              process.exit(0)
+            }
           }
-        }
-        zip.files.forEach(function (index, zipFile) {
-          const filepath = path.join(dir, zipFile.name.replace(/\\/g, path.sep))
-          if (zipFile.dir === true) {
-            if (!fs.existsSync(filepath)) fs.mkdirSync(filepath, {'mode': fstools.defaultMask})
-            process.stdout.write('Directory ' + filepath + '\n')
-            fileDoneCb()
-          } else {
-            zipFile.async('nodebuffer').then(function (fileData) {
-              process.stdout.write('File ' + filepath + '\n')
-              fs.writeFileSync(filepath, fileData, {'mode': fstools.defaultMask})
+          Object.keys(zip.files).forEach(function (index) {
+            const zipFile = zip.files[index]
+            const filepath = path.join(dir, zipFile.name.replace(/\\/g, path.sep))
+            if (zipFile.dir === true) {
+              if (!fs.existsSync(filepath)) fs.mkdirSync(filepath, {'mode': fstools.defaultMask})
+              process.stdout.write('Directory ' + filepath + '\n')
               fileDoneCb()
-            })
-          }
+            } else {
+              zipFile.async('nodebuffer').then(function (fileData) {
+                process.stdout.write('File ' + filepath + '\n')
+                fs.writeFileSync(filepath, fileData, {'mode': fstools.defaultMask})
+                fileDoneCb()
+              })
+            }
+          })
         })
-      })
-    }).pipe(fs.createWriteStream(localZipFile))
+      }).pipe(fs.createWriteStream(localZipFile))
+    }
   })
 }

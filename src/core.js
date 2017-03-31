@@ -43,7 +43,7 @@ core.fetchLatestVersion = function (callback) {
         }
       }
     }
-    if (callback) callback()
+    if (callback) callback(body)
   })
 }
 
