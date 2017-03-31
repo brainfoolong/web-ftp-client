@@ -17,15 +17,15 @@
     "mkdir-recursive": "^0.3.0",
     "request": "^2.79.0",
     "ssh2": "^0.5.4",
-    "unzip": "^0.1.11",
+    "unzip2": "^0.2.5",
     "ws": "^1.1.1"
   },
   "devDependencies": {
+    "adm-zip": "^0.4.7",
     "babel-core": "^6.24.0",
     "babel-preset-env": "^1.2.2",
     "node-minify": "^2.0.3",
     "node-sass": "^4.5.1",
-    "node-zip": "^1.1.1",
     "pre-commit": "^1.2.2",
     "standard": "^9.0.2"
   },
@@ -36,7 +36,8 @@
     "release": "node dev/release.js"
   },
   "pre-commit": [
-    "test", "build"
+    "test",
+    "build"
   ],
   "standard": {
     "globals": [

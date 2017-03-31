@@ -18,7 +18,9 @@
   setInterval(getSystemStatus, 10 * 1000)
 
   $tpl.on('click', '.update-available', function () {
-    gl.modalConfirm(gl.t('update.available.modal', systemStatus, true), function (result) {
+    const $body = $('<div>').append(gl.t('update.available.modal', systemStatus, true))
+    $body.append('<h3>Changelog</h3>').append($('<div style="white-space: pre-line">').text(systemStatus.latestVersionChangelog))
+    gl.modalConfirm($body, function (result) {
       if (result === true) {
         gl.note('coreupdate.started')
         gl.socket.send('doCoreUpdate', null, function (result) {

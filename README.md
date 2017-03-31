@@ -27,7 +27,7 @@ No release yet. Watch/star if you like it.
 * SCSS (with converter for frontend): http://sass-lang.com/
 
 # Install linux
-* Download a realase zip and unpack to a directory
+* Download a realase zip and unpack to a directory and switch to that directory
 * Run `npm install --production`
 * Start server with `./wfc start`
 * Stop server with `./wfc stop`
@@ -35,8 +35,10 @@ No release yet. Watch/star if you like it.
 
 # Install synology
 * Install package node 4
-* Via SSH terminal do the same as install linux
-* Notice: Some disktations have very low ram and cpu to run this application at full speed
+* Via SSH terminal do the same as install linux. You can for sure use a shared folder.
+* Automatic boot on startup for DSM 6 or above
+  * `sudo ln -s $(pwd)/wfc /usr/local/etc/rc.d/web-ftp-client.sh && sudo chmod 0755 wfc`
+* Notice: Some disk-stations have too low RAM and CPU to run this application at full speed. But at least constant 5MB/s download/upload should be possible.
  
 # Development setup
 * Git clone master to a directory of your choice

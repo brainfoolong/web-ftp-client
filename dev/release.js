@@ -4,12 +4,12 @@ require('./build')
 
 const path = require('path')
 const fs = require('fs')
-const Zip = require('node-zip')
+const AdmZip = require('adm-zip')
 
 // pack all required files into a release zip
-const zipArchive = new Zip()
 const pkg = require('./../package')
 const zipFile = path.join(__dirname, 'release-' + pkg.version + '.zip')
+const zipArchive = new AdmZip()
 const ignoreFiles = [
   'db/',
   'docs',
@@ -45,18 +45,19 @@ function packfiles (directory) {
       continue
     }
     const stat = fs.statSync(filepath)
-    const relative = path.relative(rootDir, filepath)
+    const relative = path.relative(rootDir, filepath).replace(/\\/g, '/')
 
     if (stat.isDirectory()) {
-      zipArchive.folder(relative)
+      zipArchive.addFile(relative + '/', new Buffer(0), '', '0644')
       packfiles(filepath)
     } else {
-      zipArchive.file(relative, fs.readFileSync(filepath))
+      zipArchive.addFile(relative, fs.readFileSync(filepath), '', '0644')
     }
   }
 }
 
 packfiles(rootDir)
 
-const data = zipArchive.generate({base64: false, compression: 'DEFLATE'})
-fs.writeFileSync(zipFile, data, 'binary')
+if (fs.existsSync(zipFile)) fs.unlinkSync(zipFile)
+
+zipArchive.writeZip(zipFile)

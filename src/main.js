@@ -24,7 +24,6 @@ if (mode === 'start') {
 if (mode === 'update-core') {
   const request = require('request')
   const fs = require('fs')
-  const unzip = require('unzip')
   const fstools = require(path.join(__dirname, 'fstools'))
   const core = require(path.join(__dirname, 'core'))
 
@@ -33,24 +32,21 @@ if (mode === 'update-core') {
 
   core.fetchLatestVersion(function () {
     request(core.latestVersionZip, function () {
-      fs.createReadStream(localZipFile).pipe(unzip.Parse()).on('entry', function (entry) {
-        const fileName = entry.path
-        if (!fileName.length) return
-        const filepath = path.join(dir, fileName)
-        if (entry.type === 'Directory') {
+      const AdmZip = require('adm-zip')
+      const zipArchive = new AdmZip(localZipFile)
+      const zipEntries = zipArchive.getEntries()
+      zipEntries.forEach(function (zipEntry) {
+        const filepath = path.join(dir, zipEntry.entryName.toString()).replace(/\\/g, path.sep)
+        process.stdout.write('File ' + filepath + '\n')
+        if (zipEntry.isDirectory) {
           if (!fs.existsSync(filepath)) fs.mkdirSync(filepath, fstools.defaultMask)
-          entry.autodrain()
         } else {
-          entry.pipe(fs.createWriteStream(filepath, {'mode': fstools.defaultMask}))
+          fs.writeFileSync(filepath, zipEntry.getData())
         }
-      }).on('close', function () {
-        process.stdout.write('Application successfully updated\n')
-        fs.unlinkSync(localZipFile)
-        process.exit(0)
-      }).on('error', function (err) {
-        process.stderr.write(err.message)
-        process.exit(0)
       })
+      process.stdout.write('Application successfully updated\n')
+      fs.unlinkSync(localZipFile)
+      process.exit(0)
     }).pipe(fs.createWriteStream(localZipFile))
   })
 }
