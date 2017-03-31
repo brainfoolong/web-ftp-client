@@ -22,7 +22,7 @@ core.latestVersionZip = null
 core.fetchLatestVersion = function (callback) {
   const pkg = require(path.join(__dirname, '../package'))
   request({
-    url: 'https://api.github.com/repos/brainfoolong/' + pkg.rame + '/releases',
+    url: 'https://api.github.com/repos/brainfoolong/' + pkg.name + '/releases',
     headers: {
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
     }
@@ -35,10 +35,12 @@ core.fetchLatestVersion = function (callback) {
         })
         const release = releases.shift()
         core.latestVersion = release.tag_name
-        core.latestVersionZip = release.zipball_url
+        if (release.assets) {
+          core.latestVersionZip = release.assets[0].browser_download_url
+        }
       }
     }
-    callback()
+    if (callback) callback()
   })
 }
 

@@ -24,11 +24,12 @@ if (mode === 'start') {
 if (mode === 'update-core') {
   const request = require('request')
   const fs = require('fs')
-  const fstools = require(path.join(__dirname, 'src/fstools'))
   const unzip = require('unzip')
+  const fstools = require(path.join(__dirname, 'fstools'))
+  const core = require(path.join(__dirname, 'core'))
+
   const dir = path.resolve(__dirname, '..')
-  const localZipFile = path.join(dir, path.dirname(dir) + '.zip')
-  const core = require(path.join(__dirname, 'src/core'))
+  const localZipFile = path.join(path.dirname(dir), path.basename(dir) + '.zip')
 
   core.fetchLatestVersion(function () {
     request(core.latestVersionZip, function () {
@@ -36,17 +37,18 @@ if (mode === 'update-core') {
         const fileName = entry.path
         if (!fileName.length) return
         const filepath = path.join(dir, fileName)
-        if (filepath === '') {
-          if (entry.type === 'Directory') {
-            if (!fs.existsSync(filepath)) fs.mkdirSync(filepath, fstools.defaultMask)
-            entry.autodrain()
-          } else {
-            entry.pipe(fs.createWriteStream(filepath, {'mode': fstools.defaultMask}))
-          }
+        if (entry.type === 'Directory') {
+          if (!fs.existsSync(filepath)) fs.mkdirSync(filepath, fstools.defaultMask)
+          entry.autodrain()
+        } else {
+          entry.pipe(fs.createWriteStream(filepath, {'mode': fstools.defaultMask}))
         }
       }).on('close', function () {
         process.stdout.write('Application successfully updated\n')
-        fs.unlinkSync(dir + '/master.zip')
+        fs.unlinkSync(localZipFile)
+        process.exit(0)
+      }).on('error', function (err) {
+        process.stderr.write(err.message)
         process.exit(0)
       })
     }).pipe(fs.createWriteStream(localZipFile))
