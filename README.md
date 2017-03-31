@@ -19,7 +19,7 @@ No release yet. Watch/star if you like it.
   * User manager
   * Multilanguage
 * What's missing for the first alpha
-  * Well, i don't know, wanna try it?!?
+  * Nothing, first alpha release is out already
 
 # Code languages and standards we use
 * JS: https://standardjs.com
@@ -27,14 +27,14 @@ No release yet. Watch/star if you like it.
 * SCSS (with converter for frontend): http://sass-lang.com/
 
 # Install linux
-* Download a realase zip and unpack to a directory and switch to that directory
+* Download a [realase zip](https://github.com/brainfoolong/web-ftp-client/releases/latest) and unpack to a directory and switch to that directory
 * Run `npm install --production`
 * Start server with `./wfc start`
 * Stop server with `./wfc stop`
 * Open http://IPTOSERVER:4340 in your browser
 
 # Install synology
-* Install package node 4
+* Install the package `node.js 4` via synology package manager
 * Via SSH terminal do the same as install linux. You can for sure use a shared folder.
 * Automatic boot on startup for DSM 6 or above
   * `sudo ln -s $(pwd)/wfc /usr/local/etc/rc.d/web-ftp-client.sh && sudo chmod 0755 wfc`
