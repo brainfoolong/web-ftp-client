@@ -41,6 +41,7 @@
       'password': {
         'type': 'password',
         'label': 'password',
+        'description': 'password.description',
         'showIf': function (fields) {
           return fields.auth.val() === 'normal'
         }

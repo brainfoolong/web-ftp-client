@@ -55,7 +55,7 @@
   "mtime": "Last modified",
   "no": "No",
   "password": "Password",
-  "password.description": "Leave empty if you don't want to change it. Notice: The password will be stored as cleartext in db. However, somebody must have access to the server disk to read this.",
+  "password.description": "Leave empty if you don't want to change it. Notice: The password will be stored with aes encryption. However, the application must be able to decrypt it.",
   "permissions": "Permissions",
   "progress": "Progress",
   "save.edited": "Save edited",

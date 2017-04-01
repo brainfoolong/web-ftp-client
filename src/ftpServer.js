@@ -11,6 +11,7 @@ const fstools = require(path.join(__dirname, 'fstools'))
 const queue = require(path.join(__dirname, 'queue'))
 const Server = require(path.join(__dirname, 'server'))
 const WebSocketUser = require(path.join(__dirname, 'websocketuser'))
+const aes = require(path.join(__dirname, 'aes'))
 
 /**
  * FTP handler for a server
@@ -29,6 +30,8 @@ function FtpServer (id) {
   this.sshClient = null
   /** @type {object} */
   this.sftp = null
+  /** @type {boolean} */
+  this.closed = false
 
   /**
    * Get date of a specific stat time
@@ -48,6 +51,7 @@ function FtpServer (id) {
    */
   this.connect = function (callback) {
     self.server.log('log.ftpserver.connect')
+    const salt = db.get('settings').get('salt').value()
     const serverData = self.server.getServerData()
     if (serverData.protocol === 'ftp') {
       self.ftpClient = new FtpClient()
@@ -63,7 +67,7 @@ function FtpServer (id) {
         host: serverData.host,
         port: serverData.port,
         user: serverData.username,
-        password: serverData.password,
+        password: aes.decrypt(salt + '_' + serverData.id, serverData.password),
         secure: serverData.encryption === 'none' ? false : serverData.encryption
       })
     }
@@ -72,17 +76,13 @@ function FtpServer (id) {
         host: serverData.host,
         port: serverData.port
       }
-      if (typeof serverData.username !== 'undefined' && serverData.username.length > 0) {
-        connectData.username = serverData.username
+      connectData.username = serverData.username
+      if (serverData.auth === 'normal') {
+        connectData.password = aes.decrypt(salt + '_' + serverData.id, serverData.password)
       }
-      if (typeof serverData.password !== 'undefined' && serverData.password.length > 0) {
-        connectData.password = serverData.password
-      }
-      if (typeof serverData.keyfile !== 'undefined' && serverData.keyfile.trim().length > 0) {
+      if (serverData.auth === 'keyfile') {
         connectData.privateKey = serverData.keyfile.trim()
-      }
-      if (typeof serverData.keyfile_passphrase !== 'undefined' && serverData.keyfile_passphrase.length > 0) {
-        connectData.passphrase = serverData.keyfile_passphrase
+        connectData.passphrase = aes.decrypt(salt + '_' + serverData.id, serverData.keyfile_passphrase)
       }
       self.sshClient = new SshClient()
       self.sshClient.on('ready', function () {
@@ -103,6 +103,8 @@ function FtpServer (id) {
         self.disconnect()
         self.server.logError(err)
       }).on('end', function () {
+        self.disconnect()
+      }).on('close', function () {
         self.disconnect()
       }).connect(connectData)
     }
@@ -558,6 +560,8 @@ function FtpServer (id) {
    * Disconnect
    */
   this.disconnect = function () {
+    if (this.closed) return
+    this.closed = true
     self.server.log('log.ftpserver.disconnect')
     delete FtpServer.instances[self.id]
     if (this.ftpClient) {

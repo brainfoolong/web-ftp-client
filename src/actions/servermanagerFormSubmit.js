@@ -5,6 +5,7 @@ const path = require('path')
 const db = require(path.join(__dirname, '../db'))
 const Server = require(path.join(__dirname, '../server'))
 const FtpServer = require(path.join(__dirname, '../ftpServer'))
+const aes = require(path.join(__dirname, '../aes'))
 
 const action = {}
 
@@ -31,6 +32,7 @@ action.execute = function (user, message, callback) {
         'id': db.getNextId()
       }
     }
+    const salt = db.get('settings').get('salt').value()
     if (formData.password.length <= 0) {
       delete formData.password
     }
@@ -39,6 +41,14 @@ action.execute = function (user, message, callback) {
     }
     // simply merging data from form into data object
     extend(true, storedData, formData)
+
+    // encrypt passwords in database
+    if (typeof formData.password !== 'undefined' && formData.password.length) {
+      storedData.password = aes.encrypt(salt + '_' + storedData.id, formData.password)
+    }
+    if (typeof formData.keyfile_passphrase !== 'undefined' && formData.keyfile_passphrase.length) {
+      storedData.keyfile_passphrase = aes.encrypt(salt + '_' + storedData.id, formData.keyfile_passphrase)
+    }
     Server.get(storedData.id).setServerData(storedData)
     if (typeof FtpServer.instances[storedData.id] !== 'undefined') {
       FtpServer.instances[storedData.id].disconnect()
