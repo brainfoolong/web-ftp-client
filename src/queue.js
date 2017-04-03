@@ -24,7 +24,7 @@ const queue = {}
  * @param {number} priority
  * @constructor
  */
-queue.QueueEntry = function (id, mode, serverId, localPath, serverPath, isDirectory, status, size, priority) {
+queue.QueueEntry = function (id, mode, serverId, localPath, serverPath, isDirectory, status, size, priority, replace) {
   /** @type {number} */
   this.id = id
   /** @type {string} */
@@ -44,6 +44,8 @@ queue.QueueEntry = function (id, mode, serverId, localPath, serverPath, isDirect
   /** @type {number} */
   this.priority = priority
   /** @type {string} */
+  this.replace = replace
+  /** @type {string} */
   this.serverName = Server.get(serverId).getServerData().name
   /**
    * Convert to json
@@ -60,7 +62,8 @@ queue.QueueEntry = function (id, mode, serverId, localPath, serverPath, isDirect
       'status': this.status,
       'size': this.size,
       'priority': this.priority,
-      'serverName': this.serverName
+      'serverName': this.serverName,
+      'replace': this.replace
     }
   }
 }
@@ -71,7 +74,7 @@ queue.QueueEntry = function (id, mode, serverId, localPath, serverPath, isDirect
  * @returns {queue.QueueEntry}
  */
 queue.createQueueEntryFromObject = function (o) {
-  return new queue.QueueEntry(o.id, o.mode, o.serverId, o.localPath, o.serverPath, o.isDirectory, o.status, o.size, o.priority)
+  return new queue.QueueEntry(o.id, o.mode, o.serverId, o.localPath, o.serverPath, o.isDirectory, o.status, o.size, o.priority, o.replace)
 }
 
 /**

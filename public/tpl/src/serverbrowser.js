@@ -179,7 +179,8 @@
       'recursive': true,
       'forceTransfer': $(this).attr('data-forceTransfer') === '1',
       'filter': filter,
-      'flat': $currentCm.find('.flat .checkbox').prop('checked') ? '1' : null
+      'flat': $currentCm.find('.flat select').val() === '1' ? '1' : null,
+      'replace': $currentCm.find('.replace select').val()
     })
   }).on('click', '.remove', function (ev) {
     ev.stopPropagation()
@@ -206,6 +207,8 @@
       }
     })
   }).on('click', '.filter, .flat', function (ev) {
+    ev.stopPropagation()
+  }).on('click', '.replace', function (ev) {
     ev.stopPropagation()
   }).on('click', '.create-directory', function (ev) {
     ev.stopPropagation()

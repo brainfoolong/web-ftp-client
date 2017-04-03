@@ -41,7 +41,7 @@
       'password': {
         'type': 'password',
         'label': 'password',
-        'description': 'password.description',
+        'description': 'server.password.description',
         'showIf': function (fields) {
           return fields.auth.val() === 'normal'
         }
@@ -57,7 +57,7 @@
       'keyfile_passphrase': {
         'type': 'password',
         'label': 'server.auth.keyfile.passphrase',
-        'description': 'password.description',
+        'description': 'server.password.description',
         'showIf': function (fields) {
           return fields.auth.val() === 'keyfile'
         }

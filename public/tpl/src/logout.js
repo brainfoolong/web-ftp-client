@@ -5,5 +5,5 @@
   gl.storage.set('login.hash', null, false)
   gl.storage.set('login.hash', null, true)
   gl.socket.con.close()
-  gl.note('Cya later buddy')
+  gl.note(gl.t('goodbye'))
 })()

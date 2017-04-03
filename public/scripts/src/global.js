@@ -173,6 +173,20 @@ gl.humanFilesize = function (bytes) {
 }
 
 /**
+ * Load the given theme
+ * @param {string} mode light/dark
+ */
+gl.loadTheme = function (mode) {
+  gl.storage.set('theme', mode)
+  const file = mode !== 'dark' ? 'sandstone' : 'slate'
+  $('#theme-bootswatch').remove()
+  $('#theme-colors').remove()
+  $('head')
+    .append('<link id="theme-colors" rel="stylesheet" type="text/css" href="stylesheets/dist/colors-' + mode + '.css">')
+    .append('<link id="theme-bootswatch" rel="stylesheet" type="text/css" href="stylesheets/lib/' + file + '/bootstrap.min.css">')
+}
+
+/**
  * Initialize all textarea autoheights
  * @param {JQuery} container
  */

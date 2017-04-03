@@ -29,9 +29,10 @@ action.execute = function (user, message, callback) {
       storedData = users[message.id]
     } else {
       storedData = {
-        'id': db.getNextId()
+        'id': db.getNextId(),
+        'loginHash': hash.random(32)
       }
-      storedData.loingHash = hash.random(32)
+      delete formData.loginHash
     }
     storedData.passwordHash = hash.saltedMd5(formData.password)
     delete storedData.password

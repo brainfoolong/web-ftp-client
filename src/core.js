@@ -11,8 +11,6 @@ const core = {}
 
 /** @type {string|null} */
 core.latestVersion = null
-/** @type {string|null} */
-core.latestVersionChangelog = null
 
 /** @type {string|null} */
 core.latestVersionZip = null
@@ -37,7 +35,6 @@ core.fetchLatestVersion = function (callback) {
         })
         const release = releases.shift()
         core.latestVersion = release.tag_name
-        core.latestVersionChangelog = release.body
         if (release.assets) {
           core.latestVersionZip = release.assets[0].browser_download_url
         }

@@ -69,10 +69,22 @@
     <div class="entry flat">
         <div class="input-group form-inline">
             <div class="form-group input-group input-group-sm btn-group">
-                <span class="input-group-addon"><input type="checkbox" class="checkbox"></span>
-                <span class="input-group-addon" data-translate="flat.transfer"></span>
+                <select class="form-control input-sm">
+                    <option value="0" data-translate="flat.transfer.disabled"></option>
+                    <option value="1" data-translate="flat.transfer.enabled"></option>
+                </select>
                 <span class="input-group-addon" data-translate-property="data-tooltip,flat.transfer.tooltip">i</span>
             </div>
         </div>
+    </div>
+    <div class="entry replace">
+        <select class="form-control input-sm">
+            <option value="never" data-translate="transfer.mode.never"></option>
+            <option value="replace-always" data-translate="transfer.mode.replace-always"></option>
+            <option value="replace-newer" data-translate="transfer.mode.replace-newer"></option>
+            <option value="replace-sizediff" data-translate="transfer.mode.replace-sizediff"></option>
+            <option value="replace-newer-or-sizediff" data-translate="transfer.mode.replace-newer-or-sizediff"></option>
+            <option value="rename" data-translate="transfer.mode.rename"></option>
+        </select>
     </div>
 </div>

@@ -81,7 +81,8 @@ action.execute = function (user, message, callback) {
         file.isDirectory,
         'queue',
         file.size,
-        0
+        0,
+        message.replace
       )
       if (file.isDirectory) {
         if (message.recursive) {

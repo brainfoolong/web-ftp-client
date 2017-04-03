@@ -35,7 +35,7 @@ html {
     left: 0;
     top: 0;
     overflow: hidden;
-    background-color: #ddd;
+    background-color: rgba(0, 0, 0, 0.3)
 }
 
 .loader:before {
@@ -89,19 +89,10 @@ html {
         position: absolute;
         right: 10px;
         font-size: 80%;
-        background: #f5f5f5;
+        background-color: rgba(0, 0, 0, 0.2);
         border-radius: 3px;
         padding: 10px;
     }
-}
-
-.menu-icons {
-    padding: 10px;
-    background: #ff7400;
-}
-
-.quick-connect-bar {
-    padding: 10px;
 }
 
 .gl.note {
@@ -117,17 +108,19 @@ html {
     .log {
         padding: 3px;
         .param {
-            background: #f5f5f5;
+            background-color: rgba(0, 0, 0, 0.2);
             display: inline-block;
             padding: 3px;
             border-radius: 3px;
-            color: #888888;
+            color: white;
             font-size: 90%;
             line-height: 1;
+            padding-left: 6px;
+            padding-right: 6px;
         }
         .time, .server {
             display: inline-block;
-            background: #a5a5a5;
+            background-color: rgba(0, 0, 0, 0.2);
             color: white;
             border-radius: 3px;
             margin-right: 10px;
@@ -267,7 +260,7 @@ textarea:invalid + span:after {
     .entry {
         position: relative;
         padding: 5px;
-        border-bottom: 1px solid #e5e5e5;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
         cursor: pointer;
         border-radius: 3px;
         &:hover, &.active {
@@ -306,7 +299,7 @@ textarea:invalid + span:after {
         }
         .entry {
             &:hover {
-                background: #f5f5f5;
+                background: rgba(0, 0, 0, 0.1);
             }
             &.active {
                 background: #0095ff;
@@ -331,11 +324,11 @@ textarea:invalid + span:after {
         background-repeat: no-repeat;
         background-size: 80% 80%;
         &.icon-file {
-            background-color: #a5a5a5;
+            background-color: rgba(0, 0, 0, 0.3);
             background-image: url(../../images/icons/ic_description_white_24px.svg);
         }
         &.icon-directory {
-            background-color: #ffd200;
+            background-color: #d6b144;
             background-image: url(../../images/icons/ic_folder_white_24px.svg);
         }
     }
@@ -345,32 +338,32 @@ textarea:invalid + span:after {
 }
 
 .tablesorter-headerDesc {
-    padding-left: 30px !important;
+    padding-left: 35px !important;
     position: relative;
     &:before {
         position: absolute;
         content: "Z-A";
-        background: #e5e5e5;
+        background: rgba(0, 0, 0, 0.2);
         font-size: 70%;
         padding: 5px;
         border-radius: 3px;
         color: white;
-        left: 0;
+        left: 5px;
     }
 }
 
 .tablesorter-headerAsc {
-    padding-left: 30px !important;
+    padding-left: 35px !important;
     position: relative;
     &:before {
         position: absolute;
         content: "A-Z";
-        background: #e5e5e5;
+        background: rgba(0, 0, 0, 0.2);
         font-size: 70%;
         padding: 5px;
         border-radius: 3px;
         color: white;
-        left: 0;
+        left: 5px;
     }
 }
 
@@ -379,7 +372,7 @@ textarea:invalid + span:after {
     position: absolute;
     padding: 10px;
     box-shadow: rgba(0, 0, 0, 0.3) 0 0 10px;
-    border-top: 3px solid #e5e5e5;
+    border-top: 3px solid rgba(0, 0, 0, 0.3);
     z-index: 2;
     background: white;
     display: none;
@@ -388,11 +381,11 @@ textarea:invalid + span:after {
     .entry {
         padding: 3px;
         cursor: pointer;
-        background: #f5f5f5;
+        background: rgba(0, 0, 0, 0.1);
         margin-bottom: 1px;
         border-radius: 3px;
         &:hover {
-            background: #e5e5e5;
+            background: rgba(0, 0, 0, 0.2);
         }
     }
     &.stick-right {
@@ -411,15 +404,15 @@ textarea:invalid + span:after {
 }
 
 .tabs {
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
     .tab {
         display: inline-block;
         padding: 5px;
         padding-left: 15px;
         padding-right: 15px;
         position: relative;
-        background: #e5e5e5;
-        border-bottom: 3px solid #cccccc;
+        background: rgba(0, 0, 0, 0.1);
+        border-bottom: 3px solid rgba(0, 0, 0, 0.2);
         cursor: pointer;
         margin-right: 2px;
         .glyphicon {
@@ -429,9 +422,10 @@ textarea:invalid + span:after {
         &.active {
             background: white;
             top: 1px;
-            border: 1px solid #e5e5e5;
+            border: 1px solid rgba(0, 0, 0, 0.2);
             padding-bottom: 8px;
             border-bottom: 0;
+            color: black;
         }
     }
 }
@@ -479,7 +473,7 @@ textarea:invalid + span:after {
         max-height: 90%;
         max-width: 800px;
         padding: 10px;
-        border-top: 3px solid #cccccc;
+        border-top: 3px solid rgba(0, 0, 0, 0.3);
         background: white;
         display: flex;
         flex-direction: column;
@@ -487,7 +481,7 @@ textarea:invalid + span:after {
         position: relative;
         .modal-own-header {
             flex: 1;
-            border-bottom: 1px solid #f5f5f5;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.3);
             padding: 10px;
             font-weight: bold;
         }
@@ -497,9 +491,12 @@ textarea:invalid + span:after {
             overflow: auto;
         }
         .modal-own-footer {
-            border-top: 1px solid #f5f5f5;
+            border-top: 1px solid rgba(0, 0, 0, 0.3);
             padding: 10px;
             flex: 1;
+            .btn {
+                margin-right: 10px;
+            }
         }
         .modal-own-close {
             cursor: pointer;
@@ -531,7 +528,7 @@ textarea:invalid + span:after {
             overflow-y: auto;
         }
         > .footer {
-            background: #f5f5f5;
+            background: rgba(0, 0, 0, 0.1);
             padding: 6px;
             text-align: right;
             padding-right: 20px;
@@ -545,7 +542,7 @@ textarea:invalid + span:after {
 }
 
 .template-menu-top {
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
     padding-bottom: 8px;
     .inline-block {
         &.logo {
@@ -557,4 +554,13 @@ textarea:invalid + span:after {
 
 .spacer {
     padding-bottom: 10px;
+}
+
+.changelog {
+    h1, h2, h3 {
+        padding-bottom: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    }
 }

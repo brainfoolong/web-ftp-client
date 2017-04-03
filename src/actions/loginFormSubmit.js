@@ -41,6 +41,7 @@ action.execute = function (user, message, callback) {
         'loginHash': hash.random(32),
         'admin': true
       }
+      delete userData.password
       // set the socket userdata with newly created credentials
       user.userData = userData
       db.get('users').set(userData.id, userData).write()

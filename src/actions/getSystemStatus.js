@@ -1,6 +1,7 @@
 'use strict'
 
 const path = require('path')
+const fs = require('fs')
 const db = require(path.join(__dirname, '../db'))
 const core = require(path.join(__dirname, '../core'))
 
@@ -22,9 +23,9 @@ action.execute = function (user, message, callback) {
   callback({
     'installed': db.get('users').size().value() > 0,
     'latestVersion': core.latestVersion,
-    'latestVersionChangelog': core.latestVersionChangelog,
     'currentVersion': require(path.join(__dirname, '../../package')).version,
-    'development': require(path.join(__dirname, '../config')).development
+    'development': require(path.join(__dirname, '../config')).development,
+    'changelog': require('marked')(fs.readFileSync(path.join(__dirname, '../../CHANGELOG.md')).toString())
   })
 }
 
