@@ -53,6 +53,9 @@ function FtpServer (id) {
     self.server.log('log.ftpserver.connect')
     const salt = db.get('settings').get('salt').value()
     const serverData = self.server.getServerData()
+    let encryption = false
+    if (serverData.encryption === 'both') encryption = true
+    if (encryption === false && serverData.encryption !== 'none') encryption = serverData.encryption
     if (serverData.protocol === 'ftp') {
       self.ftpClient = new FtpClient()
       self.ftpClient.on('ready', function () {
@@ -68,7 +71,10 @@ function FtpServer (id) {
         port: serverData.port,
         user: serverData.username,
         password: aes.decrypt(salt + '_' + serverData.id, serverData.password),
-        secure: serverData.encryption === 'none' ? false : serverData.encryption
+        secure: encryption,
+        secureOptions: {
+          'rejectUnauthorized': false
+        }
       })
     }
     if (serverData.protocol === 'sftp') {
