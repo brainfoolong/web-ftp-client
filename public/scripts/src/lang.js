@@ -16,7 +16,7 @@ gl.lang.values = {}
  * The current language, default to en
  * @type {string}
  */
-gl.lang.language = 'en'
+gl.lang.language = gl.storage.get('language') || null
 
 /**
  * Alias for gl.lang.get
@@ -38,8 +38,12 @@ gl.t = function (key, params, wrapParamsWithSpans) {
  */
 gl.lang.get = function (key, params, wrapParamsWithSpans) {
   let v = key
-  if (typeof gl.lang.values[gl.lang.language] !== 'undefined' && typeof gl.lang.values[gl.lang.language][key] !== 'undefined' && gl.lang.values[gl.lang.language][key] !== null) {
-    v = gl.lang.values[gl.lang.language][key]
+  let l = gl.lang.language
+  if (l === null) {
+    l = gl.lang.language
+  }
+  if (typeof gl.lang.values[l] !== 'undefined' && typeof gl.lang.values[l][key] !== 'undefined' && gl.lang.values[l][key] !== null) {
+    v = gl.lang.values[l][key]
   } else if (typeof gl.lang.values['en'] !== 'undefined' && typeof gl.lang.values['en'][key] !== 'undefined') {
     v = gl.lang.values['en'][key]
   }

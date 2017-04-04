@@ -201,7 +201,9 @@ gl.textareaAutoheight = function (container) {
 
 // on document ready
 $(function () {
-  gl.lang.setLanguageByNavigator()
+  if (gl.lang.language === null) {
+    gl.lang.setLanguageByNavigator()
+  }
 
   if (typeof window.WebSocket === 'undefined') {
     gl.note('Your browser is not supported in this application (Outdated Browser). Please upgrade to the newest version')
