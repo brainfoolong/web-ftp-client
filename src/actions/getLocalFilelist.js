@@ -21,15 +21,21 @@ action.requireUser = true
 action.execute = function (user, message, callback) {
   let filesout = []
   let server = Server.get(message.server)
+  const rootDir = path.join(__dirname, '../..')
   // special handler, dot refers to web client root
   if (message.directory === '.') {
-    message.directory = path.join(__dirname, '../..')
+    message.directory = path.join(__dirname, '../../..')
   }
   // add a separator if non exist
   if (!message.directory.match(/[\\/]/)) {
     message.directory += path.sep
   }
   message.directory = path.normalize(message.directory)
+  if (message.directory.substr(0, rootDir.length) === rootDir) {
+    server.logError(new Error('Directory access denied'))
+    callback()
+    return
+  }
   // check if directory exist and return valid stats
   try {
     let stat = fs.statSync(path.join(message.directory))
