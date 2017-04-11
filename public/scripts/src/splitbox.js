@@ -53,15 +53,34 @@ gl.splitbox.tabAdd = function (tpl, params, label) {
  * @param {jQuery} $tab
  */
 gl.splitbox.tabDelete = function ($tab) {
-  // if is a servertab the also disconnect
-  if ($tab.attr('data-template') === 'serverbrowser') {
+  const disconnect = function () {
     gl.socket.send('disconnectFtpServer', {'server': $tab.data('params').server})
+    gl.modalClose()
   }
-  if ($tab.hasClass('active')) {
-    $('.splitbox').children().html('')
+  const remove = function () {
+    if ($tab.hasClass('active')) {
+      $('.splitbox').children().html('')
+    }
+    $tab.remove()
+    gl.splitbox.tabSave()
+    gl.modalClose()
   }
-  $tab.remove()
-  gl.splitbox.tabSave()
+  if ($tab.attr('data-template') === 'serverbrowser') {
+    const $footer = $('<div>')
+    $footer.append('<div class="btn btn-info remove" data-translate="tab.close.remove"></div>')
+    $footer.append('<div class="btn btn-info disconnect" data-translate="tab.close.disconnect"></div>')
+    $footer.on('click', '.disconnect', function () {
+      disconnect()
+    }).on('click', '.remove', function () {
+      disconnect()
+      remove()
+    })
+    gl.modal(null, gl.t('tab.close.info'), $footer, function () {
+
+    })
+  } else {
+    remove()
+  }
 }
 
 /**

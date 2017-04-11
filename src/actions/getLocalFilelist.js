@@ -20,9 +20,12 @@ action.requireUser = true
  */
 action.execute = function (user, message, callback) {
   let filesout = []
-  let server = Server.get(message.server)
+  const server = Server.get(message.server)
   const rootDir = path.join(__dirname, '../..')
   // special handler, dot refers to web client root
+  if (typeof message.directory === 'undefined' || message.directory === '') {
+    message.directory = server.getServerData().root_local || '.'
+  }
   if (message.directory === '.') {
     message.directory = path.join(__dirname, '../../..')
   }

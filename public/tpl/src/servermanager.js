@@ -61,6 +61,14 @@
         'showIf': function (fields) {
           return fields.auth.val() === 'keyfile'
         }
+      },
+      'root_local': {
+        'type': 'text',
+        'label': 'server.root.local'
+      },
+      'root_server': {
+        'type': 'text',
+        'label': 'server.root.server'
       }
     }
   }

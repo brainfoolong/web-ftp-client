@@ -209,6 +209,7 @@ $(function () {
     gl.note('Your browser is not supported in this application (Outdated Browser). Please upgrade to the newest version')
     return
   }
+
   // add flag class for touch support
   const $body = $('body')
   const hasTouch = ('ontouchstart' in window || (typeof window.DocumentTouch !== 'undefined' && document instanceof window.DocumentTouch)) === true

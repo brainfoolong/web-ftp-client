@@ -1,3 +1,9 @@
+# v0.12.0 - xx.xx.xxxx - alpha 4
+* restrict access to web ftp client root for local browser
+* allow self signed certs
+* added default root directory for server and local browser
+
+
 # v0.11.0 - 03.04.2017 - alpha 3
 * added DE translation
 * added dark/light theme

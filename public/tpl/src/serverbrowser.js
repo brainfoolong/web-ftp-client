@@ -244,6 +244,6 @@
     gl.showContextmenu($contextmenuBoth, ev)
   })
 
-  loadServerDirectory(tabParams.serverDirectory || '/')
-  loadLocalDirectory(tabParams.localDirectory || '.')
+  loadServerDirectory(tabParams.serverDirectory)
+  loadLocalDirectory(tabParams.localDirectory)
 })()

@@ -117,5 +117,10 @@
   "user.add": "Neuen Benutzer hinzufügen",
   "usermanager": "Benutzermanager",
   "username": "Benutzername",
-  "yes": "Ja"
+  "yes": "Ja",
+  "tab.close.info" : "Was möchtest du tun?",
+  "tab.close.disconnect" : "Verbindung trennen",
+  "tab.close.remove" : "Tab schließen und Verbindung trennen",
+  "server.root.local" : "Root Verzeichnis im lokalen Browser",
+  "server.root.server" : "Root Verzeichnis im Serverbrowser"
 }
