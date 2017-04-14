@@ -2,7 +2,7 @@
   "author": "BrainFooLong (https://github.com/brainfoolong/web-ftp-client)",
   "name": "web-ftp-client",
   "description": "A web based FTP client. Like a simply version filezilla but for your browser.",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "license": "MIT",
   "main": "src/main.js",
   "repository": {
