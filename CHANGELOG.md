@@ -1,4 +1,4 @@
-# v0.12.0 - xx.xx.xxxx - alpha 4
+# v0.12.0 - 14.04.2017 - alpha 4
 * restrict access to web ftp client root for local browser
 * allow self signed certs
 * added default root directory for server and local browser
