@@ -5,6 +5,9 @@ A web based, always online, FTP/SFTP client. Like really simple, kind of, filezi
 
 [![Screenshot](https://brainfoolong.github.io/web-ftp-client/images/web-ftp.png?2)](http://imgur.com/7xQLoXp)
 
+# Support me
+If you like to buy some coffee, i will appriciate it. You can do this on [Patreon](https://www.patreon.com/brainfoolong) or via [PayPal](https://www.paypal.me/brainfoolong)
+
 # Install linux
 * Download a [realase zip](https://github.com/brainfoolong/web-ftp-client/releases/latest) and unpack to a directory and switch to that directory
 * Run `npm install --production`
