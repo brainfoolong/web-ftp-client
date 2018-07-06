@@ -5,31 +5,31 @@ A web based, always online, FTP/SFTP client. Like really simple, kind of, filezi
 
 [![Screenshot](https://brainfoolong.github.io/web-ftp-client/images/web-ftp.png?2)](http://imgur.com/7xQLoXp)
 
-# Support me
+## Support me
 If you like to buy some coffee, i will appriciate it. You can do this on [Patreon](https://www.patreon.com/brainfoolong) or via [PayPal](https://www.paypal.me/brainfoolong)
 
-# Install linux
+## Install linux
 * Download a [realase zip](https://github.com/brainfoolong/web-ftp-client/releases/latest) and unpack to a directory and switch to that directory
 * Run `npm install --production`
 * Start server with `./wfc start`
 * Stop server with `./wfc stop`
 * Open http://IPTOSERVER:4340 in your browser
 
-# Install synology
+## Install synology
 * Install the package `node.js 4` via synology package manager
 * Via SSH terminal do the same as install linux. You can for sure use a shared folder.
 * Automatic boot on startup for DSM 6 or above
   * `sudo ln -s $(pwd)/wfc /usr/local/etc/rc.d/web-ftp-client.sh && sudo chmod 0755 wfc`
 * Notice: Some disk-stations have too low RAM and CPU to run this application at full speed. But at least constant 5MB/s download/upload should be possible.
 
-# Install windows
+## Install windows
 * Download a [realase zip](https://github.com/brainfoolong/web-ftp-client/releases/latest) and unpack to a directory and switch to that directory
 * Run `npm install --production`
 * Start server with `./wfc.bat`
 * Close the .bat window to stop the server
 * Open http://IPTOSERVER:4340 in your browser
  
-# Development setup
+## Development setup
 * Git clone master to a directory of your choice
 * `npm install`
 * `npm run build` (and also everytime you change some frontend code)
@@ -38,10 +38,15 @@ If you like to buy some coffee, i will appriciate it. You can do this on [Patreo
 * Changes in frontend require `npm run build` to be executed afterwards
 * Changes in backend `/src` folder require `./wfc restart` to be executed afterwards
 
-# Development procedure
+## Development procedure
 First, always talk with me/us. If you have an idea, don't go ahead and investigate much time for development. Maybe there is already something similar in development. Use GitHub issues to discuss about requests and bugs. Fork it, pull changes. There are some pre-commit hooks that don't let you commit your code that isn't passing our tests.
 
-# Code languages and standards we use
+## Code languages and standards we use
 * JS: https://standardjs.com
 * ES6 (with Babel converter for frontend): https://babeljs.io/docs/plugins/preset-env/
 * SCSS (with converter for frontend): http://sass-lang.com/
+
+## Troubleshooting
+Linux: If you've installed nodejs and `node` as not available but `nodejs` is, than create a symlink with 
+
+    sudo ln -s `which nodejs` /usr/bin/node    
