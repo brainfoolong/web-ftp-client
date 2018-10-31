@@ -9,7 +9,7 @@ A web based, always online, FTP/SFTP client. Like really simple, kind of, filezi
 If you like to buy some coffee, i will appriciate it. You can do this on [Patreon](https://www.patreon.com/brainfoolong) or via [PayPal](https://www.paypal.me/brainfoolong)
 
 ## Install linux
-* Download a [realase zip](https://github.com/brainfoolong/web-ftp-client/releases/latest) and unpack to a directory and switch to that directory
+* Download a [realase zip](https://github.com/brainfoolong/web-ftp-client/releases/latest) (NOT the master repository zip, it will not work out of the box) and unpack to a directory and switch to that directory
 * Run `npm install --production`
 * Start server with `./wfc start`
 * Stop server with `./wfc stop`
@@ -23,7 +23,7 @@ If you like to buy some coffee, i will appriciate it. You can do this on [Patreo
 * Notice: Some disk-stations have too low RAM and CPU to run this application at full speed. But at least constant 5MB/s download/upload should be possible.
 
 ## Install windows
-* Download a [realase zip](https://github.com/brainfoolong/web-ftp-client/releases/latest) and unpack to a directory and switch to that directory
+* Download a [realase zip](https://github.com/brainfoolong/web-ftp-client/releases/latest) (NOT the master repository zip, it will not work out of the box) and unpack to a directory and switch to that directory
 * Run `npm install --production`
 * Start server with `./wfc.bat`
 * Close the .bat window to stop the server
