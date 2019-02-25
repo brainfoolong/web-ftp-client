@@ -64,7 +64,7 @@
   "password.description": "Leave empty if you don't want to change it. Notice: The password will be stored as a hash, it cannot be decrypted anymore.",
   "permissions": "Permissions",
   "progress": "Progress",
-  "save": "Speichern",
+  "save": "Save",
   "save.edited": "Save edited",
   "saved": "Saved",
   "server": "Server",
