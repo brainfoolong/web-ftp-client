@@ -1,3 +1,6 @@
+# v0.13.0 - 26. Feb. 2019
+* added spanish support (thx @https://github.com/DrLecter)
+
 # v0.12.0 - 14.04.2017 - alpha 4
 * restrict access to web ftp client root for local browser
 * allow self signed certs
